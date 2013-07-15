@@ -37,7 +37,7 @@ LzssReadStream::~LzssReadStream() {
 	free(_outLzssBufData);
 }
 
-void LzssReadStream::decodeLZSS(Common::ReadStream *in, uint32 mode, uint32 size) {
+void LzssReadStream::decodeLZSS(Common::ReadStream *in, uint32 mode, uint32 dataSize) {
 	uint8 *dst = _outLzssBufData;
 
 	do {
@@ -54,25 +54,25 @@ void LzssReadStream::decodeLZSS(Common::ReadStream *in, uint32 mode, uint32 size
 				length = 1;
 				*(dst++) = in->readByte();
 			}
-			size -= length;
-			if (size <= 0)
+			dataSize -= length;
+			if (dataSize <= 0)
 				return;
 		}
-	} while (size);
+	} while (dataSize);
 }
 
 bool LzssReadStream::eos() const {
 	return _pos >= _size;
 }
 
-uint32 LzssReadStream::read(void *buf, uint32 size) {
-	if (size > _size - _pos)
-		size = _size - _pos;
+uint32 LzssReadStream::read(void *buf, uint32 dataSize) {
+	if (dataSize > _size - _pos)
+		dataSize = _size - _pos;
 
-	memcpy(buf, &_outLzssBufData[_pos], size);
-	_pos += size;
+	memcpy(buf, &_outLzssBufData[_pos], dataSize);
+	_pos += dataSize;
 
-	return size;
+	return dataSize;
 }
 
 bool LzssReadStream::seek(int32 offset, int whence) {
