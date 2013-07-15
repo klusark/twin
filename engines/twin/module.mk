@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	detection.o \
 	gfx_opengl.o \
 	hqr.o \
+	image.o \
 	lzss.o \
 	scene.o \
 	twin.o
