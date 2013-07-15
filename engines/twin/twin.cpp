@@ -36,15 +36,19 @@ namespace Twin {
 
 TwinEngine::TwinEngine(OSystem *syst) :
 		Engine(syst) {
-	g_system->setupScreen(640, 480, false, false);
 }
 
 TwinEngine::~TwinEngine() {
 
 }
 
+void TwinEngine::createRenderer() {
+	_renderer = new GfxOpenGL();
+}
 
 Common::Error TwinEngine::run() {
+	createRenderer();
+	_renderer->setupScreen(640, 480, false);
 	Hqr scene;
 	scene.open("SCENE.HQR");
 	Common::SeekableReadStream *stream = scene.createReadStreamForIndex(1);
