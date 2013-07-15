@@ -2,6 +2,7 @@ MODULE := engines/twin
 
 MODULE_OBJS := \
 	detection.o \
+	gfx_opengl.o \
 	hqr.o \
 	lzss.o \
 	scene.o \
