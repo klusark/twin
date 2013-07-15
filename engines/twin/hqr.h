@@ -23,6 +23,8 @@
 #ifndef TWIN_HQR_H
 #define TWIN_HQR_H
 
+#include "common/stream.h"
+
 namespace Common {
 class File;
 }
