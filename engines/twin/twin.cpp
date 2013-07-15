@@ -27,6 +27,7 @@
 
 #include "engines/twin/twin.h"
 #include "engines/twin/hqr.h"
+#include "engines/twin/image.h"
 #include "engines/twin/scene.h"
 
 
@@ -42,6 +43,18 @@ TwinEngine::~TwinEngine() {
 
 }
 
+void TwinEngine::intro() {
+	// TODO: Should fade Black to White.
+	// TODO: Additional palette-work (for fading).
+	Image adelineLogo("RESS.HQR", 27, _renderer);
+	_renderer->clearScreen();
+	adelineLogo.display();
+	_renderer->flipBuffer();
+
+	// Just delay a bit for now, so we can see the results.
+	g_system->delayMillis(2000);
+}
+
 void TwinEngine::createRenderer() {
 	_renderer = new GfxOpenGL();
 }
@@ -49,6 +62,8 @@ void TwinEngine::createRenderer() {
 Common::Error TwinEngine::run() {
 	createRenderer();
 	_renderer->setupScreen(640, 480, false);
+	intro();
+
 	Hqr scene;
 	scene.open("SCENE.HQR");
 	Common::SeekableReadStream *stream = scene.createReadStreamForIndex(1);

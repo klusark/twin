@@ -45,8 +45,8 @@ class TwinEngine : public Engine {
 protected:
 	// Engine APIs
 	virtual Common::Error run();
-
 	void createRenderer();
+	void intro();
 public:
 	TwinEngine(OSystem *syst);
 	virtual ~TwinEngine();
