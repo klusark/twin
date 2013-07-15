@@ -1,6 +1,6 @@
-/* ResidualVM - A 3D game interpreter
+/* ScummVM - Graphic Adventure Engine
  *
- * ResidualVM is the legal property of its developers, whose names
+ * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
@@ -20,34 +20,28 @@
  *
  */
 
-#include "common/error.h"
-
-#include "engines/engine.h"
-#include "graphics/pixelbuffer.h"
-
-#include "engines/twin/twin.h"
-#include "engines/twin/hqr.h"
-
-
+#include "common/stream.h"
 
 namespace Twin {
 
+class LzssReadStream : public Common::SeekableReadStream {
+private:
+	uint8 *_outLzssBufData;
+	uint32 _size;
+	uint32 _pos;
 
-TwinEngine::TwinEngine(OSystem *syst) :
-		Engine(syst) {
-	g_system->setupScreen(640, 480, false, false);
-}
+	void decodeLZSS(Common::ReadStream *indata, uint32 mode, uint32 length);
 
-TwinEngine::~TwinEngine() {
+public:
+	LzssReadStream(Common::ReadStream *indata, uint32 mode, uint32 realsize);
+	~LzssReadStream();
 
-}
+	virtual int32 pos() const { return _pos; }
+	virtual int32 size() const { return _size; }
+	virtual bool seek(int32 offset, int whence = SEEK_SET);
 
+	bool eos() const;
+	uint32 read(void *buf, uint32 size);
+};
 
-Common::Error TwinEngine::run() {
-	Hqr scene;
-	scene.open("SCENE.HQR");
-	Common::SeekableReadStream *stream = scene.createReadStreamForIndex(1);
-	return Common::kNoError;
-}
-
-} // end of namespace Twin
+} // End of Twin namespace

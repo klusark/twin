@@ -20,34 +20,29 @@
  *
  */
 
-#include "common/error.h"
+#ifndef TWIN_HQR_H
+#define TWIN_HQR_H
 
-#include "engines/engine.h"
-#include "graphics/pixelbuffer.h"
-
-#include "engines/twin/twin.h"
-#include "engines/twin/hqr.h"
-
-
+namespace Common {
+class File;
+}
 
 namespace Twin {
 
+class Hqr {
+public:
+	bool open(const Common::String &filename);
 
-TwinEngine::TwinEngine(OSystem *syst) :
-		Engine(syst) {
-	g_system->setupScreen(640, 480, false, false);
-}
+	Common::SeekableReadStream *createReadStreamForIndex(int index) const;
 
-TwinEngine::~TwinEngine() {
+private:
+	void parseFile(Common::File *f);
 
-}
-
-
-Common::Error TwinEngine::run() {
-	Hqr scene;
-	scene.open("SCENE.HQR");
-	Common::SeekableReadStream *stream = scene.createReadStreamForIndex(1);
-	return Common::kNoError;
-}
+	Common::String _hqrFileName;
+	int _numIndices;
+	int *_indices;
+};
 
 } // end of namespace Twin
+
+#endif
