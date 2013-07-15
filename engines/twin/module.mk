@@ -1,7 +1,10 @@
 MODULE := engines/twin
 
 MODULE_OBJS := \
-	detection.p \
+	detection.o \
+	hqr.o \
+	lzss.o \
+	scene.o \
 	twin.o
 
 # This module can be built as a plugin

@@ -20,37 +20,54 @@
  *
  */
 
-#include "common/error.h"
-
-#include "engines/engine.h"
-#include "graphics/pixelbuffer.h"
-
-#include "engines/twin/twin.h"
-#include "engines/twin/hqr.h"
-#include "engines/twin/scene.h"
+#ifndef TWIN_SCENE_H
+#define TWIN_SCENE_H
 
 
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Twin {
 
 
-TwinEngine::TwinEngine(OSystem *syst) :
-		Engine(syst) {
-	g_system->setupScreen(640, 480, false, false);
-}
+class Scene {
+public:
+	Scene(Common::SeekableReadStream *stream);
+private:
+	class SceneActor {
+	public:
+		uint16 _entity;
+		byte _body;
+		byte _anim;
+		uint16 _sprite;
+		uint16 _x;
+		uint16 _y;
+		uint16 _z;
+	};
+	byte _textBank;
+	byte _gameOverScene;
+	uint16 _ambience[4];
+	uint16 _repeat[4];
+	uint16 _round[4];
 
-TwinEngine::~TwinEngine() {
+	uint16 _heroX;
+	uint16 _heroY;
+	uint16 _heroZ;
 
-}
+	uint16 _moveScriptSize;
+	uint8 *_moveScript;
 
+	uint16 _lifeScriptSize;
+	uint8 *_lifeScript;
 
-Common::Error TwinEngine::run() {
-	Hqr scene;
-	scene.open("SCENE.HQR");
-	Common::SeekableReadStream *stream = scene.createReadStreamForIndex(1);
-	Scene s(stream);
+	uint16 _numActors;
+	SceneActor *_actors;
 
-	return Common::kNoError;
-}
+	uint16 _numZones;
+
+};
 
 } // end of namespace Twin
+
+#endif
