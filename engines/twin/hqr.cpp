@@ -53,7 +53,8 @@ void Hqr::parseFile(Common::File *file) {
 
 	_numIndices = headerSize / 4;
 	_indices = new int[_numIndices];
-	for (int i = 0; i < _numIndices; ++i) {
+	_indices[0] = headerSize;
+	for (int i = 1; i < _numIndices; ++i) {
 		_indices[i] = file->readUint32LE();
 	}
 
