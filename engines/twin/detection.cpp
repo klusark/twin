@@ -50,7 +50,8 @@ static const TwinGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("INVOBJ.HQR", "0f536b55677b3b38fecfd25b09ea6870", 38059),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
+			GUIO0()
 		},
 		GType_LBA
 	},
@@ -62,7 +63,8 @@ static const TwinGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("LBA2.HQR", "e235f425cc8086383971dfe280c267c8", 250788),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
+			GUIO0()
 		},
 		GType_LBA2
 	},
