@@ -21,11 +21,13 @@
  */
 
 #include "common/error.h"
+#include "common/file.h"
 
 #include "engines/engine.h"
 #include "graphics/pixelbuffer.h"
 
 #include "engines/twin/twin.h"
+#include "engines/twin/fla_decoder.h"
 #include "engines/twin/hqr.h"
 #include "engines/twin/image.h"
 #include "engines/twin/scene.h"
@@ -45,10 +47,43 @@ TwinEngine::~TwinEngine() {
 	g_twin = NULL;
 }
 
+void TwinEngine::playMovie(const Common::String &name) {
+	// TODO: This is a simple hack for testing FLA-decoding,
+	// Smacker-support is still not done, nor pretty file-opening.
+
+	// Don't open files this way, HACK for now:
+	Common::File *file = new Common::File();
+	file->open("FLA/" + name);
+	if (!file->isOpen()) {
+		warning("Couldn't open %d", file->size());
+	}
+	
+	// HACK: We just want to show the movie for now, we will probably want a cleaner
+	// way to do so than this later.
+	FlaDecoder movie;
+	movie.loadStream(file);
+	movie.start();
+	
+	while (!movie.endOfVideo()) {
+		if (!movie.needsUpdate()) {
+			continue;
+		}
+		const Graphics::Surface *movieSurface = movie.decodeNextFrame();
+		
+		uint32 texId = _renderer->createBitmap(movieSurface);
+		_renderer->clearScreen();
+		_renderer->drawBitmap(texId, 0, 0, 640 , 480);
+		_renderer->flipBuffer();
+		_renderer->destroyBitmap(texId);
+	}
+	delete file;
+
+}
+
 void TwinEngine::intro() {
 	// TODO: Should fade Black to White.
 	// TODO: Additional palette-work (for fading).
-	Image *adelineLogo = NULL;
+	Image *adelineLogo = nullptr;
 	if (getGameType() == GType_LBA) {
 		adelineLogo = new Image("RESS.HQR", 27, _renderer);
 	} else if (getGameType() == GType_LBA2) {
@@ -59,8 +94,27 @@ void TwinEngine::intro() {
 	_renderer->flipBuffer();
 
 	// Just delay a bit for now, so we can see the results.
-	g_system->delayMillis(2000);
+	g_system->delayMillis(6000);
 	delete adelineLogo;
+
+	if (getGameType() == GType_LBA) {
+		Image logo("RESS.HQR", 49, _renderer); // 12 in US-version
+		_renderer->clearScreen();
+		logo.display();
+		_renderer->flipBuffer();
+
+		g_system->delayMillis(3000);
+
+		// TODO: Crossfade
+		Image logo2("RESS.HQR", 52, _renderer);
+		_renderer->clearScreen();
+		logo2.display();
+		_renderer->flipBuffer();
+		g_system->delayMillis(1000);
+
+		playMovie("DRAGON3.FLA");
+	}
+	
 }
 
 void TwinEngine::createRenderer() {

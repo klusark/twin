@@ -47,6 +47,7 @@ protected:
 	// Engine APIs
 	virtual Common::Error run();
 	void createRenderer();
+	void playMovie(const Common::String &name);
 	void intro();
 public:
 	TwinEngine(OSystem *syst, TwinGameType type);
