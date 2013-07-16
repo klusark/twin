@@ -36,7 +36,7 @@ class VideoPlayerFLA : VideoPlayer {
 
 public:
 	VideoPlayerFLA(GfxOpenGL *renderer, Audio::Mixer *mixer);
-	~VideoPlayerFLA();
+	virtual ~VideoPlayerFLA();
 	void play(int index);
 
 private:

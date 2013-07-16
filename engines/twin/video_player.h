@@ -37,7 +37,7 @@ protected:
 
 public:
 	VideoPlayer(GfxOpenGL *renderer, Audio::Mixer *mixer);
-	~VideoPlayer();
+	virtual ~VideoPlayer();
 	virtual void play(int index) = 0;
 
 };

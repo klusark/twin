@@ -38,7 +38,7 @@ class VideoPlayerSmacker : VideoPlayer {
 
 public:
 	VideoPlayerSmacker(GfxOpenGL *renderer, Audio::Mixer *mixer);
-	~VideoPlayerSmacker();
+	virtual ~VideoPlayerSmacker();
 	void play(int index);
 
 private:
