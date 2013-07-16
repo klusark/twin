@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-
+ 
 #ifndef TWIN_VIDEO_PLAYER_H
 #define TWIN_VIDEO_PLAYER_H
 
