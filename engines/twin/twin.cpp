@@ -35,8 +35,8 @@
 namespace Twin {
 
 
-TwinEngine::TwinEngine(OSystem *syst) :
-		Engine(syst) {
+TwinEngine::TwinEngine(OSystem *syst, TwinGameType type) :
+		Engine(syst), _type(type) {
 }
 
 TwinEngine::~TwinEngine() {
@@ -46,13 +46,19 @@ TwinEngine::~TwinEngine() {
 void TwinEngine::intro() {
 	// TODO: Should fade Black to White.
 	// TODO: Additional palette-work (for fading).
-	Image adelineLogo("RESS.HQR", 27, _renderer);
+	Image *adelineLogo = NULL;
+	if (getGameType() == GType_LBA) {
+		adelineLogo = new Image("RESS.HQR", 27, _renderer);
+	} else if (getGameType() == GType_LBA2) {
+		adelineLogo = new Image("SCREEN.HQR", 0, _renderer);
+	}
 	_renderer->clearScreen();
-	adelineLogo.display();
+	adelineLogo->display();
 	_renderer->flipBuffer();
 
 	// Just delay a bit for now, so we can see the results.
 	g_system->delayMillis(2000);
+	delete adelineLogo;
 }
 
 void TwinEngine::createRenderer() {

@@ -42,14 +42,17 @@ enum TwinGameType {
 
 class TwinEngine : public Engine {
 	GfxOpenGL *_renderer;
+	TwinGameType _type;
 protected:
 	// Engine APIs
 	virtual Common::Error run();
 	void createRenderer();
 	void intro();
 public:
-	TwinEngine(OSystem *syst);
+	TwinEngine(OSystem *syst, TwinGameType type);
 	virtual ~TwinEngine();
+
+	TwinGameType getGameType() { return _type; }
 
 };
 
