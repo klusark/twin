@@ -2,6 +2,7 @@ MODULE := engines/twin
 
 MODULE_OBJS := \
 	detection.o \
+	fla_decoder.o \
 	gfx_opengl.o \
 	hqr.o \
 	image.o \
