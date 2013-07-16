@@ -56,6 +56,8 @@ public:
 
 };
 
+extern TwinEngine *g_twin;
+
 } // end of namespace Twin
 
 #endif

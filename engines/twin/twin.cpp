@@ -34,13 +34,15 @@
 
 namespace Twin {
 
+TwinEngine *g_twin = NULL;
 
 TwinEngine::TwinEngine(OSystem *syst, TwinGameType type) :
 		Engine(syst), _type(type) {
+	g_twin = this;
 }
 
 TwinEngine::~TwinEngine() {
-
+	g_twin = NULL;
 }
 
 void TwinEngine::intro() {
