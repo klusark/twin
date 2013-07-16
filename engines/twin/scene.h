@@ -35,6 +35,8 @@ class Scene {
 public:
 	Scene(Common::SeekableReadStream *stream);
 private:
+	void loadLBA2(Common::SeekableReadStream *stream);
+
 	class SceneActor {
 	public:
 		uint16 _entity;
@@ -44,6 +46,11 @@ private:
 		uint16 _x;
 		uint16 _y;
 		uint16 _z;
+		uint16 _moveScriptSize;
+		uint8 *_moveScript;
+
+		uint16 _lifeScriptSize;
+		uint8 *_lifeScript;
 	};
 	byte _textBank;
 	byte _gameOverScene;

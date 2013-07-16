@@ -23,10 +23,19 @@
 #include "common/stream.h"
 
 #include "engines/twin/scene.h"
+#include "engines/twin/twin.h"
 
 namespace Twin {
 
 Scene::Scene(Common::SeekableReadStream *stream) {
+	if (g_twin->getGameType() == GType_LBA2) {
+		loadLBA2(stream);
+	}
+}
+
+
+void Scene::loadLBA2(Common::SeekableReadStream *stream) {
+	stream->readByte();
 	_textBank = stream->readByte();
 	_gameOverScene = stream->readByte();
 	stream->readUint32LE();
@@ -37,18 +46,26 @@ Scene::Scene(Common::SeekableReadStream *stream) {
 	_ambience[0] = stream->readUint16LE();
 	_repeat[0] = stream->readUint16LE();
 	_round[0] = stream->readUint16LE();
+	stream->readUint16LE();
+	stream->readUint16LE();
 
 	_ambience[1] = stream->readUint16LE();
 	_repeat[1] = stream->readUint16LE();
 	_round[1] = stream->readUint16LE();
+	stream->readUint16LE();
+	stream->readUint16LE();
 
 	_ambience[2] = stream->readUint16LE();
 	_repeat[2] = stream->readUint16LE();
 	_round[2] = stream->readUint16LE();
+	stream->readUint16LE();
+	stream->readUint16LE();
 
 	_ambience[3] = stream->readUint16LE();
 	_repeat[3] = stream->readUint16LE();
 	_round[3] = stream->readUint16LE();
+	stream->readUint16LE();
+	stream->readUint16LE();
 
 
 	stream->readUint16LE();
@@ -72,6 +89,8 @@ Scene::Scene(Common::SeekableReadStream *stream) {
 	_actors = new SceneActor[_numActors];
 
 	for (int i = 0; i < _numActors; ++i) {
+
+		//These sizes are probably mostly wrong, but the overall actor size is right
 		uint16 flags = stream->readUint16LE();
 		SceneActor *a = &_actors[i];
 		a->_entity = stream->readUint16LE();
@@ -95,10 +114,20 @@ Scene::Scene(Common::SeekableReadStream *stream) {
 		stream->readByte();
 		stream->readByte();
 		stream->readUint16LE();
-		stream->readUint16LE();
+		stream->readByte();
+
+		a->_moveScriptSize = stream->readUint16LE();
+		a->_moveScript = new uint8[a->_moveScriptSize];
+		stream->read(a->_moveScript, a->_moveScriptSize);
+
+		a->_lifeScriptSize = stream->readUint16LE();
+		a->_lifeScript = new uint8[a->_lifeScriptSize];
+		stream->read(a->_lifeScript, a->_lifeScriptSize);
 
 	}
+	stream->readUint32LE();
 	_numZones = stream->readUint16LE();
+
 }
 
 
