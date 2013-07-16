@@ -103,6 +103,7 @@ FlaDecoder::FlaVideoTrack::FlaVideoTrack(int width, int height, int fps, int num
 	_height = height;
 	_nbframes = numFrames;
 	_frameRate = Common::Rational(fps, 1);
+	_curFrame = 0;
 	_surface = new Graphics::Surface();
 	_surface->create(_width, _height, _format);
 	_palette = new byte [256 * 3];
