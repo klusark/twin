@@ -1,6 +1,7 @@
 MODULE := engines/twin
 
 MODULE_OBJS := \
+	block_library.o \
 	detection.o \
 	fla_decoder.o \
 	gfx_opengl.o \
