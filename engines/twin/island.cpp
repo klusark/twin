@@ -20,33 +20,38 @@
  *
  */
 
-#ifndef TWIN_HQR_H
-#define TWIN_HQR_H
-
 #include "common/stream.h"
+#include "common/textconsole.h"
 
-namespace Common {
-class File;
-}
+#include "engines/twin/island.h"
+#include "engines/twin/twin.h"
 
 namespace Twin {
 
-class Hqr {
-public:
-	bool open(const Common::String &filename);
+Island::Island(Hqr *hqr) {
+	int indeces = hqr->getNumIndeces();
 
-	Common::SeekableReadStream *createReadStreamForIndex(int index) const;
+	_hightMaps = new uint16*[(indeces-2)/6];
 
-	int getNumIndeces() { return _numIndices; }
+	int mapid = 0;
+	// The rest of the data isn't known to me right now.
+	// there is probably texture data and texture coords
+	for (int i = 7; i < indeces; i += 6) {
+		Common::SeekableReadStream *stream = hqr->createReadStreamForIndex(i);
+		loadHeightMap(stream, mapid);
+		delete stream;
+		++mapid;
+	}
+}
 
-private:
-	void parseFile(Common::File *f);
+void Island::loadHeightMap(Common::SeekableReadStream *stream, int mapid) {
+	_hightMaps[mapid] = new uint16[65*65];
+	for (int y = 0; y < 65; ++y) {
+		for (int x = 0; x < 65; ++x) {
+			_hightMaps[mapid][y*65 + x] = stream->readUint16LE();
+		}
+	}
 
-	Common::String _hqrFileName;
-	int _numIndices;
-	int *_indices;
-};
+}
 
 } // end of namespace Twin
-
-#endif

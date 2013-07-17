@@ -20,31 +20,25 @@
  *
  */
 
-#ifndef TWIN_HQR_H
-#define TWIN_HQR_H
+#ifndef TWIN_ISLAND_H
+#define TWIN_ISLAND_H
 
-#include "common/stream.h"
+#include "engines/twin/hqr.h"
 
 namespace Common {
-class File;
+class SeekableReadStream;
 }
 
 namespace Twin {
 
-class Hqr {
+
+class Island {
 public:
-	bool open(const Common::String &filename);
-
-	Common::SeekableReadStream *createReadStreamForIndex(int index) const;
-
-	int getNumIndeces() { return _numIndices; }
-
+	Island(Hqr *hqr);
 private:
-	void parseFile(Common::File *f);
+	void loadHeightMap(Common::SeekableReadStream *stream, int mapid);
 
-	Common::String _hqrFileName;
-	int _numIndices;
-	int *_indices;
+	uint16 **_hightMaps;
 };
 
 } // end of namespace Twin

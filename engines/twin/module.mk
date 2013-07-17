@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	grid.o \
 	hqr.o \
 	image.o \
+	island.o \
 	lzss.o \
 	scene.o \
 	twin.o \
