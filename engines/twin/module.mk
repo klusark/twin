@@ -3,6 +3,7 @@ MODULE := engines/twin
 MODULE_OBJS := \
 	block.o \
 	block_library.o \
+	colour_palette.o \
 	detection.o \
 	fla_decoder.o \
 	gfx_opengl.o \
