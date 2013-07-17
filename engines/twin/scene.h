@@ -72,6 +72,8 @@ private:
 	SceneActor *_actors;
 
 	uint16 _numZones;
+	uint16 _numTracks;
+	uint16 _numEndThings;
 
 };
 

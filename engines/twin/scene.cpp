@@ -88,7 +88,7 @@ void Scene::loadLBA2(Common::SeekableReadStream *stream) {
 	_numActors = stream->readUint16LE();
 	_actors = new SceneActor[_numActors];
 
-	for (int i = 0; i < _numActors; ++i) {
+	for (int i = 0; i < _numActors - 1; ++i) {
 
 		//These sizes are probably mostly wrong, but the overall actor size is right
 		uint16 flags = stream->readUint16LE();
@@ -127,7 +127,59 @@ void Scene::loadLBA2(Common::SeekableReadStream *stream) {
 	}
 	stream->readUint32LE();
 	_numZones = stream->readUint16LE();
+	for (int i = 0; i < _numZones; ++i) {
+		//SKIP data for now
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+	}
 
+	_numTracks = stream->readUint16LE();
+
+	for (int i = 0; i < _numTracks; ++i) {
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+	}
+
+	//Figure out what this data is
+	_numEndThings = stream->readUint16LE();
+	for (int i = 0; i < _numEndThings; ++i) {
+		stream->readUint16LE();
+		stream->readUint16LE();
+	}
+
+	stream->readUint16LE();
 }
 
 
