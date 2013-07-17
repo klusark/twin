@@ -35,8 +35,8 @@ Grid::Grid(Common::SeekableReadStream *stream) {
 
 // LBArchatect(GPL) by zink was used as the base for this function
 void Grid::loadLBA2(Common::SeekableReadStream *stream) {
-	stream->readByte();
-	stream->readByte();
+	_layoutLib = stream->readByte();
+	_gridFragment = stream->readByte();
 
 	int n = 0;
 	int off = 34;
@@ -95,11 +95,11 @@ void Grid::loadLBA2(Common::SeekableReadStream *stream) {
 }
 
 void Grid::setGridAt(byte x, byte y, byte z, Square s) {
-	_grid[x * 64 * 64 + z * 64 + y] = s;
+	_grid[x * 64 * 25 + z * 25 + y] = s;
 }
 
 Grid::Square *Grid::getGridAt(byte x, byte y, byte z) {
-	return &_grid[x * 64 * 64 + z * 64 + y];
+	return &_grid[x * 64 * 25 + z * 25 + y];
 }
 
 

@@ -37,7 +37,8 @@ public:
 private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
-	
+	byte _layoutLib;
+	byte _gridFragment;
 
 	struct Square {
 		byte _lt;
