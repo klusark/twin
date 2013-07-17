@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	detection.o \
 	fla_decoder.o \
 	gfx_opengl.o \
+	grid.o \
 	hqr.o \
 	image.o \
 	lzss.o \
