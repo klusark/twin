@@ -1,6 +1,7 @@
 MODULE := engines/twin
 
 MODULE_OBJS := \
+	block.o \
 	block_library.o \
 	detection.o \
 	fla_decoder.o \
