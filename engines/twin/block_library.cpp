@@ -44,17 +44,19 @@ void BlockLibrary::loadLBA2(Common::SeekableReadStream *stream) {
 		_offsets[i] = stream->readUint32LE();
 	}
 
-	_blocks = new Block[_numOffsets];
+	_blocks = new BlockInfo[_numOffsets];
 	for (int i = 0; i < _numOffsets; ++i) {
-		Block *b = &_blocks[i];
+		BlockInfo *b = &_blocks[i];
 		b->_x = stream->readByte();
 		b->_y = stream->readByte();
 		b->_z = stream->readByte();
-		int numBlocks = b->_x * b->_y * b->_z;
-		for (int j = 0; j < numBlocks; ++j) {
-			b->_shape  = stream->readByte();
-			b->_type  = stream->readByte();
-			b->_index  = stream->readUint16LE();
+		b->_numBlocks = b->_x * b->_y * b->_z;
+		b->_blocks = new SubBlock[b->_numBlocks];
+		for (uint32 j = 0; j < b->_numBlocks; ++j) {
+			SubBlock *s = &b->_blocks[j];
+			s->_shape = stream->readByte();
+			s->_type = stream->readByte();
+			s->_index = stream->readUint16LE();
 		}
 	}
 }

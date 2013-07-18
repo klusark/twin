@@ -30,26 +30,33 @@ class SeekableReadStream;
 
 namespace Twin {
 
+class SubBlock {
+public:
+	uint16 _index;
+	byte _shape;
+	byte _type;
+};
+
+class BlockInfo {
+public:
+	SubBlock *_blocks;
+	uint32 _numBlocks;
+	byte _x;
+	byte _y;
+	byte _z;
+};
 
 class BlockLibrary {
 public:
 	BlockLibrary(Common::SeekableReadStream *stream);
+	BlockInfo *getBlock(uint16 i) { return &_blocks[i]; }
 private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
-	class Block {
-	public:
-		uint16 _index;
-		byte _x;
-		byte _y;
-		byte _z;
-		byte _shape;
-		byte _type;
-	};
 
 	uint32 _numOffsets;
 	uint32 *_offsets;
-	Block *_blocks;
+	BlockInfo *_blocks;
 };
 
 } // end of namespace Twin

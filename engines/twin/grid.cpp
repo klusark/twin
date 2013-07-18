@@ -28,6 +28,7 @@
 namespace Twin {
 
 Grid::Grid(Common::SeekableReadStream *stream) {
+	memset(_grid, 0, 64*64*25*sizeof(Square));
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
 	}
@@ -53,15 +54,14 @@ void Grid::loadLBA2(Common::SeekableReadStream *stream) {
 			byte groups = stream->readByte();
 			for (byte c = 0; c < groups; ++c) {
 				byte flags = stream->readByte();
-				byte blocks = flags & 0x1F;
+				byte blocks = (flags & 0x1F) + 1;
 				flags &= 0xE0;
 				switch (flags) {
 				case 0x00:
 					for (byte d = 0; d < blocks; ++d) {
 						Square s;
-						s._lt = 0;
-						s._brk = 0;
-						s._brknr = 0;
+						s._layout = 0;
+						s._brick = 0;
 						setGridAt(x, y, z, s);
 						++y;
 					}
@@ -69,9 +69,8 @@ void Grid::loadLBA2(Common::SeekableReadStream *stream) {
 				case 0x40:
 					for (byte d = 0; d < blocks; ++d) {
 						Square s;
-						s._lt = stream->readByte();
-						s._brk = stream->readByte();
-						s._brknr = 0;
+						s._layout = stream->readByte();
+						s._brick = stream->readByte();
 						setGridAt(x, y, z, s);
 						++y;
 					}
@@ -79,9 +78,8 @@ void Grid::loadLBA2(Common::SeekableReadStream *stream) {
 				case 0x80:
 					{
 						Square s;
-						s._lt = stream->readByte();
-						s._brk = stream->readByte();
-						s._brknr = 0;
+						s._layout = stream->readByte();
+						s._brick = stream->readByte();
 						for (byte d = 0; d < blocks; ++d) {
 							setGridAt(x, y, z, s);
 							++y;
@@ -98,7 +96,7 @@ void Grid::setGridAt(byte x, byte y, byte z, Square s) {
 	_grid[x * 64 * 25 + z * 25 + y] = s;
 }
 
-Grid::Square *Grid::getGridAt(byte x, byte y, byte z) {
+Square *Grid::getGridAt(byte x, byte y, byte z) {
 	return &_grid[x * 64 * 25 + z * 25 + y];
 }
 

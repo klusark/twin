@@ -30,24 +30,25 @@ class SeekableReadStream;
 
 namespace Twin {
 
+struct Square {
+	byte _layout;
+	byte _brick;
+};
+
 
 class Grid {
 public:
 	Grid(Common::SeekableReadStream *stream);
+	void setGridAt(byte x, byte y, byte z, Square s);
+	Square *getGridAt(byte x, byte y, byte z);
 private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
 	byte _layoutLib;
 	byte _gridFragment;
 
-	struct Square {
-		byte _lt;
-		byte _brk;
-		byte _brknr;
-	};
 
-	void setGridAt(byte x, byte y, byte z, Square s);
-	Square *getGridAt(byte x, byte y, byte z);
+
 
 
 	Square _grid[64*64*25];
