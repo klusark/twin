@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/textconsole.h"
+
 #include "engines/twin/lzss.h"
 
 namespace Twin {
@@ -31,6 +33,7 @@ LzssReadStream::LzssReadStream(Common::ReadStream *indata, uint32 mode, uint32 r
 	decodeLZSS(indata, mode, realsize);
 	_size = realsize;
 	_pos = 0;
+	delete indata;
 }
 
 LzssReadStream::~LzssReadStream() {
@@ -67,7 +70,7 @@ bool LzssReadStream::eos() const {
 
 uint32 LzssReadStream::read(void *buf, uint32 dataSize) {
 	if (dataSize > _size - _pos)
-		dataSize = _size - _pos;
+		error("LzssReadStream::read past end of buffer");
 
 	memcpy(buf, &_outLzssBufData[_pos], dataSize);
 	_pos += dataSize;
