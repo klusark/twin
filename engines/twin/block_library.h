@@ -49,6 +49,7 @@ public:
 class BlockLibrary {
 public:
 	BlockLibrary(Common::SeekableReadStream *stream);
+	~BlockLibrary();
 	BlockInfo *getBlock(uint16 i) { return &_blocks[i]; }
 private:
 	void loadLBA2(Common::SeekableReadStream *stream);

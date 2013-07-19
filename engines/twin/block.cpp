@@ -31,6 +31,11 @@ Block::Block(Common::SeekableReadStream *stream) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
 	}
+	delete stream;
+}
+
+Block::~Block() {
+	delete[] _data;
 }
 
 // This code should apply to both games

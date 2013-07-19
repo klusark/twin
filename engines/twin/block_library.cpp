@@ -31,6 +31,15 @@ BlockLibrary::BlockLibrary(Common::SeekableReadStream *stream) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
 	}
+	delete stream;
+}
+
+BlockLibrary::~BlockLibrary() {
+	delete[] _offsets;
+	for (int i = 0; i < _numOffsets; ++i) {
+		delete[] _blocks[i]._blocks;
+	}
+	delete[] _blocks;
 }
 
 void BlockLibrary::loadLBA2(Common::SeekableReadStream *stream) {

@@ -34,6 +34,7 @@ namespace Twin {
 class Block {
 public:
 	Block(Common::SeekableReadStream *stream);
+	~Block();
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
