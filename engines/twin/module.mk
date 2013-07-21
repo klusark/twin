@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	image.o \
 	island.o \
 	lzss.o \
+	model.o \
 	scene.o \
 	twin.o \
 	video_player.o \
