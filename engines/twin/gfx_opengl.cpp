@@ -27,6 +27,10 @@
 #endif
 
 #include "engines/twin/gfx_opengl.h"
+#include "engines/twin/model.h"
+#include "math/vector3d.h"
+#include "common/textconsole.h"
+#include "engines/twin/colour_palette.h"
 
 #ifdef USE_OPENGL
 
@@ -113,6 +117,59 @@ void GfxOpenGL::drawBitmap(int texID, int x, int y, int w, int h) {
 
 void GfxOpenGL::destroyBitmap(uint32 texID) {
 	glDeleteTextures(1, &texID);
+}
+
+void GfxOpenGL::drawModel(Model *m) {
+
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_ALPHA_TEST);
+	glDisable(GL_LIGHTING);
+
+	glDisable(GL_TEXTURE_2D);
+	glColor4ub(255, 255, 255, 255);
+
+	glLoadIdentity();
+
+
+	for (uint j = 0; j < m->_numPolygons; j++) {
+		Polygon *p = &m->_polygons[j];
+		glBegin(GL_POLYGON);
+
+		for (int i = 0; i < m->_polygons->_num; ++i) {
+			int vert = p->_data[i];
+			if (vert > m->_numVerticies || vert == 0) {
+				break;
+			}
+
+			glColor4ub(_palette->_palette[p->_colour]._r, _palette->_palette[p->_colour]._g, _palette->_palette[p->_colour]._b, 255);
+			Vertex *v = &m->_verticies[vert];
+			Math::Vector3d mv(v->_x, v->_y, v->_z);
+			Bone *b = &m->_bones[v->_bone];
+			while (b) {
+				Vertex *bv = &m->_verticies[b->_vertex];
+				Math::Vector3d mv2(bv->_x, bv->_y, bv->_z);
+				mv += mv2;
+
+				b = &m->_bones[b->_parent];
+				if (b->_parent == 0xffff) {
+					break;
+				}
+			}
+			Normal *n = &m->_normals[vert];
+
+			glNormal3f(n->_x, n->_y, n->_z);
+			glVertex3fv(mv.getData());
+
+		}
+
+		glEnd();
+
+	}
+	
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_ALPHA_TEST);
+	glEnable(GL_LIGHTING);
 }
 
 } // end of namespace Twin

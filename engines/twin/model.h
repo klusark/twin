@@ -30,18 +30,51 @@ class SeekableReadStream;
 
 namespace Twin {
 
+class Polygon {
+public:
+	uint16 *_data;
+	uint16 _num;
+	byte _colour;
+};
+
+class Vertex {
+public:
+	float _x;
+	float _y;
+	float _z;
+	uint16 _bone;
+};
+
+class Normal {
+public:
+	float _x;
+	float _y;
+	float _z;
+};
+
+class Bone {
+public:
+	uint16 _parent;
+	uint16 _vertex;
+};
+
 
 class Model {
 public:
 	Model(Common::SeekableReadStream *stream);
-private:
+//private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
 	uint32 _numVerticies;
 	uint32 _numBones;
 	uint32 _numNormals;
-	uint32 _numPolygon;
+	uint32 _numPolygons;
 	uint32 _numSphere;
+
+	Polygon *_polygons;
+	Vertex *_verticies;
+	Normal *_normals;
+	Bone *_bones;
 };
 
 } // end of namespace Twin

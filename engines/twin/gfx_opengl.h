@@ -41,6 +41,9 @@
 
 namespace Twin {
 
+class Model;
+class ColourPalette;
+
 class GfxOpenGL {
 	int _screenWidth;
 	int _screenHeight;
@@ -48,6 +51,7 @@ class GfxOpenGL {
 	float _scaleW;
 	float _scaleH;
 	Graphics::PixelFormat _pixelFormat;
+	ColourPalette *_palette;
 public:
 	GfxOpenGL() {}
 	byte *setupScreen(int screenW, int screenH, bool fullscreen);
@@ -56,6 +60,8 @@ public:
 	int createBitmap(const Graphics::Surface *surf);
 	void drawBitmap(int texID, int x, int y, int w, int h);
 	void destroyBitmap(uint32 texID);
+	void drawModel(Model *m);
+	void setColourPalette(ColourPalette *p) { _palette = p; }
 };
 
 } // end of namespace Twin
