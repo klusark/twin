@@ -22,6 +22,7 @@
 
 #include "common/error.h"
 #include "common/file.h"
+#include "common/events.h"
 
 #include "engines/engine.h"
 #include "graphics/pixelbuffer.h"
@@ -126,10 +127,19 @@ Common::Error TwinEngine::run() {
 	_renderer->setupScreen(640, 480, false);
 	intro();
 
-	Hqr scene;
-	scene.open("SCENE.HQR");
-	Common::SeekableReadStream *stream = scene.createReadStreamForIndex(1);
-	Scene s(stream);
+	for (;;) {
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			Common::EventType type = event.type;
+			if (type == Common::EVENT_KEYDOWN || type == Common::EVENT_KEYUP) {
+
+			}
+		}
+
+		_renderer->clearScreen();
+		//render stuff
+		_renderer->flipBuffer();
+	}
 
 	return Common::kNoError;
 }
