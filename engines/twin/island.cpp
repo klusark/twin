@@ -54,4 +54,50 @@ void Island::loadHeightMap(Common::SeekableReadStream *stream, int mapid) {
 
 }
 
+/*
+	HQR file entries
+		0 - sections layout (max of 256 sections)
+		1 - ground textures
+		2 - objects textures
+
+		Island Sections (Num Entries HQR - 3 / 6 = Total Sections available)
+*/
+void Island::loadIsland(Hqr *hqr) {
+	int entries = hqr->getNumIndecies();
+	int sections = (entries - 3) / 6;
+
+	// 0 - layout sections
+	Common::SeekableReadStream *stream = hqr->createReadStreamForIndex(0);
+	_sectionsLayout = new byte[256];
+	stream->read(_sectionsLayout, 256);
+	delete stream;
+
+	// 1 - ground texture
+	//stream = hqr->createReadStreamForIndex(1);
+	//delete stream;
+
+	// 2 - object texture
+	//stream = hqr->createReadStreamForIndex(1);
+	//delete stream;
+
+	// TODO here we should also set Sea and Sky textures from Ress.HQR file (from idx 12 to 27)
+
+	for (int i = 0; i < sections; i++) {
+		loadIslandSection(hqr, i);
+	}
+}
+
+/*
+	Island Sections (Num Entries HQR - 3 / 6 = Total Sections available)
+		3 (0) - Objects layout
+		4 (1) - Objects data
+		5 (2) - Quads (2 triangles)
+		6 (3) - Texture UV mapping
+		7 (4) - Height Maps
+		8 (5) - Intensity
+*/
+void Island::loadIslandSection(Hqr *hqr, int sectionIdx) {
+
+}
+
 } // end of namespace Twin

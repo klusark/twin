@@ -37,8 +37,13 @@ public:
 	Island(Hqr *hqr);
 private:
 	void loadHeightMap(Common::SeekableReadStream *stream, int mapid);
+	
 
 	uint16 **_hightMaps;
+
+	void loadIsland(Hqr *hqr);
+	void loadIslandSection(Hqr *hqr, int sectionIdx);
+	byte *_sectionsLayout;
 };
 
 } // end of namespace Twin
