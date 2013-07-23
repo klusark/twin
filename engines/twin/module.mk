@@ -1,6 +1,7 @@
 MODULE := engines/twin
 
 MODULE_OBJS := \
+	actor.o \
 	block.o \
 	block_library.o \
 	colour_palette.o \

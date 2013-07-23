@@ -22,6 +22,7 @@
 
 #include "common/stream.h"
 
+#include "engines/twin/actor.h"
 #include "engines/twin/scene.h"
 #include "engines/twin/twin.h"
 
@@ -86,45 +87,11 @@ void Scene::loadLBA2(Common::SeekableReadStream *stream) {
 	stream->read(_lifeScript, _lifeScriptSize);
 
 	_numActors = stream->readUint16LE();
-	_actors = new SceneActor[_numActors];
-
+	_actors = new Actor *[_numActors];
 	for (int i = 0; i < _numActors - 1; ++i) {
-
-		//These sizes are probably mostly wrong, but the overall actor size is right
-		uint16 flags = stream->readUint16LE();
-		SceneActor *a = &_actors[i];
-		a->_entity = stream->readUint16LE();
-		a->_body = stream->readByte();
-		a->_anim = stream->readByte();
-		a->_sprite = stream->readUint16LE();
-		a->_x = stream->readUint16LE();
-		a->_y = stream->readUint16LE();
-		a->_z = stream->readUint16LE();
-		stream->readByte();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readByte();
-		stream->readByte();
-		stream->readByte();
-		stream->readByte();
-		stream->readUint16LE();
-		stream->readByte();
-
-		a->_moveScriptSize = stream->readUint16LE();
-		a->_moveScript = new uint8[a->_moveScriptSize];
-		stream->read(a->_moveScript, a->_moveScriptSize);
-
-		a->_lifeScriptSize = stream->readUint16LE();
-		a->_lifeScript = new uint8[a->_lifeScriptSize];
-		stream->read(a->_lifeScript, a->_lifeScriptSize);
-
+		_actors[i] = new Actor(stream);
 	}
+
 	stream->readUint32LE();
 	_numZones = stream->readUint16LE();
 	for (int i = 0; i < _numZones; ++i) {

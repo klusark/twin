@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TWIN_SCENE_H
-#define TWIN_SCENE_H
+#ifndef TWIN_ACTOR_H
+#define TWIN_ACTOR_H
 
 
 namespace Common {
@@ -30,36 +30,27 @@ class SeekableReadStream;
 
 namespace Twin {
 
-class Actor;
 
-class Scene {
+class Actor {
 public:
-	Scene(Common::SeekableReadStream *stream);
+	Actor(Common::SeekableReadStream *stream);
 private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
-	byte _textBank;
-	byte _gameOverScene;
-	uint16 _ambience[4];
-	uint16 _repeat[4];
-	uint16 _round[4];
 
-	uint16 _heroX;
-	uint16 _heroY;
-	uint16 _heroZ;
-
+	uint16 _entity;
+	byte _body;
+	byte _anim;
+	uint16 _sprite;
+	uint16 _x;
+	uint16 _y;
+	uint16 _z;
 	uint16 _moveScriptSize;
 	uint8 *_moveScript;
 
 	uint16 _lifeScriptSize;
 	uint8 *_lifeScript;
 
-	uint16 _numActors;
-	Actor **_actors;
-
-	uint16 _numZones;
-	uint16 _numTracks;
-	uint16 _numEndThings;
 
 };
 
