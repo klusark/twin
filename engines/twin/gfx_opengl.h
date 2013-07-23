@@ -43,6 +43,8 @@ namespace Twin {
 
 class Model;
 class ColourPalette;
+class Grid;
+class Block;
 
 class GfxOpenGL {
 	int _screenWidth;
@@ -61,6 +63,8 @@ public:
 	void drawBitmap(int texID, int x, int y, int w, int h);
 	void destroyBitmap(uint32 texID);
 	void drawModel(Model *m);
+	void drawBlock(Block *block, int32 x, int32 y, int32 z);
+	void drawGrid(Grid *g);
 	void setColourPalette(ColourPalette *p) { _palette = p; }
 };
 

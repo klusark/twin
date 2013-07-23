@@ -44,6 +44,8 @@ public:
 	byte _height;
 	byte *_data;
 
+	void *_renderData;
+
 };
 
 } // end of namespace Twin

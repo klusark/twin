@@ -33,6 +33,7 @@
 #include "engines/twin/image.h"
 #include "engines/twin/scene.h"
 #include "engines/twin/resource.h"
+#include "engines/twin/colour_palette.h"
 
 
 
@@ -129,7 +130,14 @@ Common::Error TwinEngine::run() {
 	g_resource = new Resource();
 	createRenderer();
 	_renderer->setupScreen(640, 480, false);
-	intro();
+	//intro();
+
+	Hqr ress;
+	ress.open("RESS.HQR");
+	ColourPalette cp(ress.createReadStreamForIndex(0));
+	_renderer->setColourPalette(&cp);
+
+	Grid *g = g_resource->getGrid(0);
 
 	for (;;) {
 		Common::Event event;
@@ -141,7 +149,7 @@ Common::Error TwinEngine::run() {
 		}
 
 		_renderer->clearScreen();
-		//render stuff
+		_renderer->drawGrid(g);
 		_renderer->flipBuffer();
 	}
 

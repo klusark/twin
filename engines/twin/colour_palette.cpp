@@ -29,6 +29,7 @@ namespace Twin {
 
 ColourPalette::ColourPalette(Common::SeekableReadStream *stream) {
 	load(stream);
+	delete stream;
 }
 
 

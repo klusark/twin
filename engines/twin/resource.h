@@ -23,6 +23,7 @@
 #ifndef TWIN_RESOURCE_H
 #define TWIN_RESOURCE_H
 
+#include "common/hashmap.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -30,12 +31,31 @@ class SeekableReadStream;
 
 namespace Twin {
 
+class Block;
+class Hqr;
+class BlockLibrary;
+class Grid;
 
 class Resource {
 public:
 	Resource();
 	~Resource();
 
+	Grid *getGrid(int id);
+	Block *getBlock(int id);
+	BlockLibrary *getBlockLibrary(int id);
+private:
+	void loadGridDefaults();
+
+	uint16 _firstGrid;
+	uint16 _firstGridFragment;
+	uint16 _firstLibrary;
+	uint16 _firstBlock;
+
+	Hqr *f;
+
+	Common::HashMap<int, Block *> _blocks;
+	Common::HashMap<int, BlockLibrary *> _blockLibraries;
 };
 
 extern Resource *g_resource;

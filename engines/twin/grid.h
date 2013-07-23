@@ -41,13 +41,13 @@ public:
 	Grid(Common::SeekableReadStream *stream);
 	void setGridAt(byte x, byte y, byte z, Square s);
 	Square *getGridAt(byte x, byte y, byte z);
+	byte getLibrary() { return _layoutLib; }
+
 private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
 	byte _layoutLib;
 	byte _gridFragment;
-
-
 
 
 
