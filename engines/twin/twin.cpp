@@ -34,7 +34,7 @@
 #include "engines/twin/scene.h"
 #include "engines/twin/resource.h"
 #include "engines/twin/colour_palette.h"
-
+#include "engines/twin/grid.h"
 
 
 namespace Twin {
@@ -129,7 +129,7 @@ void TwinEngine::createRenderer() {
 Common::Error TwinEngine::run() {
 	g_resource = new Resource();
 	createRenderer();
-	_renderer->setupScreen(640, 480, false);
+	_renderer->setupScreen(1024, 768, false);
 	//intro();
 
 	Hqr ress;
@@ -137,7 +137,9 @@ Common::Error TwinEngine::run() {
 	ColourPalette cp(ress.createReadStreamForIndex(0));
 	_renderer->setColourPalette(&cp);
 
-	Grid *g = g_resource->getGrid(0);
+	int grid = 0;
+	Grid *g = g_resource->getGrid(grid);
+	bool mouseDown = false;
 
 	for (;;) {
 		Common::Event event;
@@ -145,6 +147,24 @@ Common::Error TwinEngine::run() {
 			Common::EventType type = event.type;
 			if (type == Common::EVENT_KEYDOWN || type == Common::EVENT_KEYUP) {
 
+			} else if (type == Common::EVENT_WHEELUP) {
+				++grid;
+				delete g;
+				g = g_resource->getGrid(grid);
+			} else if (type == Common::EVENT_WHEELDOWN) {
+				--grid;
+				if (grid < 0) {
+					grid = 0;
+				} else {
+					delete g;
+					g = g_resource->getGrid(grid);
+				}
+			} else if (type == Common::EVENT_LBUTTONDOWN) {
+				mouseDown = true;
+			} else if (type == Common::EVENT_LBUTTONUP) {
+				mouseDown = false;
+			} else if (type == Common::EVENT_MOUSEMOVE && mouseDown) {
+				_renderer->moveCamera(event.relMouse.x, event.relMouse.y);
 			}
 		}
 

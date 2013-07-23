@@ -64,6 +64,9 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	glViewport(0, 0, _screenWidth, _screenHeight);
 
+	_cameraX = 0;
+	_cameraY = 0;
+
 	return NULL;
 }
 
@@ -219,7 +222,7 @@ void GfxOpenGL::drawBlock(Block *block, int32 x, int32 y, int32 z) {
 	x += block->_offsetX;
 	y += block->_offsetY;
 
-	if (x > _screenWidth || x < -48 || y > _screenHeight || y < -40) {
+	if (x + _cameraX > _screenWidth || x + _cameraX < -48 || y + _cameraY > _screenHeight || y + _cameraY < -40) {
 		return;
 	}
 
@@ -238,6 +241,7 @@ void GfxOpenGL::drawBlock(Block *block, int32 x, int32 y, int32 z) {
 
 
 	glPushMatrix();
+	glTranslatef(_cameraX, _cameraY, 0.0f);
 
 	glBindTexture(GL_TEXTURE_2D, texNum);
 	glBegin(GL_QUADS);
