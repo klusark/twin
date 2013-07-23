@@ -32,6 +32,7 @@
 #include "engines/twin/hqr.h"
 #include "engines/twin/image.h"
 #include "engines/twin/scene.h"
+#include "engines/twin/resource.h"
 
 
 
@@ -46,6 +47,8 @@ TwinEngine::TwinEngine(OSystem *syst, TwinGameType type) :
 
 TwinEngine::~TwinEngine() {
 	g_twin = NULL;
+	delete g_resource;
+	g_resource = NULL;
 }
 
 void TwinEngine::playMovie(const Common::String &name) {
@@ -123,6 +126,7 @@ void TwinEngine::createRenderer() {
 }
 
 Common::Error TwinEngine::run() {
+	g_resource = new Resource();
 	createRenderer();
 	_renderer->setupScreen(640, 480, false);
 	intro();
