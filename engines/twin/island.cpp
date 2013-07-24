@@ -29,14 +29,14 @@
 namespace Twin {
 
 Island::Island(Hqr *hqr) {
-	int indecies = hqr->getNumIndecies();
+	int indices = hqr->getNumIndices();
 
-	_hightMaps = new uint16*[(indecies-2)/6];
+	_hightMaps = new uint16*[(indices - 2) / 6];
 
 	int mapid = 0;
 	// The rest of the data isn't known to me right now.
 	// there is probably texture data and texture coords
-	for (int i = 7; i < indecies; i += 6) {
+	for (int i = 7; i < indices; i += 6) {
 		Common::SeekableReadStream *stream = hqr->createReadStreamForIndex(i);
 		loadHeightMap(stream, mapid);
 		delete stream;
@@ -63,7 +63,7 @@ void Island::loadHeightMap(Common::SeekableReadStream *stream, int mapid) {
 		Island Sections (Num Entries HQR - 3 / 6 = Total Sections available)
 */
 void Island::loadIsland(Hqr *hqr) {
-	int entries = hqr->getNumIndecies();
+	int entries = hqr->getNumIndices();
 	int sections = (entries - 3) / 6;
 
 	// 0 - layout sections

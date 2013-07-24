@@ -37,7 +37,7 @@ public:
 
 	Common::SeekableReadStream *createReadStreamForIndex(int index) const;
 
-	int getNumIndecies() { return _numIndices; }
+	int getNumIndices() { return _numIndices; }
 
 private:
 	void parseFile(Common::File *f);
