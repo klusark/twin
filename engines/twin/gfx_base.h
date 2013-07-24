@@ -20,29 +20,18 @@
  *
  */
 
-#ifndef TWIN_VIDEO_PLAYER_FLA_H
-#define TWIN_VIDEO_PLAYER_FLA_H
+#ifndef TWIN_GFX_BASE_H
+#define TWIN_GFX_BASE_H
 
-#include "video_player.h"
-
-#include "twin/gfx_base.h"
-
-#include "video/smk_decoder.h"
+#include "engines/twin/gfx_opengl.h"
 
 namespace Twin {
 
-
-class VideoPlayerFLA : VideoPlayer {
-
-public:
-	VideoPlayerFLA(GfxBase *renderer, Audio::Mixer *mixer);
-	virtual ~VideoPlayerFLA();
-	void play(int index);
-
-private:
-
-};
+//TODO: Turn this into a base class;
+typedef GfxOpenGL GfxBase;
 
 } // end of namespace Twin
+
+
 
 #endif

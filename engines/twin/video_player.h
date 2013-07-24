@@ -23,7 +23,7 @@
 #ifndef TWIN_VIDEO_PLAYER_H
 #define TWIN_VIDEO_PLAYER_H
 
-#include "twin/gfx_opengl.h"
+#include "twin/gfx_base.h"
 
 #include "video/smk_decoder.h"
 
@@ -32,11 +32,11 @@ namespace Twin {
 class VideoPlayer {
 
 protected:
-	GfxOpenGL *_renderer;
+	GfxBase *_renderer;
 	Audio::Mixer *_mixer;
 
 public:
-	VideoPlayer(GfxOpenGL *renderer, Audio::Mixer *mixer);
+	VideoPlayer(GfxBase *renderer, Audio::Mixer *mixer);
 	virtual ~VideoPlayer();
 	virtual void play(int index) = 0;
 

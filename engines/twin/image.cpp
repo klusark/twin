@@ -29,7 +29,7 @@
 
 namespace Twin {
 
-Image::Image(const Common::String &resName, uint32 index, GfxOpenGL *renderer) : _renderer(renderer) {
+Image::Image(const Common::String &resName, uint32 index, GfxBase *renderer) : _renderer(renderer) {
 	Hqr resFile;
 	resFile.open(resName);
 	Common::SeekableReadStream *imgStream = resFile.createReadStreamForIndex(index);

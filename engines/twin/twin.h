@@ -27,7 +27,7 @@
 
 #include "common/system.h"
 
-#include "engines/twin/gfx_opengl.h"
+#include "engines/twin/gfx_base.h"
 
 namespace Graphics {
 struct Surface;
@@ -41,7 +41,7 @@ enum TwinGameType {
 };
 
 class TwinEngine : public Engine {
-	GfxOpenGL *_renderer;
+	GfxBase *_renderer;
 	TwinGameType _type;
 protected:
 	// Engine APIs

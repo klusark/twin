@@ -25,7 +25,7 @@
 
 #include "video_player.h"
 
-#include "twin/gfx_opengl.h"
+#include "twin/gfx_base.h"
 
 #include "video/smk_decoder.h"
 
@@ -37,7 +37,7 @@ class VideoPlayerSmacker : VideoPlayer {
 	Video::SmackerDecoder *_smkDecoder;
 
 public:
-	VideoPlayerSmacker(GfxOpenGL *renderer, Audio::Mixer *mixer);
+	VideoPlayerSmacker(GfxBase *renderer, Audio::Mixer *mixer);
 	virtual ~VideoPlayerSmacker();
 	void play(int index);
 

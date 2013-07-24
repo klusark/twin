@@ -25,7 +25,7 @@
 #include "common/stream.h"
 
 #include "engines/twin/fla_decoder.h"
-#include "engines/twin/gfx_opengl.h"
+#include "engines/twin/gfx_base.h"
 
 namespace Twin {
 

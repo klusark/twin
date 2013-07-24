@@ -24,7 +24,7 @@
 
 namespace Twin {
 
-VideoPlayer::VideoPlayer(GfxOpenGL *renderer, Audio::Mixer *mixer) : _renderer(renderer), _mixer(mixer) {
+VideoPlayer::VideoPlayer(GfxBase *renderer, Audio::Mixer *mixer) : _renderer(renderer), _mixer(mixer) {
 }
 
 

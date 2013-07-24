@@ -27,7 +27,7 @@
 namespace Twin {
 
 
-VideoPlayerSmacker::VideoPlayerSmacker(GfxOpenGL *renderer, Audio::Mixer *mixer) : VideoPlayer(renderer, mixer) {
+VideoPlayerSmacker::VideoPlayerSmacker(GfxBase *renderer, Audio::Mixer *mixer) : VideoPlayer(renderer, mixer) {
 	this->_smkDecoder = new Video::SmackerDecoder();
 }
 

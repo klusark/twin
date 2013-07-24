@@ -25,7 +25,7 @@
 
 #include "common/str.h"
 
-#include "engines/twin/gfx_opengl.h"
+#include "engines/twin/gfx_base.h"
 
 namespace Graphics {
 struct Surface;
@@ -37,9 +37,9 @@ class Image {
 	Graphics::Surface *_surface;
 	byte *_palette;
 	uint32 _texId;
-	GfxOpenGL *_renderer;
+	GfxBase *_renderer;
 public:
-	Image(const Common::String &resName, uint32 index, GfxOpenGL *renderer);
+	Image(const Common::String &resName, uint32 index, GfxBase *renderer);
 	~Image();
 	void display();
 };
