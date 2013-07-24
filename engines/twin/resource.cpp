@@ -28,15 +28,20 @@
 #include "engines/twin/block.h"
 #include "engines/twin/block_library.h"
 #include "engines/twin/grid.h"
+#include "engines/twin/entity_information.h"
 
 namespace Twin {
 
 Resource *g_resource = nullptr;
 
 Resource::Resource() {
-	f = new Hqr();
-	f->open("LBA_BKG.HQR");
+	_bkg = new Hqr();
+	_bkg->open("LBA_BKG.HQR");
 	loadGridDefaults();
+
+	_ress = new Hqr();
+	_ress->open("RESS.HQR");
+	_ei = new EntityInformation(_ress->createReadStreamForIndex(44));
 }
 
 Resource::~Resource() {
@@ -44,7 +49,7 @@ Resource::~Resource() {
 }
 
 Grid *Resource::getGrid(int id) {
-	Grid *g = new Grid(f->createReadStreamForIndex(_firstGrid + id));
+	Grid *g = new Grid(_bkg->createReadStreamForIndex(_firstGrid + id));
 	return g;
 }
 
@@ -54,7 +59,7 @@ Block *Resource::getBlock(int block) {
 	if (_blocks.contains(block)) {
 		return _blocks[block];
 	}
-	Block *b = new Block(f->createReadStreamForIndex(_firstBlock + block));
+	Block *b = new Block(_bkg->createReadStreamForIndex(_firstBlock + block));
 	_blocks[block] = b;
 	return b;
 }
@@ -63,13 +68,13 @@ BlockLibrary *Resource::getBlockLibrary(int block) {
 	if (_blockLibraries.contains(block)) {
 		return _blockLibraries[block];
 	}
-	BlockLibrary *b = new BlockLibrary(f->createReadStreamForIndex(_firstLibrary + block));
+	BlockLibrary *b = new BlockLibrary(_bkg->createReadStreamForIndex(_firstLibrary + block));
 	_blockLibraries[block] = b;
 	return b;
 }
 
 void Resource::loadGridDefaults() {
-	Common::SeekableReadStream *stream = f->createReadStreamForIndex(0);
+	Common::SeekableReadStream *stream = _bkg->createReadStreamForIndex(0);
 	_firstGrid = stream->readUint16LE();
 	_firstGridFragment = stream->readUint16LE();
 	_firstLibrary = stream->readUint16LE();

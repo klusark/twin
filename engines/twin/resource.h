@@ -35,6 +35,7 @@ class Block;
 class Hqr;
 class BlockLibrary;
 class Grid;
+class EntityInformation;
 
 class Resource {
 public:
@@ -52,7 +53,10 @@ private:
 	uint16 _firstLibrary;
 	uint16 _firstBlock;
 
-	Hqr *f;
+	Hqr *_bkg;
+	Hqr *_ress;
+
+	EntityInformation *_ei;
 
 	Common::HashMap<int, Block *> _blocks;
 	Common::HashMap<int, BlockLibrary *> _blockLibraries;
