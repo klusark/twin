@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	block_library.o \
 	colour_palette.o \
 	detection.o \
+	entity_information.o \
 	fla_decoder.o \
 	gfx_opengl.o \
 	grid.o \
