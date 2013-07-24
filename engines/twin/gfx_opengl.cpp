@@ -66,6 +66,10 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	_cameraX = 0;
 	_cameraY = 0;
+	_cameraZ = 0;
+	_rotX = 0;
+	_rotY = 0;
+	_rotZ = 0;
 
 	return NULL;
 }
@@ -127,16 +131,23 @@ void GfxOpenGL::destroyBitmap(uint32 texID) {
 }
 
 void GfxOpenGL::drawModel(Model *m) {
-
 	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_ALPHA_TEST);
-	glDisable(GL_LIGHTING);
 
-	glDisable(GL_TEXTURE_2D);
-	glColor4ub(255, 255, 255, 255);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(45.0f,(GLfloat)_screenWidth/(GLfloat)_screenHeight,0.01f,10.0f);
 
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+	glColor4ub(255, 255, 255, 255);
+
+	gluLookAt( 0, 0, 1, 0, 0, 0, 0, 1, 0 );
+	glPushMatrix();
+
+	glTranslatef((_cameraX/(float)_screenWidth), -(_cameraY/(float)_screenHeight), (_cameraZ/(float)_screenHeight));
+	glRotatef(_rotY, 1, 0, 0);
+	glRotatef(_rotX, 0, 1, 0);
 
 	for (uint j = 0; j < m->_numPolygons; j++) {
 		Polygon *p = &m->_polygons[j];
@@ -151,16 +162,18 @@ void GfxOpenGL::drawModel(Model *m) {
 			glColor4ub(_palette->_palette[p->_colour]._r, _palette->_palette[p->_colour]._g, _palette->_palette[p->_colour]._b, 255);
 			Vertex *v = &m->_verticies[vert];
 			Math::Vector3d mv(v->_x, v->_y, v->_z);
+			if (v->_bone == 0) {
+				continue;
+			}
 			Bone *b = &m->_bones[v->_bone];
 			while (b) {
 				Vertex *bv = &m->_verticies[b->_vertex];
 				Math::Vector3d mv2(bv->_x, bv->_y, bv->_z);
 				mv += mv2;
-
-				b = &m->_bones[b->_parent];
 				if (b->_parent == 0xffff) {
 					break;
 				}
+				b = &m->_bones[b->_parent];
 			}
 			Normal *n = &m->_normals[vert];
 
@@ -172,11 +185,9 @@ void GfxOpenGL::drawModel(Model *m) {
 		glEnd();
 
 	}
-	
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_ALPHA_TEST);
-	glEnable(GL_LIGHTING);
+	glPopMatrix();
+
+	glDisable(GL_DEPTH_TEST);
 }
 
 void GfxOpenGL::drawBlock(Block *block, int32 x, int32 y, int32 z) {
@@ -226,13 +237,13 @@ void GfxOpenGL::drawBlock(Block *block, int32 x, int32 y, int32 z) {
 		return;
 	}
 
+	glColor4ub(255, 255, 255, 255);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	glDisable(GL_BLEND);
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0.5);
 	glDisable(GL_LIGHTING);

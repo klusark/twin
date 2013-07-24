@@ -35,6 +35,9 @@
 #include "engines/twin/resource.h"
 #include "engines/twin/colour_palette.h"
 #include "engines/twin/grid.h"
+#include "engines/twin/animation.h"
+#include "engines/twin/model.h"
+#include "engines/twin/entity_information.h"
 
 
 namespace Twin {
@@ -132,6 +135,11 @@ Common::Error TwinEngine::run() {
 	_renderer->setupScreen(1024, 768, false);
 	//intro();
 
+	Hqr body;
+	body.open("BODY.HQR");
+	Model *m;
+	m = new Model(body.createReadStreamForIndex(0));
+
 	Hqr ress;
 	ress.open("RESS.HQR");
 	ColourPalette cp(ress.createReadStreamForIndex(0));
@@ -139,7 +147,7 @@ Common::Error TwinEngine::run() {
 
 	int grid = 0;
 	Grid *g = g_resource->getGrid(grid);
-	bool mouseDown = false;
+	bool mouseDown = false, wheelDown = false, rDown = false;
 
 	for (;;) {
 		Common::Event event;
@@ -150,26 +158,43 @@ Common::Error TwinEngine::run() {
 			} else if (type == Common::EVENT_WHEELUP) {
 				++grid;
 				delete g;
+				delete m;
 				g = g_resource->getGrid(grid);
+				m = new Model(body.createReadStreamForIndex(grid));
 			} else if (type == Common::EVENT_WHEELDOWN) {
 				--grid;
 				if (grid < 0) {
 					grid = 0;
 				} else {
 					delete g;
+					delete m;
 					g = g_resource->getGrid(grid);
+					m = new Model(body.createReadStreamForIndex(grid));
 				}
 			} else if (type == Common::EVENT_LBUTTONDOWN) {
 				mouseDown = true;
 			} else if (type == Common::EVENT_LBUTTONUP) {
 				mouseDown = false;
 			} else if (type == Common::EVENT_MOUSEMOVE && mouseDown) {
-				_renderer->moveCamera(event.relMouse.x, event.relMouse.y);
+				_renderer->moveCamera(event.relMouse.x, event.relMouse.y, 0);
+			} else if (type == Common::EVENT_MOUSEMOVE && wheelDown) {
+				_renderer->moveCamera(0, 0, event.relMouse.y);
+			} else if (type == Common::EVENT_MOUSEMOVE && rDown) {
+				_renderer->rotateObject(event.relMouse.x, event.relMouse.y, 0);
+			} else if (type == Common::EVENT_MBUTTONDOWN) {
+				wheelDown = true;
+			} else if (type == Common::EVENT_MBUTTONUP) {
+				wheelDown = false;
+			} else if (type == Common::EVENT_RBUTTONDOWN) {
+				rDown = true;
+			} else if (type == Common::EVENT_RBUTTONUP) {
+				rDown = false;
 			}
 		}
 
 		_renderer->clearScreen();
 		_renderer->drawGrid(g);
+		_renderer->drawModel(m);
 		_renderer->flipBuffer();
 	}
 

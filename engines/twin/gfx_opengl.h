@@ -56,6 +56,11 @@ class GfxOpenGL {
 	ColourPalette *_palette;
 	int _cameraX;
 	int _cameraY;
+	int _cameraZ;
+
+	int _rotX;
+	int _rotY;
+	int _rotZ;
 public:
 	GfxOpenGL() {}
 	byte *setupScreen(int screenW, int screenH, bool fullscreen);
@@ -68,7 +73,8 @@ public:
 	void drawBlock(Block *block, int32 x, int32 y, int32 z);
 	void drawGrid(Grid *g);
 	void setColourPalette(ColourPalette *p) { _palette = p; }
-	void moveCamera(int x, int y) { _cameraX += x; _cameraY += y; }
+	void moveCamera(int x, int y, int z) { _cameraX += x; _cameraY += y; _cameraZ += z; }
+	void rotateObject(int x, int y, int z) { _rotX += x; _rotY += y; _rotZ += z; }
 };
 
 } // end of namespace Twin
