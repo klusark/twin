@@ -36,7 +36,7 @@ BlockLibrary::BlockLibrary(Common::SeekableReadStream *stream) {
 
 BlockLibrary::~BlockLibrary() {
 	delete[] _offsets;
-	for (int i = 0; i < _numOffsets; ++i) {
+	for (uint32 i = 0; i < _numOffsets; ++i) {
 		delete[] _blocks[i]._blocks;
 	}
 	delete[] _blocks;
@@ -49,12 +49,12 @@ void BlockLibrary::loadLBA2(Common::SeekableReadStream *stream) {
 
 	_offsets = new uint32[_numOffsets];
 	_offsets[0] = firstOffset;
-	for (int i = 1; i < _numOffsets; ++i) {
+	for (uint32 i = 1; i < _numOffsets; ++i) {
 		_offsets[i] = stream->readUint32LE();
 	}
 
 	_blocks = new BlockInfo[_numOffsets];
-	for (int i = 0; i < _numOffsets; ++i) {
+	for (uint32 i = 0; i < _numOffsets; ++i) {
 		BlockInfo *b = &_blocks[i];
 		b->_x = stream->readByte();
 		b->_y = stream->readByte();

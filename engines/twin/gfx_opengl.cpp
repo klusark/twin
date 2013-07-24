@@ -143,7 +143,7 @@ void GfxOpenGL::drawModel(Model *m) {
 		glBegin(GL_POLYGON);
 
 		for (int i = 0; i < m->_polygons->_num; ++i) {
-			int vert = p->_data[i];
+			uint32 vert = p->_data[i];
 			if (vert > m->_numVerticies || vert == 0) {
 				break;
 			}
@@ -269,7 +269,7 @@ void GfxOpenGL::drawGrid(Grid *g) {
 				Square *s = g->getGridAt(x, y, z);
 				if (s->_layout != 0) {
 					BlockInfo *info = b->getBlock(s->_layout-1);
-					int brick = s->_brick;
+					uint32 brick = s->_brick;
 					if (info->_numBlocks > brick && brick >= 0) {
 						int index = info->_blocks[brick]._index - 1;
 						if (index >= 0) {
