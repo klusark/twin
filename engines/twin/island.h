@@ -35,15 +35,16 @@ namespace Twin {
 class Island {
 public:
 	Island(Hqr *hqr);
+
 private:
-	void loadHeightMap(Common::SeekableReadStream *stream, int mapid);
-	
 
-	uint16 **_hightMaps;
-
-	void loadIsland(Hqr *hqr);
-	void loadIslandSection(Hqr *hqr, int sectionIdx);
+	Hqr *_ile;
 	byte *_sectionsLayout;
+	//uint16 *_heightMap;
+	
+	void loadIsland();
+	void loadIslandSection(int32 sectionIdx, int32 idx);
+
 };
 
 } // end of namespace Twin
