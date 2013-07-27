@@ -161,20 +161,12 @@ void GfxOpenGL::drawModel(Model *m) {
 
 			glColor4ub(_palette->_palette[p->_colour]._r, _palette->_palette[p->_colour]._g, _palette->_palette[p->_colour]._b, 255);
 			Vertex *v = &m->_verticies[vert];
-			Math::Vector3d mv(v->_x, v->_y, v->_z);
+
 			if (v->_bone == 0) {
 				continue;
 			}
-			Bone *b = &m->_bones[v->_bone];
-			while (b) {
-				Vertex *bv = &m->_verticies[b->_vertex];
-				Math::Vector3d mv2(bv->_x, bv->_y, bv->_z);
-				mv += mv2;
-				if (b->_parent == 0xffff) {
-					break;
-				}
-				b = &m->_bones[b->_parent];
-			}
+			Math::Vector3d mv = v->getPos(m);
+
 			Normal *n = &m->_normals[vert];
 
 			glNormal3f(n->_x, n->_y, n->_z);
@@ -185,6 +177,22 @@ void GfxOpenGL::drawModel(Model *m) {
 		glEnd();
 
 	}
+
+	for (uint j = 0; j < m->_numPoints; j++) {
+		Point *p = &m->_points[j];
+		glColor4ub(_palette->_palette[p->_colour]._r, _palette->_palette[p->_colour]._g, _palette->_palette[p->_colour]._b, 255);
+
+		Vertex *v1 = &m->_verticies[p->_v1];
+		Math::Vector3d vec1 = v1->getPos(m);
+		Vertex *v2 = &m->_verticies[p->_v2];
+		Math::Vector3d vec2 = v2->getPos(m);
+
+		glBegin(GL_LINES);
+		glVertex3fv(vec1.getData());
+		glVertex3fv(vec2.getData());
+		glEnd();
+	}
+
 	glPopMatrix();
 
 	glDisable(GL_DEPTH_TEST);

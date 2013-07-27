@@ -23,6 +23,8 @@
 #include "common/stream.h"
 #include "common/textconsole.h"
 
+#include "math/vector3d.h"
+
 #include "engines/twin/model.h"
 #include "engines/twin/twin.h"
 
@@ -51,8 +53,8 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 	_numPolygons = stream->readUint32LE();
 	uint32 polygonOffset = stream->readUint32LE();
 
-	uint32 numUnknown2 = stream->readUint32LE();
-	uint32 offsetUnknown2 = stream->readUint32LE();
+	_numPoints = stream->readUint32LE();
+	uint32 pointsOffset = stream->readUint32LE();
 
 	_numSphere = stream->readUint32LE();
 	uint32 sphereOffset = stream->readUint32LE();
@@ -121,9 +123,13 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 		}
 	}
 
-	for (uint32 i = 0; i < numUnknown2; ++i) {
-		stream->readUint32LE();
-		stream->readUint32LE();
+	_points = new Point[_numPoints];
+	for (uint32 i = 0; i < _numPoints; ++i) {
+		Point *p = &_points[i];
+		stream->readUint16LE();
+		p->_colour = stream->readUint16LE();
+		p->_v1 = stream->readUint16LE();
+		p->_v2 = stream->readUint16LE();
 	}
 
 	for (uint32 i = 0; i < _numSphere; ++i) {
@@ -142,5 +148,20 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 
 }
 
+
+Math::Vector3d Vertex::getPos(Model *m) {
+	Math::Vector3d vec(_x, _y, _z);
+	Bone *b = &m->_bones[_bone];
+	while (b) {
+		Vertex *bv = &m->_verticies[b->_vertex];
+		Math::Vector3d bone_vec(bv->_x, bv->_y, bv->_z);
+		vec += bone_vec;
+		if (b->_parent == 0xffff) {
+			break;
+		}
+		b = &m->_bones[b->_parent];
+	}
+	return vec;
+}
 
 } // end of namespace Twin

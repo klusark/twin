@@ -23,12 +23,15 @@
 #ifndef TWIN_MODEL_H
 #define TWIN_MODEL_H
 
+#include "math/mathfwd.h"
 
 namespace Common {
 class SeekableReadStream;
 }
 
 namespace Twin {
+
+class Model;
 
 class Polygon {
 public:
@@ -39,6 +42,7 @@ public:
 
 class Vertex {
 public:
+	Math::Vector3d getPos(Model *m);
 	float _x;
 	float _y;
 	float _z;
@@ -66,6 +70,13 @@ public:
 	byte _h;
 };
 
+class Point {
+public:
+	uint16 _v1;
+	uint16 _v2;
+	byte _colour;
+};
+
 class Model {
 public:
 	Model(Common::SeekableReadStream *stream);
@@ -78,12 +89,14 @@ public:
 	uint32 _numPolygons;
 	uint32 _numSphere;
 	uint32 _numTextures;
+	uint32 _numPoints;
 
 	Polygon *_polygons;
 	Vertex *_verticies;
 	Normal *_normals;
 	Bone *_bones;
 	Texture *_textures;
+	Point *_points;
 };
 
 } // end of namespace Twin
