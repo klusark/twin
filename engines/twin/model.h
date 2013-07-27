@@ -77,6 +77,14 @@ public:
 	byte _colour;
 };
 
+class Sphere {
+public:
+	uint16 _vertex;
+	float _size;
+	byte _colour;
+};
+
+
 class Model {
 public:
 	Model(Common::SeekableReadStream *stream);
@@ -87,7 +95,7 @@ public:
 	uint32 _numBones;
 	uint32 _numNormals;
 	uint32 _numPolygons;
-	uint32 _numSphere;
+	uint32 _numSpheres;
 	uint32 _numTextures;
 	uint32 _numPoints;
 
@@ -97,6 +105,7 @@ public:
 	Bone *_bones;
 	Texture *_textures;
 	Point *_points;
+	Sphere *_spheres;
 };
 
 } // end of namespace Twin

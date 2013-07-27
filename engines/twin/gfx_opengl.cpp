@@ -193,6 +193,9 @@ void GfxOpenGL::drawModel(Model *m) {
 		glEnd();
 	}
 
+	for (uint j = 0; j < m->_numSpheres; j++) {
+	}
+
 	glPopMatrix();
 
 	glDisable(GL_DEPTH_TEST);
