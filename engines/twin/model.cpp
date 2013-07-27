@@ -109,7 +109,7 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 		int size = stream->readUint16LE();
 		int num3 = stream->readUint16LE();
 		int val = ((size - 8) / num);
-		for (int i = 0; i < num; ++i) {
+		for (int j = 0; j < num; ++j) {
 			_polygons[currPoly]._data = new uint16[val / 2];
 			_polygons[currPoly]._num = val / 2;
 			for (int i = 0; i < (val / 2); ++i) {
