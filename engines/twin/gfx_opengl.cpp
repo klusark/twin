@@ -194,7 +194,17 @@ void GfxOpenGL::drawModel(Model *m) {
 	}
 
 	for (uint j = 0; j < m->_numSpheres; j++) {
-	}
+		Sphere *s = &m->_spheres[j];
+		Vertex *v = &m->_verticies[s->_vertex];
+		Math::Vector3d vec = v->getPos(m);
+
+		glColor4ub(_palette->_palette[s->_colour]._r, _palette->_palette[s->_colour]._g, _palette->_palette[s->_colour]._b, 255);
+
+		glPushMatrix();
+		glTranslatef(vec.x(), vec.y(), vec.z());
+		drawSphere(s->_size, 8, 8);
+		glPopMatrix();
+	}	
 
 	glPopMatrix();
 
@@ -305,6 +315,14 @@ void GfxOpenGL::drawGrid(Grid *g) {
 	}
 
 
+}
+
+void GfxOpenGL::drawSphere(double radius, int slices, int stacks) {
+	GLUquadricObj* Sphere = gluNewQuadric();
+	gluQuadricNormals(Sphere, GLU_SMOOTH);
+	gluQuadricDrawStyle(Sphere, GLU_FILL);
+	gluSphere(Sphere, radius, slices, stacks);
+	gluDeleteQuadric(Sphere);
 }
 
 } // end of namespace Twin

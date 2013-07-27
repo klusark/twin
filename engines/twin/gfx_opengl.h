@@ -72,6 +72,7 @@ public:
 	void drawModel(Model *m);
 	void drawBlock(Block *block, int32 x, int32 y, int32 z);
 	void drawGrid(Grid *g);
+	void drawSphere(double radius, int slices, int stacks);
 	void setColourPalette(ColourPalette *p) { _palette = p; }
 	void moveCamera(int x, int y, int z) { _cameraX += x; _cameraY += y; _cameraZ += z; }
 	void rotateObject(int x, int y, int z) { _rotX += x; _rotY += y; _rotZ += z; }
