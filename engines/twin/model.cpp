@@ -57,8 +57,8 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 	_numSphere = stream->readUint32LE();
 	uint32 sphereOffset = stream->readUint32LE();
 
-	uint32 numUnknown3 = stream->readUint32LE();
-	uint32 offsetUnknown3 = stream->readUint32LE();
+	_numTextures = stream->readUint32LE();
+	uint32 texturesOffset = stream->readUint32LE();
 
 	stream->seek(bonesOffset);
 
@@ -131,8 +131,13 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 		stream->readUint32LE();
 	}
 
-	for (uint32 i = 0; i < numUnknown3; ++i) {
-		stream->readUint32LE();
+	_textures = new Texture[_numTextures];
+	for (uint32 i = 0; i < _numTextures; ++i) {
+		Texture *t = &_textures[i];
+		t->_x = stream->readByte();
+		t->_y = stream->readByte();
+		t->_w = stream->readByte();
+		t->_h = stream->readByte();
 	}
 
 }

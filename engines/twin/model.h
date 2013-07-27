@@ -58,6 +58,13 @@ public:
 	uint16 _vertex;
 };
 
+class Texture {
+public:
+	byte _x;
+	byte _y;
+	byte _w;
+	byte _h;
+};
 
 class Model {
 public:
@@ -70,11 +77,13 @@ public:
 	uint32 _numNormals;
 	uint32 _numPolygons;
 	uint32 _numSphere;
+	uint32 _numTextures;
 
 	Polygon *_polygons;
 	Vertex *_verticies;
 	Normal *_normals;
 	Bone *_bones;
+	Texture *_textures;
 };
 
 } // end of namespace Twin
