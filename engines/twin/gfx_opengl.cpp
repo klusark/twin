@@ -195,13 +195,11 @@ void GfxOpenGL::drawModel(Model *m) {
 
 		glBegin(GL_POLYGON);
 
-		int k = 0;
 		for (int i = 0; i < 4; ++i) {
 			uint32 vert = p->_data[i];
 			if (vert > m->_numVerticies || vert == 0) {
 				continue;
 			}
-
 
 			Vertex *v = &m->_verticies[vert];
 			if (v->_bone == 0) {
@@ -212,12 +210,10 @@ void GfxOpenGL::drawModel(Model *m) {
 			Normal *n = &m->_normals[vert];
 			if (p->_hasTex) {
 				Texture *t = &m->_textures[p->_tex];
-				float x = ((int)p->_texX[k]);
-				float y = ((int)p->_texY[k]);
-				x /= 256;
-				y /= 256;
-				x *= 256 / (t->_w );
-				y *= 256 / (t->_h);
+				float x = p->_texX[i];
+				float y = p->_texY[i];
+				x /= (t->_w );
+				y /= (t->_h);
 				glTexCoord2f(x, y);
 				glColor4ub(255, 255, 255, 255);
 			} else {
@@ -225,8 +221,6 @@ void GfxOpenGL::drawModel(Model *m) {
 			}
 			glNormal3f(n->_x, n->_y, n->_z);
 			glVertex3fv(mv.getData());
-
-			++k;
 		}
 
 		glEnd();
