@@ -27,6 +27,7 @@
 #include "engines/twin/island.h"
 #include "engines/twin/twin.h"
 #include "engines/twin/hqr.h"
+#include "engines/twin/model.h"
 
 namespace Twin {
 
@@ -56,31 +57,6 @@ struct IslandUV {
 /* This structure maps an UV declaration entry in the ILE files */
 struct GroundTextureInfo {
 	IslandUV uv[3];
-};
-
-/* This structure maps an object positioning, index in OBL, and rotation data entry in the ILE files */
-struct IslandObjectInfo {
-	uint32 index;
-	int32 ox;
-	int32 oy;
-	int32 oz;
-	uint16 a5;
-	uint16 a5bis;
-	byte a6;
-	byte angle;
-	uint16 a6bis;
-	uint16 a7;
-	uint16 a7bis;
-	uint16 a8;
-	uint16 a8bis;
-	uint16 a9;
-	uint16 a9bis;
-	uint16 a10;
-	uint16 a10bis;
-	uint16 a11;
-	uint16 a11bis;
-	uint16 a12;
-	uint16 a12bis;
 };
 
 /* This structure maps an object header in the OBL files */
@@ -126,8 +102,9 @@ struct OBLPolygon {
 };
 
 
-Island::Island(Hqr *hqr) {
+Island::Island(Hqr *hqr, Hqr *obl) {
 	_ile = hqr;
+	_obl = obl;
 	loadIsland();
 }
 
@@ -191,9 +168,38 @@ void Island::loadIsland() {
 */
 void Island::loadIslandSection(int sectionIdx, int entryIdx) {
 	IslandSection *section = &_sections[sectionIdx];
+	Common::SeekableReadStream *stream = NULL;
+
+	// 3 (0) - Objects layout
+	stream = _ile->createReadStreamForIndex(entryIdx + 0);
+	stream->seek(8);
+	section->_numObjects = stream->readUint32LE();
+	delete stream;
+
+
+	// 4 (1) - Objects data
+	if (section->_numObjects != 0) {
+		section->_objects = new IslandObjectInfo[section->_numObjects];
+		stream = _ile->createReadStreamForIndex(entryIdx + 1);
+		for (uint32 i = 0; i < section->_numObjects; ++i) {
+			IslandObjectInfo *o = &section->_objects[i];
+			o->_index = stream->readUint32LE();
+			float x, y, z;
+			x = stream->readSint32LE() / 16384.0f;
+			y = stream->readSint32LE() / 16384.0f;
+			z = stream->readSint32LE() / 16384.0f;
+			o->_pos.set(x, y, z);
+			stream->seek(5, SEEK_CUR);
+			o->_angle = stream->readByte();
+			stream->seek(26, SEEK_CUR);
+			o->_model = new Model(_obl->createReadStreamForIndex(o->_index));
+		}
+		delete stream;
+	}
+
 	// 7 (4) - Height Maps
 	int16 heightmap[65][65];
-	Common::SeekableReadStream *stream = _ile->createReadStreamForIndex(entryIdx + 4);
+	stream = _ile->createReadStreamForIndex(entryIdx + 4);
 	_sectionsLayout = new byte[256];
 	stream->read(heightmap, sizeof(heightmap));
 	delete stream;

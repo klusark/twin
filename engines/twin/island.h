@@ -32,6 +32,7 @@ class SeekableReadStream;
 namespace Twin {
 
 class Hqr;
+class Model;
 
 struct IslandVertex {
 	Math::Vector3d _pos;
@@ -55,20 +56,31 @@ struct IslandFace {
 	uint16 _verts[3];
 };
 
+/* This structure maps an object positioning, index in OBL, and rotation data entry in the ILE files */
+struct IslandObjectInfo {
+	uint32 _index;
+	Math::Vector3d _pos;
+	byte _angle;
+	Model *_model;
+};
+
 struct IslandSection {
 	Common::Array<IslandFace> faces;
 	Common::Array<IslandVertex> vertices;
 	byte y;
 	byte x;
+	uint32 _numObjects;
+	IslandObjectInfo *_objects;
 };
 
 class Island {
 public:
-	Island(Hqr *hqr);
+	Island(Hqr *hqr, Hqr *obl);
 
 private:
 
 	Hqr *_ile;
+	Hqr *_obl;
 	byte *_sectionsLayout;
 	//uint16 *_heightMap;
 	

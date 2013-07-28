@@ -192,6 +192,9 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 Math::Vector3d Vertex::getPos(Model *m) {
 	Math::Vector3d vec(_pos);
 	uint16 bone = _bone;
+	if (bone == 0) {
+		return vec;
+	}
 	Bone *b = &m->_bones[bone];
 	while (b) {
 		Vertex *bv = &m->_verticies[b->_vertex];
