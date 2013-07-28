@@ -114,7 +114,7 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 			Polygon *p = &_polygons[currPoly];
 			p->_num = val / 2;
 			p->_colour = 0;
-			p->_hasTex = flag & 0x8;
+			p->_hasTex = flag & 0x8 && val > 16;
 			int texc = 0;
 			for (int i = 0; i < (val / 2); ++i) {
 				if (i == 14 && p->_hasTex) {
