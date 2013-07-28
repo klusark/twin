@@ -23,7 +23,7 @@
 #ifndef TWIN_ISLAND_H
 #define TWIN_ISLAND_H
 
-#include "engines/twin/hqr.h"
+#include "math/vector3d.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -31,6 +31,34 @@ class SeekableReadStream;
 
 namespace Twin {
 
+class Hqr;
+
+struct IslandVertex {
+	Math::Vector3d _pos;
+
+	float r;
+	float g;
+	float b;
+
+	//not sure if this should be a...
+	float a;
+
+	float u;
+	float v;
+};
+
+struct IslandFace {
+	uint16 x;
+	uint16 y;
+	uint16 z;
+};
+
+struct IslandSection {
+	Common::Array<IslandFace> faces;
+	Common::Array<IslandVertex> vertices;
+	byte y;
+	byte x;
+};
 
 class Island {
 public:
@@ -45,6 +73,9 @@ private:
 	void loadIsland();
 	void loadIslandSection(int32 sectionIdx, int32 idx);
 
+public:
+	IslandSection *_sections;
+	uint32 _numSections;
 };
 
 } // end of namespace Twin

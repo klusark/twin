@@ -26,6 +26,7 @@
 
 #include "engines/twin/island.h"
 #include "engines/twin/twin.h"
+#include "engines/twin/hqr.h"
 
 namespace Twin {
 
@@ -124,6 +125,7 @@ struct OBLPolygon {
 	IslandUV	uv[4];	
 };
 
+
 Island::Island(Hqr *hqr) {
 	_ile = hqr;
 	loadIsland();
@@ -139,7 +141,7 @@ Island::Island(Hqr *hqr) {
 */
 void Island::loadIsland() {
 	int32 entries = _ile->getNumIndices();
-	int32 sections = (entries - 3) / 6; // get the number of sections in this ILE file
+	_numSections = (entries - 3) / 6; // get the number of sections in this ILE file
 
 	// 0 - layout sections
 	Common::SeekableReadStream *stream = _ile->createReadStreamForIndex(0);
@@ -157,8 +159,17 @@ void Island::loadIsland() {
 
 	// TODO here we should also set Sea and Sky textures from Ress.HQR file (from idx 12 to 27)
 	// We should figure out where the matching with this textures and each island are.
+	_sections = new IslandSection[_numSections];
 
-	for (int32 s = 0; s < sections; s++) {
+	for (int i = 0; i < 256; ++i) {
+		byte c = _sectionsLayout[i];
+		if (c != 0) {
+			_sections[c - 1].x = i % 16;
+			_sections[c - 1].y = i / 16;
+		}
+	}
+
+	for (uint32 s = 0; s < _numSections; s++) {
 		int32 i = (s * 6) + 3; // section index start
 		loadIslandSection(s, i);
 	}
@@ -174,6 +185,7 @@ void Island::loadIsland() {
 		8 (5) - Intensity
 */
 void Island::loadIslandSection(int sectionIdx, int entryIdx) {
+	IslandSection *section = &_sections[sectionIdx];
 	// 7 (4) - Height Maps
 	int16 heightmap[65][65];
 	Common::SeekableReadStream *stream = _ile->createReadStreamForIndex(entryIdx + 4);
@@ -230,12 +242,11 @@ void Island::loadIslandSection(int sectionIdx, int entryIdx) {
 
 	// Parse data
 	int16 maxHeight = 0;
+
 	
-	Common::Array<float> vertices;
-	vertices.reserve(9 * 64 * 64 * 4 * 2);
-	
-	Common::Array<uint16> faces;
-	faces.reserve(6 * 64 * 64);
+	//vertices.reserve(64 * 64 * 4 * 3);
+
+	//faces.reserve(4 * 64 * 64);
 
 	// Vertex Count - In order of verts that make tris
 	uint16  idx = 0;
@@ -244,18 +255,15 @@ void Island::loadIslandSection(int sectionIdx, int entryIdx) {
 	uint16 idxOrder2[6] = {0, 2, 1, 1, 2, 3};
 
 	// For Every QUAD
-	for (int32 x = 0; x < 64; ++x)
-	{
-		for (int32 y = 0; y < 64; ++y)
-		{
+	for (int32 x = 0; x < 64; ++x) {
+		for (int32 y = 0; y < 64; ++y) {
 			// Pass the pointer from the quad database to this quad (2 triangles passed)
 			GroundTriangle *tri = squares[x][y].triangle;
 			// Orientation
 			uint16 *idxOrder = (tri[0].orientation == 0) ? idxOrder1 : idxOrder2;
 
 			// For both tris in this quad...
-			for (int32 t = 0; t < 2; ++t)
-			{
+			for (int32 t = 0; t < 2; ++t) {
 				// Data Usage for this Tri
 				int mdMax = 0;
 
@@ -265,60 +273,59 @@ void Island::loadIslandSection(int sectionIdx, int entryIdx) {
 					mdMax++;
 
 				// For all the data usage in this tri
-				for (int32 md = 0; md < mdMax; ++md)
-				{
+				for (int32 md = 0; md < mdMax; ++md) {
 					// For each vertex, offset by triangle num in quad
-					for (int32 i = 3 * t; i < (3 + 3 * t); ++i)
-					{
+					for (int32 i = 3 * t; i < (3 + 3 * t); ++i) {
 						int32 xi = x + idxOrder[i] / 2;
 						int32 yi = y + idxOrder[i] % 2;
-
-						// Vertex position
-						vertices.push_back(((float)(xi) - 32) / 0x20);
-						vertices.push_back(((float)(heightmap[xi][yi])) / 0x4000);
-						vertices.push_back(((float)(64 - yi) - 32) / 0x20);
+						IslandVertex v;
+						float x = ((float)(xi) - 32) / 0x20;
+						float y = ((float)(heightmap[xi][yi])) / 0x4000;
+						float z = ((float)(64 - yi) - 32) / 0x20;
+						v._pos.set(x, y, z);
 
 						if (heightmap[xi][yi] > maxHeight)
 							maxHeight = heightmap[xi][yi];
 
 						// Vertex color and UV
-						if (tri[t].useTexture && (mdMax < 2 || md == 1))
-						{
+						if (tri[t].useTexture && (mdMax < 2 || md == 1)) {
 							float intens = intensity[xi][yi] / 16.0f + 0.3;
-							
+
 							if (intens > 1.0)
 								intens = 1.0;
 
-							vertices.push_back(intens);
-							vertices.push_back(intens);
-							vertices.push_back(intens);
-							vertices.push_back(1.0);
-							vertices.push_back((textureInfo[tri[t].textureIndex].uv[uvOrder[i]].u / 65535.0f) * 0.5);
-							vertices.push_back(textureInfo[tri[t].textureIndex].uv[uvOrder[i]].v / 65535.0f);
+							v.r = intens;
+							v.g = intens;
+							v.b = intens;
+							v.a = 1;
 
-						}
-						else if (mdMax < 2 || md == 0)
-						{
+							v.u = (textureInfo[tri[t].textureIndex].uv[uvOrder[i]].u / 65535.0f) * 0.5;
+							v.v = textureInfo[tri[t].textureIndex].uv[uvOrder[i]].v / 65535.0f;
+
+						} else if (mdMax < 2 || md == 0) {
 							byte colorIdx = (tri[t].textureBank * 16) + intensity[xi][yi];
-							
+
 							// TODO get palette RGB components for colorIdx
 							float r = 0;
 							float g = 0;
 							float b = 0;
 
-							vertices.push_back(r);
-							vertices.push_back(g);
-							vertices.push_back(b);
-							vertices.push_back(1.0);
-							vertices.push_back(0.75f);
-							vertices.push_back(0.5f);
+							v.r = r;
+							v.g = g;
+							v.b = b;
+							v.a = 1.0;
+							v.u = 0.75f;
+							v.v = 0.5f;
 						}
+						section->vertices.push_back(v);
 					}
 
 					/* Index */
-					faces.push_back(idx);
-					faces.push_back(idx + 1);
-					faces.push_back(idx + 2);
+					IslandFace f;
+					f.x = idx;
+					f.y = idx + 1;
+					f.z = idx + 2;
+					section->faces.push_back(f);
 					idx += 3;
 				}
 			}

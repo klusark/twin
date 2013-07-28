@@ -36,6 +36,7 @@
 #include "engines/twin/resource.h"
 #include "engines/twin/block_library.h"
 #include "engines/twin/block.h"
+#include "engines/twin/island.h"
 
 #ifdef USE_OPENGL
 
@@ -350,6 +351,46 @@ void GfxOpenGL::drawSphere(double radius, int slices, int stacks) {
 	gluQuadricDrawStyle(Sphere, GLU_FILL);
 	gluSphere(Sphere, radius, slices, stacks);
 	gluDeleteQuadric(Sphere);
+}
+
+void GfxOpenGL::drawIsland(Island *island) {
+	glEnable(GL_DEPTH_TEST);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(45.0f,(GLfloat)_screenWidth/(GLfloat)_screenHeight,0.01f,100.0f);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glColor4ub(255, 255, 255, 255);
+
+	gluLookAt( 0, 0, 1, 0, 0, 0, 0, 1, 0 );
+	glPushMatrix();
+
+	glTranslatef((_cameraX/(float)_screenWidth), -(_cameraY/(float)_screenHeight), (_cameraZ/(float)_screenHeight));
+	glRotatef(_rotY, 1, 0, 0);
+	glRotatef(_rotX, 0, 1, 0);
+
+	//glTranslatef(-8, -8, 0);
+	for (int i = 0; i < island->_numSections; ++i) {
+		IslandSection *s = &island->_sections[i];
+		glPushMatrix();
+		glTranslatef((s->y- 7) * 2, 0, (-(s->x - 7)) * 2);
+		int size = s->faces.size();
+		for (int i = 0; i < size; ++i) {
+			glColor4ub(i%255, (i + 74)%255, (i + 180)%255, 255);
+			IslandFace *f = &s->faces[i];
+			glBegin(GL_TRIANGLES);
+			glVertex3fv(s->vertices[f->x]._pos.getData());
+			glVertex3fv(s->vertices[f->y]._pos.getData());
+			glVertex3fv(s->vertices[f->z]._pos.getData());
+			glEnd();
+		}
+		glPopMatrix();
+
+	}
+	glPopMatrix();
 }
 
 void GfxOpenGL::loadTexture(byte *buf, uint32 *texId, byte **tex, uint32 width, uint32 height) {
