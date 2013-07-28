@@ -31,15 +31,15 @@ namespace Twin {
 
 /* This structure is used to map the triangle declarations in the ILE files */
 struct GroundTriangle {
-	uint32 textureBank : 4;
-	uint32 useTexture : 2;
-	uint32 useColor : 2;
-	uint32 unk1 : 4 ;
-	uint32 unk2 : 4;
-	uint32 orientation : 1;
-	uint32 unk3 : 1;
-	uint32 unk4 : 1;
-	uint32 textureIndex : 13;
+	byte textureBank;
+	byte useTexture;
+	byte useColor;
+	byte unk1;
+	byte unk2;
+	byte orientation;
+	byte unk3;
+	byte unk4;
+	uint16 textureIndex;
 };
 
 /* This structure maps the grid's quad declaration in the ILE files */
@@ -178,26 +178,54 @@ void Island::loadIslandSection(int sectionIdx, int entryIdx) {
 	int16 heightmap[65][65];
 	Common::SeekableReadStream *stream = _ile->createReadStreamForIndex(entryIdx + 4);
 	_sectionsLayout = new byte[256];
-	stream->read(heightmap, 65*65);
+	stream->read(heightmap, sizeof(heightmap));
 	delete stream;
 
 	// 6 (3) - Texture UV mapping
 	GroundTextureInfo *textureInfo;
 	stream = _ile->createReadStreamForIndex(entryIdx + 3);
-	textureInfo = new GroundTextureInfo[stream->size() / 12];
-	stream->read(textureInfo, 65*65);
+	int numGroundTextreInfos = stream->size() / 12;
+	textureInfo = new GroundTextureInfo[numGroundTextreInfos];
+	for (int i = 0; i < numGroundTextreInfos; ++i) {
+		GroundTextureInfo *t = &textureInfo[i];
+		for (int j = 0; j < 3; ++j) {
+			t->uv[j].u = stream->readUint16LE();
+			t->uv[j].v = stream->readUint16LE();
+		}
+	}
 	delete stream;
 
 	// 8 (5) - Intensity
 	byte intensity[65][65];
 	stream = _ile->createReadStreamForIndex(entryIdx + 5);
-	stream->read(intensity, 65*65);
+	stream->read(intensity, sizeof(intensity));
 	delete stream;
 
 	// 5 (2) - Quads (2 triangles)
 	GroundSquare squares[64][64];
 	stream = _ile->createReadStreamForIndex(entryIdx + 2);
-	stream->read(squares, 64 * 64 * 8);
+	for (int y = 0; y < 64; ++y) {
+		for (int x = 0; x < 64; ++x) {
+			for (int i = 0; i < 2; ++i) {
+				GroundTriangle *g = &squares[y][x].triangle[i];
+				byte a = stream->readByte();
+				byte b = stream->readByte();
+				byte c = stream->readByte();
+				byte d = stream->readByte();
+				g->textureBank =  (a & 0x0F) >> 0;
+				g->useTexture =   (a & 0x30) >> 4;
+				g->useColor =     (a & 0xC0) >> 6;
+				g->unk1 =         (b & 0x0F) >> 0;
+				g->unk2 =         (b & 0xF0) >> 4;
+				g->orientation =  (c & 0x01) >> 0;
+				g->unk3 =         (c & 0x02) >> 1;
+				g->unk4 =         (c & 0x04) >> 2;
+				g->textureIndex = d;
+				g->textureIndex <<= 5;
+				g->textureIndex |= ((c & 0xF8) >> 3);
+			}
+		}
+	}
 	delete stream;
 
 	// Parse data
