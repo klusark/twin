@@ -63,7 +63,6 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 	uint32 texturesOffset = stream->readUint32LE();
 
 	stream->seek(bonesOffset);
-
 	_bones = new Bone[_numBones];
 	for (uint32 i = 0; i < _numBones; ++i) {
 		Bone *b = &_bones[i];
@@ -102,22 +101,60 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 	}
 
 	_polygons = new Polygon[_numPolygons];
+	memset(_polygons, 0, _numPolygons * sizeof(Polygon));
 	uint32 currPoly = 0;
 	while (currPoly < _numPolygons) {
 		int flag = stream->readUint16LE();
 		int num = stream->readUint16LE();
 		int size = stream->readUint16LE();
 		int num3 = stream->readUint16LE();
+
 		int val = ((size - 8) / num);
 		for (int j = 0; j < num; ++j) {
-			_polygons[currPoly]._data = new uint16[val / 2];
-			_polygons[currPoly]._num = val / 2;
+			Polygon *p = &_polygons[currPoly];
+			p->_num = val / 2;
+			p->_colour = 0;
+			p->_hasTex = flag & 0x8;
+			int texc = 0;
 			for (int i = 0; i < (val / 2); ++i) {
-				uint16 data = stream->readUint16LE();
-				_polygons[currPoly]._data[i] = data;
-				if (data > _numVerticies) {
-					_polygons[currPoly]._colour = (data << 4) >> 4;
+				if (i == 14 && p->_hasTex) {
+					p->_tex = stream->readByte();
+					stream->readByte();
+					stream->readByte();
+					stream->readByte();
+					++i;
+				} else if (i > 5 && p->_hasTex) {
+					//??
+					stream->readByte();
+
+					byte x = stream->readByte();
+
+					//??
+					stream->readByte();
+
+					byte y = stream->readByte();
+					if (texc < 4) {
+						p->_texX[texc] = x;
+						p->_texY[texc] = y;
+					}
+					++texc;
+					++i;
+				} else {
+					if (p->_hasTex && i == 3 && val != 32) {
+						p->_tex = stream->readByte();
+						stream->readByte();
+						//p->_data[i] = stream->readByte();
+					} else if (i == 4) {
+						uint16 data = stream->readUint16LE();
+						p->_colour = (data << 4) >> 4;
+					} else {
+						uint16 data = stream->readUint16LE();
+						if (i < 4) {
+							p->_data[i] = data;
+						}
+					}
 				}
+
 			}
 			++currPoly;
 		}
@@ -144,6 +181,7 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 	_textures = new Texture[_numTextures];
 	for (uint32 i = 0; i < _numTextures; ++i) {
 		Texture *t = &_textures[i];
+		t->_renderData = NULL;
 		t->_x = stream->readByte();
 		t->_y = stream->readByte();
 		t->_w = stream->readByte();

@@ -35,9 +35,13 @@ class Model;
 
 class Polygon {
 public:
-	uint16 *_data;
+	uint16 _data[4];
 	uint16 _num;
+	uint16 _tex;
+	byte _texX[4];
+	byte _texY[4];
 	byte _colour;
+	bool _hasTex;
 };
 
 class Vertex {
@@ -68,6 +72,7 @@ public:
 	byte _y;
 	byte _w;
 	byte _h;
+	void *_renderData;
 };
 
 class Point {

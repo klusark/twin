@@ -45,6 +45,7 @@ class Model;
 class ColourPalette;
 class Grid;
 class Block;
+class Texture;
 
 class GfxOpenGL {
 	int _screenWidth;
@@ -61,6 +62,10 @@ class GfxOpenGL {
 	int _rotX;
 	int _rotY;
 	int _rotZ;
+
+	byte *_modelPixels;
+	uint32 _modelMaterial;
+
 public:
 	GfxOpenGL() {}
 	byte *setupScreen(int screenW, int screenH, bool fullscreen);
@@ -76,6 +81,13 @@ public:
 	void setColourPalette(ColourPalette *p) { _palette = p; }
 	void moveCamera(int x, int y, int z) { _cameraX += x; _cameraY += y; _cameraZ += z; }
 	void rotateObject(int x, int y, int z) { _rotX += x; _rotY += y; _rotZ += z; }
+	void loadModelTexture(Common::SeekableReadStream *stream);
+
+private:
+	void bindTexture(Texture *t);
+	void loadTexture(byte *buf, uint32 *texId, byte **tex, uint32 width, uint32 height);
+
+
 };
 
 } // end of namespace Twin

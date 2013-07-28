@@ -144,6 +144,7 @@ Common::Error TwinEngine::run() {
 	ress.open("RESS.HQR");
 	ColourPalette cp(ress.createReadStreamForIndex(0));
 	_renderer->setColourPalette(&cp);
+	_renderer->loadModelTexture(ress.createReadStreamForIndex(6));
 
 	int grid = 0;
 	Grid *g = g_resource->getGrid(grid);
@@ -189,6 +190,8 @@ Common::Error TwinEngine::run() {
 				rDown = true;
 			} else if (type == Common::EVENT_RBUTTONUP) {
 				rDown = false;
+			} else if (type == Common::EVENT_QUIT) {
+				return Common::kNoError;
 			}
 		}
 

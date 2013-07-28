@@ -26,10 +26,11 @@
 #undef ARRAYSIZE
 #endif
 
-#include "engines/twin/gfx_opengl.h"
-#include "engines/twin/model.h"
 #include "math/vector3d.h"
 #include "common/textconsole.h"
+
+#include "engines/twin/gfx_opengl.h"
+#include "engines/twin/model.h"
 #include "engines/twin/colour_palette.h"
 #include "engines/twin/grid.h"
 #include "engines/twin/resource.h"
@@ -70,6 +71,7 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	_rotX = 0;
 	_rotY = 0;
 	_rotZ = 0;
+	_modelPixels = NULL;
 
 	return NULL;
 }
@@ -130,7 +132,37 @@ void GfxOpenGL::destroyBitmap(uint32 texID) {
 	glDeleteTextures(1, &texID);
 }
 
+void GfxOpenGL::bindTexture(Texture *t) {
+	if (t->_renderData == NULL) {
+		GLuint *texNum = new GLuint;
+		GLint format = GL_RGBA;
+		GLint type = GL_UNSIGNED_BYTE;
+		glGenTextures(1, texNum);
+		glBindTexture(GL_TEXTURE_2D, *texNum);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, 256);
+		glTexImage2D(GL_TEXTURE_2D, 0, format, t->_w + 1, t->_h + 1, 0, format, type, _modelPixels + t->_x * 4 + t->_y * 4 * 256);
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+		t->_renderData = texNum;
+	}
+
+	GLuint texNum = *(GLuint *)t->_renderData;
+	glBindTexture(GL_TEXTURE_2D, texNum);
+}
+
+void GfxOpenGL::loadModelTexture(Common::SeekableReadStream *stream) {
+	byte *data = new byte[256 * 256];
+	stream->read(data, 256 * 256);
+	delete stream;
+
+	loadTexture(data, (uint32 *)&_modelMaterial, &_modelPixels, 256, 256);
+}
+
 void GfxOpenGL::drawModel(Model *m) {
+
 	glEnable(GL_DEPTH_TEST);
 
 	glMatrixMode(GL_PROJECTION);
@@ -151,31 +183,56 @@ void GfxOpenGL::drawModel(Model *m) {
 
 	for (uint j = 0; j < m->_numPolygons; j++) {
 		Polygon *p = &m->_polygons[j];
+		if (p->_hasTex) {
+
+			if (p->_tex == 0) {
+				glBindTexture(GL_TEXTURE_2D, _modelMaterial);
+			} else {
+				bindTexture(&m->_textures[p->_tex]);
+			}
+			glEnable(GL_TEXTURE_2D);
+		}
+
 		glBegin(GL_POLYGON);
 
-		for (int i = 0; i < m->_polygons->_num; ++i) {
+		int k = 0;
+		for (int i = 0; i < 4; ++i) {
 			uint32 vert = p->_data[i];
 			if (vert > m->_numVerticies || vert == 0) {
-				break;
+				continue;
 			}
 
-			glColor4ub(_palette->_palette[p->_colour]._r, _palette->_palette[p->_colour]._g, _palette->_palette[p->_colour]._b, 255);
-			Vertex *v = &m->_verticies[vert];
 
+			Vertex *v = &m->_verticies[vert];
 			if (v->_bone == 0) {
 				continue;
 			}
 			Math::Vector3d mv = v->getPos(m);
 
 			Normal *n = &m->_normals[vert];
-
+			if (p->_hasTex) {
+				Texture *t = &m->_textures[p->_tex];
+				float x = ((int)p->_texX[k]);
+				float y = ((int)p->_texY[k]);
+				x /= 256;
+				y /= 256;
+				x *= 256 / (t->_w );
+				y *= 256 / (t->_h);
+				glTexCoord2f(x, y);
+				glColor4ub(255, 255, 255, 255);
+			} else {
+				glColor4ub(_palette->_palette[p->_colour]._r, _palette->_palette[p->_colour]._g, _palette->_palette[p->_colour]._b, 255);
+			}
 			glNormal3f(n->_x, n->_y, n->_z);
 			glVertex3fv(mv.getData());
 
+			++k;
 		}
 
 		glEnd();
-
+		if (p->_hasTex) {
+			glDisable(GL_TEXTURE_2D);
+		}
 	}
 
 	for (uint j = 0; j < m->_numPoints; j++) {
@@ -217,36 +274,12 @@ void GfxOpenGL::drawBlock(Block *block, int32 x, int32 y, int32 z) {
 	int zb = z;
 	x = (xb - zb) * 24 + 288;
 	y = ((xb + zb) * 12) - (yb * 15) + 215;
-	GLuint texNum;
+
 	if (block->_renderData == NULL) {
-		block->_renderData = new GLint;
-
-		glGenTextures(1, &texNum);
-		*(GLuint *)(block->_renderData) = texNum;
-		GLint format = GL_RGBA;
-		GLint type = GL_UNSIGNED_BYTE;
-
-		byte *pixels = new byte[block->_width * block->_height * 4];
-		for (int i = 0; i < block->_width * block->_height; ++i) {
-			byte val = block->_data[i];
-			pixels[i*4 + 0] = _palette->_palette[val]._r;
-			pixels[i*4 + 1] = _palette->_palette[val]._g;
-			pixels[i*4 + 2] = _palette->_palette[val]._b;
-			if (val == 0) {
-				pixels[i*4 + 3] = 0;
-			} else {
-				pixels[i*4 + 3] = 255;
-			}
-		}
-
-		glBindTexture(GL_TEXTURE_2D, texNum);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, block->_width, block->_height, 0, format, type, pixels);
+		block->_renderData = new GLuint;
+		loadTexture(block->_data, (uint32 *)block->_renderData, NULL, block->_width, block->_height);
 	}
-	texNum = *(GLuint *)block->_renderData;
+	GLuint texNum = *(GLuint *)block->_renderData;
 
 	int w = block->_width;
 	int h = block->_height;
@@ -323,6 +356,39 @@ void GfxOpenGL::drawSphere(double radius, int slices, int stacks) {
 	gluQuadricDrawStyle(Sphere, GLU_FILL);
 	gluSphere(Sphere, radius, slices, stacks);
 	gluDeleteQuadric(Sphere);
+}
+
+void GfxOpenGL::loadTexture(byte *buf, uint32 *texId, byte **tex, uint32 width, uint32 height) {
+	GLuint texNum;
+	glGenTextures(1, &texNum);
+	*(GLuint *)(texId) = texNum;
+	GLint format = GL_RGBA;
+	GLint type = GL_UNSIGNED_BYTE;
+
+	byte *pixels = new byte[width * height * 4];
+	for (uint32 i = 0; i < width * height; ++i) {
+		byte val = buf[i];
+		pixels[i*4 + 0] = _palette->_palette[val]._r;
+		pixels[i*4 + 1] = _palette->_palette[val]._g;
+		pixels[i*4 + 2] = _palette->_palette[val]._b;
+		if (val == 0) {
+			pixels[i*4 + 3] = 0;
+		} else {
+			pixels[i*4 + 3] = 255;
+		}
+	}
+
+	glBindTexture(GL_TEXTURE_2D, texNum);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, type, pixels);
+	if (tex == NULL) {
+		//delete pixels;
+	} else {
+		*tex = pixels;
+	}
 }
 
 } // end of namespace Twin
