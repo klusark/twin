@@ -36,9 +36,13 @@ class Hqr;
 struct IslandVertex {
 	Math::Vector3d _pos;
 
+	//intencity
 	float r;
 	float g;
 	float b;
+
+	bool _hasTexture;
+	byte _colour;
 
 	//not sure if this should be a...
 	float a;
@@ -48,9 +52,7 @@ struct IslandVertex {
 };
 
 struct IslandFace {
-	uint16 x;
-	uint16 y;
-	uint16 z;
+	uint16 _verts[3];
 };
 
 struct IslandSection {
@@ -76,6 +78,8 @@ private:
 public:
 	IslandSection *_sections;
 	uint32 _numSections;
+	byte *_texture;
+	void *_renderData;
 };
 
 } // end of namespace Twin

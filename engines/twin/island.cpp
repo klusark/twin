@@ -140,6 +140,9 @@ Island::Island(Hqr *hqr) {
 		Island Sections (Num Entries HQR - 3 / 6 = Total Sections available)
 */
 void Island::loadIsland() {
+
+	_renderData = NULL;
+
 	int32 entries = _ile->getNumIndices();
 	_numSections = (entries - 3) / 6; // get the number of sections in this ILE file
 
@@ -150,8 +153,10 @@ void Island::loadIsland() {
 	delete stream;
 
 	// 1 - ground texture
-	//stream = hqr->createReadStreamForIndex(1);
-	//delete stream;
+	stream = _ile->createReadStreamForIndex(1);
+	_texture = new byte[256 * 256];
+	stream->read(_texture, 256 *256);
+	delete stream;
 
 	// 2 - object texture
 	//stream = hqr->createReadStreamForIndex(1);
@@ -298,21 +303,18 @@ void Island::loadIslandSection(int sectionIdx, int entryIdx) {
 							v.g = intens;
 							v.b = intens;
 							v.a = 1;
+							v._hasTexture = true;
 
-							v.u = (textureInfo[tri[t].textureIndex].uv[uvOrder[i]].u / 65535.0f) * 0.5;
+							v.u = textureInfo[tri[t].textureIndex].uv[uvOrder[i]].u / 65535.0f;
 							v.v = textureInfo[tri[t].textureIndex].uv[uvOrder[i]].v / 65535.0f;
 
 						} else if (mdMax < 2 || md == 0) {
 							byte colorIdx = (tri[t].textureBank * 16) + intensity[xi][yi];
-
-							// TODO get palette RGB components for colorIdx
-							float r = 0;
-							float g = 0;
-							float b = 0;
-
-							v.r = r;
-							v.g = g;
-							v.b = b;
+							v._hasTexture = false;
+							v._colour = colorIdx;
+							v.r = 1;
+							v.g = 1;
+							v.b = 1;
 							v.a = 1.0;
 							v.u = 0.75f;
 							v.v = 0.5f;
@@ -322,9 +324,9 @@ void Island::loadIslandSection(int sectionIdx, int entryIdx) {
 
 					/* Index */
 					IslandFace f;
-					f.x = idx;
-					f.y = idx + 1;
-					f.z = idx + 2;
+					f._verts[0] = idx;
+					f._verts[1] = idx + 1;
+					f._verts[2] = idx + 2;
 					section->faces.push_back(f);
 					idx += 3;
 				}

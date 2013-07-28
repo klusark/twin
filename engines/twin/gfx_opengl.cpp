@@ -354,6 +354,12 @@ void GfxOpenGL::drawSphere(double radius, int slices, int stacks) {
 }
 
 void GfxOpenGL::drawIsland(Island *island) {
+	if (island->_renderData == NULL) {
+		island->_renderData = new GLuint;
+		loadTexture(island->_texture, (GLuint *)island->_renderData, NULL, 256, 256);
+	}
+
+	GLuint &texid = *(GLuint *)island->_renderData;
 	glEnable(GL_DEPTH_TEST);
 
 	glMatrixMode(GL_PROJECTION);
@@ -372,25 +378,36 @@ void GfxOpenGL::drawIsland(Island *island) {
 	glRotatef(_rotY, 1, 0, 0);
 	glRotatef(_rotX, 0, 1, 0);
 
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, texid);
+
 	//glTranslatef(-8, -8, 0);
-	for (int i = 0; i < island->_numSections; ++i) {
+	for (uint32 i = 0; i < island->_numSections; ++i) {
 		IslandSection *s = &island->_sections[i];
 		glPushMatrix();
 		glTranslatef((s->y- 7) * 2, 0, (-(s->x - 7)) * 2);
 		int size = s->faces.size();
-		for (int i = 0; i < size; ++i) {
-			glColor4ub(i%255, (i + 74)%255, (i + 180)%255, 255);
-			IslandFace *f = &s->faces[i];
+		for (int j = 0; j < size; ++j) {
+			IslandFace *f = &s->faces[j];
 			glBegin(GL_TRIANGLES);
-			glVertex3fv(s->vertices[f->x]._pos.getData());
-			glVertex3fv(s->vertices[f->y]._pos.getData());
-			glVertex3fv(s->vertices[f->z]._pos.getData());
+			for (int k = 0; k < 3; ++k) {
+				IslandVertex *v = &s->vertices[f->_verts[k]];
+				if (v->_hasTexture) {
+					glColor4f(v->r, v->g, v->b, v->a);
+					glTexCoord2f(v->u, v->v);
+				} else {
+					glColor4ub(_palette->_palette[v->_colour]._r, _palette->_palette[v->_colour]._g, _palette->_palette[v->_colour]._b, 255);
+				}
+				glVertex3fv(v->_pos.getData());
+			}
 			glEnd();
 		}
 		glPopMatrix();
 
 	}
 	glPopMatrix();
+
+	glDisable(GL_TEXTURE_2D);
 }
 
 void GfxOpenGL::loadTexture(byte *buf, uint32 *texId, byte **tex, uint32 width, uint32 height) {
