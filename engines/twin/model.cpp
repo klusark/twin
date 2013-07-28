@@ -75,14 +75,12 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 
 	_verticies = new Vertex[_numVerticies];
 	for (uint32 i = 0; i < _numVerticies; ++i) {
-		int16 x, y ,z;
+		float x, y ,z;
 		Vertex *v = &_verticies[i];
-		x = stream->readSint16LE();
-		y = stream->readSint16LE();
-		z = stream->readSint16LE();
-		v->_x = ((float)x) / 16384.0f;
-		v->_y = ((float)y) / 16384.0f;
-		v->_z = ((float)z) / 16384.0f;
+		x = stream->readSint16LE() / 16384.0f;
+		y = stream->readSint16LE() / 16384.0f;
+		z = stream->readSint16LE() / 16384.0f;
+		v->_pos.set(x, y, z);
 		v->_bone = stream->readUint16LE();
 	}
 
@@ -192,16 +190,17 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 
 
 Math::Vector3d Vertex::getPos(Model *m) {
-	Math::Vector3d vec(_x, _y, _z);
-	Bone *b = &m->_bones[_bone];
+	Math::Vector3d vec(_pos);
+	uint16 bone = _bone;
+	Bone *b = &m->_bones[bone];
 	while (b) {
 		Vertex *bv = &m->_verticies[b->_vertex];
-		Math::Vector3d bone_vec(bv->_x, bv->_y, bv->_z);
-		vec += bone_vec;
-		if (b->_parent == 0xffff) {
+		vec += bv->_pos;
+		bone = b->_parent;
+		if (bone == 0xffff) {
 			break;
 		}
-		b = &m->_bones[b->_parent];
+		b = &m->_bones[bone];
 	}
 	return vec;
 }

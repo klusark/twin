@@ -23,7 +23,7 @@
 #ifndef TWIN_MODEL_H
 #define TWIN_MODEL_H
 
-#include "math/mathfwd.h"
+#include "math/vector3d.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -47,9 +47,7 @@ public:
 class Vertex {
 public:
 	Math::Vector3d getPos(Model *m);
-	float _x;
-	float _y;
-	float _z;
+	Math::Vector3d _pos;
 	uint16 _bone;
 };
 
