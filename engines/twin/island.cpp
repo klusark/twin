@@ -290,10 +290,10 @@ void Island::loadIslandSection(int sectionIdx, int entryIdx) {
 						int32 xi = x + idxOrder[i] / 2;
 						int32 yi = y + idxOrder[i] % 2;
 						IslandVertex v;
-						float x = ((float)(xi) - 32) / 0x20;
-						float y = ((float)(heightmap[xi][yi])) / 0x4000;
-						float z = ((float)(64 - yi) - 32) / 0x20;
-						v._pos.set(x, y, z);
+						float posx = ((float)(xi) - 32) / 0x20;
+						float posy = ((float)(heightmap[xi][yi])) / 0x4000;
+						float posz = ((float)(64 - yi) - 32) / 0x20;
+						v._pos.set(posx, posy, posz);
 
 						if (heightmap[xi][yi] > maxHeight)
 							maxHeight = heightmap[xi][yi];

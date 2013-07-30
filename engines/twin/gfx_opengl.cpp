@@ -330,7 +330,7 @@ void GfxOpenGL::drawGrid(Grid *g) {
 				if (s->_layout != 0) {
 					BlockInfo *info = b->getBlock(s->_layout-1);
 					uint32 brick = s->_brick;
-					if (info->_numBlocks > brick && brick >= 0) {
+					if (info->_numBlocks > brick) {
 						int index = info->_blocks[brick]._index - 1;
 						if (index >= 0) {
 							Block *gb = g_resource->getBlock(index);

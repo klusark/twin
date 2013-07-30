@@ -96,7 +96,7 @@ public:
 };
 
 bool TwinMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	TwinGameDescription *tgd = (TwinGameDescription*)desc;
+	const TwinGameDescription *tgd = (const TwinGameDescription*)desc;
 	*engine = new TwinEngine(syst, tgd->gameType);
 
 	return true;

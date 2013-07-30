@@ -77,7 +77,7 @@ void EntityInformation::loadLBA2(Common::SeekableReadStream *stream) {
 				stream->readByte();
 				stream->readByte();
 				byte size = stream->readByte();
-				for (byte i = 1; i < size; ++i) {
+				for (byte j = 1; j < size; ++j) {
 					stream->readByte();
 				}
 			} else if (opcode == 0xff) {
