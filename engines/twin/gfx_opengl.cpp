@@ -162,28 +162,31 @@ void GfxOpenGL::loadModelTexture(Common::SeekableReadStream *stream) {
 	loadTexture(data, (uint32 *)&_modelMaterial, &_modelPixels, 256, 256);
 }
 
-void GfxOpenGL::drawModel(Model *m) {
+void GfxOpenGL::drawModel(Model *m, bool fromIsland) {
+	if (!fromIsland) {
+		glEnable(GL_DEPTH_TEST);
 
-	glEnable(GL_DEPTH_TEST);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluPerspective(45.0f,(GLfloat)_screenWidth/(GLfloat)_screenHeight,0.01f,10.0f);
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(45.0f,(GLfloat)_screenWidth/(GLfloat)_screenHeight,0.01f,10.0f);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+		glColor4ub(255, 255, 255, 255);
 
-	glColor4ub(255, 255, 255, 255);
+		gluLookAt( 0, 0, 1, 0, 0, 0, 0, 1, 0 );
+		glPushMatrix();
 
-	gluLookAt( 0, 0, 1, 0, 0, 0, 0, 1, 0 );
-	glPushMatrix();
-
-	glTranslatef((_cameraX/(float)_screenWidth), -(_cameraY/(float)_screenHeight), (_cameraZ/(float)_screenHeight));
-	glRotatef(_rotY, 1, 0, 0);
-	glRotatef(_rotX, 0, 1, 0);
-
+		glTranslatef((_cameraX/(float)_screenWidth), -(_cameraY/(float)_screenHeight), (_cameraZ/(float)_screenHeight));
+		glRotatef(_rotY, 1, 0, 0);
+		glRotatef(_rotX, 0, 1, 0);
+	}
 	for (uint j = 0; j < m->_numPolygons; j++) {
 		Polygon *p = &m->_polygons[j];
+		if (fromIsland) {
+			p->_hasTex = false;
+		}
 		if (p->_hasTex) {
 
 			if (p->_tex == 0) {
@@ -203,9 +206,6 @@ void GfxOpenGL::drawModel(Model *m) {
 			}
 
 			Vertex *v = &m->_verticies[vert];
-			if (v->_bone == 0) {
-				continue;
-			}
 			Math::Vector3d mv = v->getPos(m);
 
 			Normal *n = &m->_normals[vert];
@@ -258,9 +258,11 @@ void GfxOpenGL::drawModel(Model *m) {
 		glPopMatrix();
 	}	
 
-	glPopMatrix();
+	if (!fromIsland) {
+		glPopMatrix();
 
-	glDisable(GL_DEPTH_TEST);
+		glDisable(GL_DEPTH_TEST);
+	}
 }
 
 void GfxOpenGL::drawBlock(Block *block, int32 x, int32 y, int32 z) {
@@ -415,12 +417,25 @@ void GfxOpenGL::drawIsland(Island *island) {
 				glDisable(GL_TEXTURE_2D);
 			}
 		}
+
+		for (uint32 i = 0; i < s->_numObjects; ++i) {
+			IslandObjectInfo *info = &s->_objects[i];
+			glPushMatrix();
+
+			glTranslatef(info->_pos.z() - 1, info->_pos.y(), -(info->_pos.x() - 1));
+			float a = ((info->_angle + 4) / 4.0f) * 90;
+			glRotatef(a, 0, 1, 0);
+			drawModel(info->_model, true);
+			glPopMatrix();
+		}
 		glPopMatrix();
 
 	}
 	glPopMatrix();
 	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_DEPTH_TEST);
+
+	
 }
 
 void GfxOpenGL::loadTexture(byte *buf, uint32 *texId, byte **tex, uint32 width, uint32 height) {

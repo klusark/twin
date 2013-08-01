@@ -75,7 +75,7 @@ public:
 	int createBitmap(const Graphics::Surface *surf);
 	void drawBitmap(int texID, int x, int y, int w, int h);
 	void destroyBitmap(uint32 texID);
-	void drawModel(Model *m);
+	void drawModel(Model *m, bool fromIsland = false);
 	void drawBlock(Block *block, int32 x, int32 y, int32 z);
 	void drawGrid(Grid *g);
 	void drawSphere(double radius, int slices, int stacks);
