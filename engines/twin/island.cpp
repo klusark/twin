@@ -59,48 +59,6 @@ struct GroundTextureInfo {
 	IslandUV uv[3];
 };
 
-/* This structure maps an object header in the OBL files */
-struct IslandObjectHeader {
-	byte	unk0[0x44];
-	uint32	polygonSectionOffset;
-	uint32	lineSectionSize;
-	uint32	lineSectionOffset;
-	uint32	sphereSectionSize;
-	uint32	sphereSectionOffset;
-	uint32	cutSectionSize;
-	uint32	cutSectionOffset;
-	uint32	unk1;
-	uint16	numVerticesType1;
-	uint16	numVerticesType2;
-};
-
-struct OBLVertex {
-	int16	x;
-	int16	y;
-	int16	z;
-	int16	unk0;
-};
-
-struct OBLIntensity {
-	byte	i[8];
-};
-
-struct OBLPolygonHeader {
-	byte	id;
-	byte	type;
-	uint16	numPolygon;
-	uint16	size;
-	byte	unk0;
-	byte	unk1;
-};
-
-struct OBLPolygon {
-	uint16		idx[4];
-	byte		color;
-	byte		unk0[3];
-	IslandUV	uv[4];	
-};
-
 
 Island::Island(Hqr *hqr, Hqr *obl) {
 	_ile = hqr;
@@ -251,19 +209,15 @@ void Island::loadIslandSection(int sectionIdx, int entryIdx) {
 	}
 	delete stream;
 
-	// Parse data
-	int16 maxHeight = 0;
-
-	
-	//vertices.reserve(64 * 64 * 4 * 3);
-
-	//faces.reserve(4 * 64 * 64);
 
 	// Vertex Count - In order of verts that make tris
 	uint16  idx = 0;
 	uint16 uvOrder[6] = {0, 1, 2, 2, 0, 1};
 	uint16 idxOrder1[6] = {0, 2, 3, 0, 3, 1};
 	uint16 idxOrder2[6] = {0, 2, 1, 1, 2, 3};
+
+	section->_numFaces = 64 * 64 * 2;
+	section->_faces = new IslandFace[section->_numFaces];
 
 	// For Every QUAD
 	for (int32 x = 0; x < 64; ++x) {
@@ -275,66 +229,47 @@ void Island::loadIslandSection(int sectionIdx, int entryIdx) {
 
 			// For both tris in this quad...
 			for (int32 t = 0; t < 2; ++t) {
-				// Data Usage for this Tri
-				int mdMax = 0;
+				IslandFace *f = &section->_faces[idx];
+				++idx;
+				int j = 0;
+				// For each vertex, offset by triangle num in quad
+				for (int32 i = 3 * t; i < (3 + 3 * t); ++i) {
+					int32 xi = x + idxOrder[i] / 2;
+					int32 yi = y + idxOrder[i] % 2;
+					IslandVertex *v = &f->_vertices[j];
+					++j;
+					float x = ((float)(xi) - 32) / 0x20;
+					float y = ((float)(heightmap[xi][yi])) / 0x4000;
+					float z = ((float)(64 - yi) - 32) / 0x20;
+					v->_pos.set(x, y, z);
 
-				if (tri[t].useColor)
-					mdMax++;
-				if (tri[t].useTexture)
-					mdMax++;
 
-				// For all the data usage in this tri
-				for (int32 md = 0; md < mdMax; ++md) {
-					// For each vertex, offset by triangle num in quad
-					for (int32 i = 3 * t; i < (3 + 3 * t); ++i) {
-						int32 xi = x + idxOrder[i] / 2;
-						int32 yi = y + idxOrder[i] % 2;
-						IslandVertex v;
-						float posx = ((float)(xi) - 32) / 0x20;
-						float posy = ((float)(heightmap[xi][yi])) / 0x4000;
-						float posz = ((float)(64 - yi) - 32) / 0x20;
-						v._pos.set(posx, posy, posz);
+					v->r = 1;
+					v->g = 1;
+					v->b = 1;
+					v->a = 1.0;
+					v->_hasTexture = tri[t].useTexture;
+					v->_hasColour = tri[t].useColor;
+					// Vertex color and UV
+					if (v->_hasTexture) {
+						float intens = intensity[xi][yi] / 16.0f + 0.3;
 
-						if (heightmap[xi][yi] > maxHeight)
-							maxHeight = heightmap[xi][yi];
+						if (intens > 1.0)
+							intens = 1.0;
 
-						// Vertex color and UV
-						if (tri[t].useTexture && (mdMax < 2 || md == 1)) {
-							float intens = intensity[xi][yi] / 16.0f + 0.3;
+						v->r = intens;
+						v->g = intens;
+						v->b = intens;
 
-							if (intens > 1.0)
-								intens = 1.0;
+						v->u = textureInfo[tri[t].textureIndex].uv[uvOrder[i]].u / 65535.0f;
+						v->v = textureInfo[tri[t].textureIndex].uv[uvOrder[i]].v / 65535.0f;
 
-							v.r = intens;
-							v.g = intens;
-							v.b = intens;
-							v.a = 1;
-							v._hasTexture = true;
-
-							v.u = textureInfo[tri[t].textureIndex].uv[uvOrder[i]].u / 65535.0f;
-							v.v = textureInfo[tri[t].textureIndex].uv[uvOrder[i]].v / 65535.0f;
-
-						} else if (mdMax < 2 || md == 0) {
-							byte colorIdx = (tri[t].textureBank * 16) + intensity[xi][yi];
-							v._hasTexture = false;
-							v._colour = colorIdx;
-							v.r = 1;
-							v.g = 1;
-							v.b = 1;
-							v.a = 1.0;
-							v.u = 0.75f;
-							v.v = 0.5f;
-						}
-						section->vertices.push_back(v);
 					}
+					if (v->_hasColour) {
+						byte colorIdx = (tri[t].textureBank * 16) + intensity[xi][yi];
+						v->_colour = colorIdx;
 
-					/* Index */
-					IslandFace f;
-					f._verts[0] = idx;
-					f._verts[1] = idx + 1;
-					f._verts[2] = idx + 2;
-					section->faces.push_back(f);
-					idx += 3;
+					}
 				}
 			}
 		}

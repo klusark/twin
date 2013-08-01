@@ -386,16 +386,17 @@ void GfxOpenGL::drawIsland(Island *island) {
 		IslandSection *s = &island->_sections[i];
 		glPushMatrix();
 		glTranslatef((s->y- 7) * 2, 0, (-(s->x - 7)) * 2);
-		int size = s->faces.size();
-		for (int j = 0; j < size; ++j) {
-			IslandFace *f = &s->faces[j];
+		for (int j = 0; j < s->_numFaces; ++j) {
+			IslandFace *f = &s->_faces[j];
 			glBegin(GL_TRIANGLES);
 			for (int k = 0; k < 3; ++k) {
-				IslandVertex *v = &s->vertices[f->_verts[k]];
+				IslandVertex *v = &f->_vertices[k];
+
 				if (v->_hasTexture) {
 					glColor4f(v->r, v->g, v->b, v->a);
 					glTexCoord2f(v->u, v->v);
-				} else {
+				}
+				if (v->_hasColour && !v->_hasTexture) {
 					glColor4ub(_palette->_palette[v->_colour]._r, _palette->_palette[v->_colour]._g, _palette->_palette[v->_colour]._b, 255);
 				}
 				glVertex3fv(v->_pos.getData());

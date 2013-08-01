@@ -43,6 +43,7 @@ struct IslandVertex {
 	float b;
 
 	bool _hasTexture;
+	bool _hasColour;
 	byte _colour;
 
 	//not sure if this should be a...
@@ -53,7 +54,7 @@ struct IslandVertex {
 };
 
 struct IslandFace {
-	uint16 _verts[3];
+	IslandVertex _vertices[3];
 };
 
 /* This structure maps an object positioning, index in OBL, and rotation data entry in the ILE files */
@@ -65,8 +66,8 @@ struct IslandObjectInfo {
 };
 
 struct IslandSection {
-	Common::Array<IslandFace> faces;
-	Common::Array<IslandVertex> vertices;
+	uint16 _numFaces;
+	IslandFace *_faces;
 	byte y;
 	byte x;
 	uint32 _numObjects;
