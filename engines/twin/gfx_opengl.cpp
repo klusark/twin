@@ -361,7 +361,7 @@ void GfxOpenGL::drawIsland(Island *island) {
 
 	GLuint &texid = *(GLuint *)island->_renderData;
 	glEnable(GL_DEPTH_TEST);
-
+	glDepthFunc(GL_LEQUAL);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(45.0f,(GLfloat)_screenWidth/(GLfloat)_screenHeight,0.01f,100.0f);
@@ -378,8 +378,11 @@ void GfxOpenGL::drawIsland(Island *island) {
 	glRotatef(_rotY, 1, 0, 0);
 	glRotatef(_rotX, 0, 1, 0);
 
-	glEnable(GL_TEXTURE_2D);
+
 	glBindTexture(GL_TEXTURE_2D, texid);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.5);
+	glDisable(GL_LIGHTING);
 
 	//glTranslatef(-8, -8, 0);
 	for (uint32 i = 0; i < island->_numSections; ++i) {
@@ -388,27 +391,36 @@ void GfxOpenGL::drawIsland(Island *island) {
 		glTranslatef((s->y- 7) * 2, 0, (-(s->x - 7)) * 2);
 		for (int j = 0; j < s->_numFaces; ++j) {
 			IslandFace *f = &s->_faces[j];
-			glBegin(GL_TRIANGLES);
-			for (int k = 0; k < 3; ++k) {
-				IslandVertex *v = &f->_vertices[k];
+			if (f->_hasColour) {
+				glBegin(GL_TRIANGLES);
+				for (int k = 0; k < 3; ++k) {
+					IslandVertex *v = &f->_vertices[k];
 
-				if (v->_hasTexture) {
-					glColor4f(v->r, v->g, v->b, v->a);
-					glTexCoord2f(v->u, v->v);
-				}
-				if (v->_hasColour && !v->_hasTexture) {
 					glColor4ub(_palette->_palette[v->_colour]._r, _palette->_palette[v->_colour]._g, _palette->_palette[v->_colour]._b, 255);
+					glVertex3fv(v->_pos.getData());
 				}
-				glVertex3fv(v->_pos.getData());
+				glEnd();
 			}
-			glEnd();
+			if (f->_hasTexture) {
+				glEnable(GL_TEXTURE_2D);
+				glBegin(GL_TRIANGLES);
+				for (int k = 0; k < 3; ++k) {
+					IslandVertex *v = &f->_vertices[k];
+					glColor4ub(v->r * 255, v->g * 255, v->b * 255, v->a *255);
+					glTexCoord2f(v->u, v->v);
+					glVertex3fv(v->_pos.getData());
+				}
+				glEnd();
+
+				glDisable(GL_TEXTURE_2D);
+			}
 		}
 		glPopMatrix();
 
 	}
 	glPopMatrix();
-
-	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_ALPHA_TEST);
+	glDisable(GL_DEPTH_TEST);
 }
 
 void GfxOpenGL::loadTexture(byte *buf, uint32 *texId, byte **tex, uint32 width, uint32 height) {

@@ -230,6 +230,8 @@ void Island::loadIslandSection(int sectionIdx, int entryIdx) {
 			// For both tris in this quad...
 			for (int32 t = 0; t < 2; ++t) {
 				IslandFace *f = &section->_faces[idx];
+				f->_hasTexture = tri[t].useTexture;
+				f->_hasColour = tri[t].useColor;
 				++idx;
 				int j = 0;
 				// For each vertex, offset by triangle num in quad
@@ -248,10 +250,8 @@ void Island::loadIslandSection(int sectionIdx, int entryIdx) {
 					v->g = 1;
 					v->b = 1;
 					v->a = 1.0;
-					v->_hasTexture = tri[t].useTexture;
-					v->_hasColour = tri[t].useColor;
 					// Vertex color and UV
-					if (v->_hasTexture) {
+					if (f->_hasTexture) {
 						float intens = intensity[xi][yi] / 16.0f + 0.3;
 
 						if (intens > 1.0)
@@ -265,7 +265,7 @@ void Island::loadIslandSection(int sectionIdx, int entryIdx) {
 						v->v = textureInfo[tri[t].textureIndex].uv[uvOrder[i]].v / 65535.0f;
 
 					}
-					if (v->_hasColour) {
+					if (f->_hasColour) {
 						byte colorIdx = (tri[t].textureBank * 16) + intensity[xi][yi];
 						v->_colour = colorIdx;
 

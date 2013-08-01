@@ -42,8 +42,6 @@ struct IslandVertex {
 	float g;
 	float b;
 
-	bool _hasTexture;
-	bool _hasColour;
 	byte _colour;
 
 	//not sure if this should be a...
@@ -54,6 +52,8 @@ struct IslandVertex {
 };
 
 struct IslandFace {
+	bool _hasTexture;
+	bool _hasColour;
 	IslandVertex _vertices[3];
 };
 
