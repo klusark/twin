@@ -24,6 +24,8 @@
 #define TWIN_MODEL_H
 
 #include "math/vector3d.h"
+#include "math/vector4d.h"
+#include "math/matrix4.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -87,6 +89,19 @@ public:
 	byte _colour;
 };
 
+class Hierarchy {
+public:
+	Hierarchy() {
+		_numChildren = 0;
+	}
+	void computeWorldMatrix(Math::Matrix4 parentMtx);
+	Math::Matrix4 computeLocalMatrix();
+	Math::Matrix4 _worldMatrix;
+	Hierarchy *_children[8];
+	uint16 _numChildren;
+	Vertex *_vertex;
+	uint16 _index;
+};
 
 class Model {
 public:
@@ -109,6 +124,8 @@ public:
 	Texture *_textures;
 	Point *_points;
 	Sphere *_spheres;
+	Hierarchy *_heir;
+	Hierarchy *_heirs;
 };
 
 } // end of namespace Twin

@@ -24,6 +24,8 @@
 #include "common/textconsole.h"
 
 #include "math/vector3d.h"
+#include "math/vector4d.h"
+#include "math/matrix4.h"
 
 #include "engines/twin/model.h"
 #include "engines/twin/twin.h"
@@ -186,26 +188,48 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 		t->_h = stream->readByte();
 	}
 
+
+	_heirs = new Hierarchy[_numBones];
+
+	for (int i = 0; i < _numBones; ++i) {
+		Bone *b = &_bones[i];
+		Hierarchy *h =  &_heirs[i];
+		h->_index = i;
+		h->_vertex = &_verticies[b->_vertex];
+		if (b->_parent == 0xffff) {
+			_heir = h;
+			continue;
+		}
+		Hierarchy *ph =  &_heirs[b->_parent];
+		ph->_children[ph->_numChildren] = h;
+		ph->_numChildren++;
+	}
+	Math::Matrix4 matrix;
+	matrix.setToIdentity();
+
+	_heir->computeWorldMatrix(matrix);
 }
 
+Math::Matrix4 Hierarchy::computeLocalMatrix() {
+	Math::Matrix4 matrix;
+	matrix.setToIdentity();
+	matrix.setPosition(_vertex->_pos);
+	return matrix;
+}
+
+void Hierarchy::computeWorldMatrix(Math::Matrix4 parentMtx) {
+	Math::Matrix4 localMtx = computeLocalMatrix();
+	_worldMatrix = parentMtx * localMtx;
+	for (int i = 0; i < _numChildren; ++i) {
+		_children[i]->computeWorldMatrix(_worldMatrix);
+	}
+}
 
 Math::Vector3d Vertex::getPos(Model *m) {
-	Math::Vector3d vec(_pos);
-	uint16 bone = _bone;
-	if (bone == 0) {
-		return vec;
-	}
-	Bone *b = &m->_bones[bone];
-	while (b) {
-		Vertex *bv = &m->_verticies[b->_vertex];
-		vec += bv->_pos;
-		bone = b->_parent;
-		if (bone == 0xffff) {
-			break;
-		}
-		b = &m->_bones[bone];
-	}
-	return vec;
+	Math::Vector4d mv(_pos.x(), _pos.y(), _pos.z(), 1);
+	Hierarchy *h = &m->_heir[_bone];
+	mv = h->_worldMatrix * mv;
+	return Math::Vector3d(mv.getData());
 }
 
 } // end of namespace Twin
