@@ -63,6 +63,7 @@ struct GroundTextureInfo {
 Island::Island(Hqr *hqr, Hqr *obl) {
 	_ile = hqr;
 	_obl = obl;
+	_drawList = NULL;
 	loadIsland();
 }
 

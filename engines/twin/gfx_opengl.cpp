@@ -386,51 +386,65 @@ void GfxOpenGL::drawIsland(Island *island) {
 	glAlphaFunc(GL_GREATER, 0.5);
 	glDisable(GL_LIGHTING);
 
-	//glTranslatef(-8, -8, 0);
-	for (uint32 i = 0; i < island->_numSections; ++i) {
-		IslandSection *s = &island->_sections[i];
-		glPushMatrix();
-		glTranslatef((s->y- 7) * 2, 0, (-(s->x - 7)) * 2);
-		for (int j = 0; j < s->_numFaces; ++j) {
-			IslandFace *f = &s->_faces[j];
-			if (f->_hasColour) {
-				glBegin(GL_TRIANGLES);
-				for (int k = 0; k < 3; ++k) {
-					IslandVertex *v = &f->_vertices[k];
+	if (!island->_drawList) {
+		GLuint *list = new GLuint;
+		*list = glGenLists(1);
+		island->_drawList = list;
 
-					glColor4ub(_palette->_palette[v->_colour]._r, _palette->_palette[v->_colour]._g, _palette->_palette[v->_colour]._b, 255);
-					glVertex3fv(v->_pos.getData());
-				}
-				glEnd();
-			}
-			if (f->_hasTexture) {
-				glEnable(GL_TEXTURE_2D);
-				glBegin(GL_TRIANGLES);
-				for (int k = 0; k < 3; ++k) {
-					IslandVertex *v = &f->_vertices[k];
-					glColor4ub(v->r * 255, v->g * 255, v->b * 255, v->a *255);
-					glTexCoord2f(v->u, v->v);
-					glVertex3fv(v->_pos.getData());
-				}
-				glEnd();
-
-				glDisable(GL_TEXTURE_2D);
-			}
-		}
-
-		for (uint32 i = 0; i < s->_numObjects; ++i) {
-			IslandObjectInfo *info = &s->_objects[i];
+		glNewList(*list, GL_COMPILE);
+		//glTranslatef(-8, -8, 0);
+		for (uint32 i = 0; i < island->_numSections; ++i) {
+			IslandSection *s = &island->_sections[i];
 			glPushMatrix();
+			glTranslatef((s->y- 7) * 2, 0, (-(s->x - 7)) * 2);
+			glBegin(GL_TRIANGLES);
+			for (int j = 0; j < s->_numFaces; ++j) {
+				IslandFace *f = &s->_faces[j];
+				if (f->_hasColour) {
+					for (int k = 0; k < 3; ++k) {
+						IslandVertex *v = &f->_vertices[k];
 
-			glTranslatef(info->_pos.z() - 1, info->_pos.y(), -(info->_pos.x() - 1));
-			float a = ((info->_angle + 4) / 4.0f) * 90;
-			glRotatef(a, 0, 1, 0);
-			drawModel(info->_model, true);
+						glColor4ub(_palette->_palette[v->_colour]._r, _palette->_palette[v->_colour]._g, _palette->_palette[v->_colour]._b, 255);
+						glVertex3fv(v->_pos.getData());
+					}
+				}
+			}
+			glEnd();
+			glEnable(GL_TEXTURE_2D);
+			glBegin(GL_TRIANGLES);
+			for (int j = 0; j < s->_numFaces; ++j) {
+				IslandFace *f = &s->_faces[j];
+
+				if (f->_hasTexture) {
+					for (int k = 0; k < 3; ++k) {
+						IslandVertex *v = &f->_vertices[k];
+						glColor4ub(v->r * 255, v->g * 255, v->b * 255, v->a *255);
+						glTexCoord2f(v->u, v->v);
+						glVertex3fv(v->_pos.getData());
+					}
+
+				}
+			}
+			glEnd();
+			glDisable(GL_TEXTURE_2D);
+
+			for (uint32 i = 0; i < s->_numObjects; ++i) {
+				IslandObjectInfo *info = &s->_objects[i];
+				glPushMatrix();
+
+				glTranslatef(info->_pos.z() - 1, info->_pos.y(), -(info->_pos.x() - 1));
+				float a = ((info->_angle + 4) / 4.0f) * 90;
+				glRotatef(a, 0, 1, 0);
+				drawModel(info->_model, true);
+				glPopMatrix();
+			}
 			glPopMatrix();
-		}
-		glPopMatrix();
 
+		}
+		glEndList();
 	}
+	GLuint list = *(GLuint *)island->_drawList;
+	glCallList(list);
 	glPopMatrix();
 	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_DEPTH_TEST);

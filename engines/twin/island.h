@@ -93,6 +93,7 @@ public:
 	uint32 _numSections;
 	byte *_texture;
 	void *_renderData;
+	void *_drawList;
 };
 
 } // end of namespace Twin
