@@ -288,22 +288,6 @@ void GfxOpenGL::drawBlock(Block *block, int32 x, int32 y, int32 z) {
 		return;
 	}
 
-	glColor4ub(255, 255, 255, 255);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_GREATER, 0.5);
-	glDisable(GL_LIGHTING);
-
-	glEnable(GL_TEXTURE_2D);
-
-
-	glPushMatrix();
-	glTranslatef(_cameraX, _cameraY, 0.0f);
 
 	glBindTexture(GL_TEXTURE_2D, texNum);
 	glBegin(GL_QUADS);
@@ -317,13 +301,23 @@ void GfxOpenGL::drawBlock(Block *block, int32 x, int32 y, int32 z) {
 	glVertex2f(x * _scaleW, (y + h) * _scaleH);
 	glEnd();
 
-	glPopMatrix();
-
-	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_ALPHA_TEST);
 }
 
 void GfxOpenGL::drawGrid(Grid *g) {
+	glColor4ub(255, 255, 255, 255);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.5);
+	glDisable(GL_LIGHTING);
+
+	glEnable(GL_TEXTURE_2D);
+	glPushMatrix();
+	glTranslatef(_cameraX, _cameraY, 0.0f);
 	BlockLibrary *b = g_resource->getBlockLibrary(g->getLibrary());
 	for (int z = 0; z < 64; z++) {
 		for (int x = 0; x < 64; x++) {
@@ -343,8 +337,9 @@ void GfxOpenGL::drawGrid(Grid *g) {
 			}
 		}
 	}
-
-
+	glPopMatrix();
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_ALPHA_TEST);
 }
 
 void GfxOpenGL::drawSphere(double radius, int slices, int stacks) {
