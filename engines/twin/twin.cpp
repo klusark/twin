@@ -139,10 +139,10 @@ Common::Error TwinEngine::run() {
 	_renderer->setupScreen(1024, 768, false);
 	//intro();
 
-	Hqr body;
-	body.open("BODY.HQR");
-	Model *m;
-	m = new Model(body.createReadStreamForIndex(0));
+	//Hqr body;
+	//body.open("BODY.HQR");
+	//Model *m;
+	//m = new Model(body.createReadStreamForIndex(0));
 
 	Hqr ress;
 	ress.open("RESS.HQR");
@@ -160,10 +160,13 @@ Common::Error TwinEngine::run() {
 	Hqr CITABAU2;
 	CITABAU2.open("DESERT.OBL");
 	Island idland(&CITABAU, &CITABAU2);
-	Hqr anim;
-	anim.open("ANIM.HQR");
 
-	Animation a(anim.createReadStreamForIndex(67), m);
+	uint32 body = 0;
+	uint32 entity = 0;
+	uint32 anim = 0;
+	Entity *e = g_resource->getEntity(entity, body, anim);
+	bool entityInfoChanged = false;
+	//Animation a(anim.createReadStreamForIndex(67), m);
 
 
 	int grid = 0;
@@ -174,25 +177,38 @@ Common::Error TwinEngine::run() {
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			Common::EventType type = event.type;
-			if (type == Common::EVENT_KEYDOWN || type == Common::EVENT_KEYUP) {
-
+			if (type == Common::EVENT_KEYUP) {
+				Common::KeyCode k = event.kbd.keycode;
+				if (k == Common::KEYCODE_q) {
+					++entity;
+					entityInfoChanged = true;
+				} else if (k == Common::KEYCODE_a && entity != 0) {
+					--entity;
+					entityInfoChanged = true;
+				} else if (k == Common::KEYCODE_w) {
+					++body;
+					entityInfoChanged = true;
+				} else if (k == Common::KEYCODE_s && body != 0) {
+					--body;
+					entityInfoChanged = true;
+				} else if (k == Common::KEYCODE_e) {
+					++anim;
+					entityInfoChanged = true;
+				} else if (k == Common::KEYCODE_d && anim != 0) {
+					--anim;
+					entityInfoChanged = true;
+				}
 			} else if (type == Common::EVENT_WHEELUP) {
 				++grid;
 				delete g;
-				delete m;
 				g = g_resource->getGrid(grid);
-				m = new Model(body.createReadStreamForIndex(grid));
-				a.setModel(m);
 			} else if (type == Common::EVENT_WHEELDOWN) {
 				--grid;
 				if (grid < 0) {
 					grid = 0;
 				} else {
 					delete g;
-					delete m;
 					g = g_resource->getGrid(grid);
-					m = new Model(body.createReadStreamForIndex(grid));
-					a.setModel(m);
 				}
 			} else if (type == Common::EVENT_LBUTTONDOWN) {
 				mouseDown = true;
@@ -217,14 +233,20 @@ Common::Error TwinEngine::run() {
 			}
 		}
 
+		if (entityInfoChanged) {
+			entityInfoChanged = false;
+			delete e;
+			e = g_resource->getEntity(entity, body, anim);
+		}
+
 		uint32 currentTime = g_system->getMillis();
 		uint32 deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
 
 		_renderer->clearScreen();
-		a.update(deltaTime);
+		e->update(deltaTime);
 		//_renderer->drawGrid(g);
-		_renderer->drawModel(m);
+		_renderer->drawModel(e->_model);
 		//_renderer->drawIsland(&idland);
 		_renderer->flipBuffer();
 	}

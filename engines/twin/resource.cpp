@@ -29,8 +29,18 @@
 #include "engines/twin/block_library.h"
 #include "engines/twin/grid.h"
 #include "engines/twin/entity_information.h"
+#include "engines/twin/animation.h"
+#include "engines/twin/model.h"
 
 namespace Twin {
+
+Entity::~Entity() {
+	delete _anim;
+	delete _model;
+}
+void Entity::update(uint32 time) {
+	_anim->update(time);
+}
 
 Resource *g_resource = nullptr;
 
@@ -42,6 +52,12 @@ Resource::Resource() {
 	_ress = new Hqr();
 	_ress->open("RESS.HQR");
 	_ei = new EntityInformation(_ress->createReadStreamForIndex(44));
+
+	_body = new Hqr();
+	_body->open("BODY.HQR");
+
+	_anim = new Hqr();
+	_anim->open("ANIM.HQR");
 }
 
 Resource::~Resource() {
@@ -80,6 +96,25 @@ void Resource::loadGridDefaults() {
 	_firstLibrary = stream->readUint16LE();
 	_firstBlock = stream->readUint16LE();
 	delete stream;
+}
+
+
+Entity *Resource::getEntity(uint16 entity, uint16 body, uint16 anim) {
+	if (entity >= _ei->_numEntities) {
+		entity = _ei->_numEntities - 1;
+	}
+	EntityEntry *e = &_ei->_entities[entity];
+	if (body >= e->_bodies.size()) {
+		body = e->_bodies.size() - 1;
+	}
+	if (anim >= e->_anims.size()) {
+		anim = e->_anims.size() - 1;
+	}
+
+	Model *m = new Model(_body->createReadStreamForIndex(e->_bodies[body]._bodyIndex));
+	Animation *a = new Animation(_anim->createReadStreamForIndex(e->_anims[anim]._animIndex), m);
+	Entity *ent = new Entity(m, a);
+	return ent;
 }
 
 } // end of namespace Twin

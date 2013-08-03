@@ -23,7 +23,7 @@
 #ifndef TWIN_ENTITY_INFORMATION_H
 #define TWIN_ENTITY_INFORMATION_H
 
-#include "common/list.h"
+#include "common/array.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -31,7 +31,7 @@ class SeekableReadStream;
 
 namespace Twin {
 
-class Body {
+class EntityBody {
 public:
 	uint16 _bodyIndex;
 	byte _index;
@@ -45,19 +45,25 @@ public:
 	uint16 _z2;
 };
 
-class Entity {
+class EntityAnim {
 public:
-	Common::List<Body> _bodies;
+	uint16 _animIndex;
+};
+
+class EntityEntry {
+public:
+	Common::Array<EntityBody> _bodies;
+	Common::Array<EntityAnim> _anims;
 };
 
 class EntityInformation {
 public:
 	EntityInformation(Common::SeekableReadStream *stream);
 	~EntityInformation();
-private:
+//private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
-	Entity *_entities;
+	EntityEntry *_entities;
 	uint32 _numEntities;
 };
 

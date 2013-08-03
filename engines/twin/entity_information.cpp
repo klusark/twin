@@ -44,15 +44,14 @@ void EntityInformation::loadLBA2(Common::SeekableReadStream *stream) {
 
 	stream->seek(offset);
 
-	
 	_numEntities = (offset/4) - 1;
-	_entities = new Entity[_numEntities];
+	_entities = new EntityEntry[_numEntities];
 	for (uint32 i = 0; i < _numEntities; ++i) {
-		Entity *e = &_entities[i];
+		EntityEntry *e = &_entities[i];
 		for (;;) {
 			byte opcode = stream->readByte();
 			if (opcode == 1) {
-				Body b;
+				EntityBody b;
 				b._index = stream->readByte();
 
 				// This is just the size of the body
@@ -73,13 +72,16 @@ void EntityInformation::loadLBA2(Common::SeekableReadStream *stream) {
 				}
 				e->_bodies.push_back(b);
 			} else if (opcode == 3) {
+				EntityAnim a;
 				//TODO: figure out the anim data
 				stream->readByte();
 				stream->readByte();
 				byte size = stream->readByte();
-				for (byte j = 1; j < size; ++j) {
+				a._animIndex = stream->readByte();
+				for (byte j = 2; j < size; ++j) {
 					stream->readByte();
 				}
+				e->_anims.push_back(a);
 			} else if (opcode == 0xff) {
 				break;
 			} else {

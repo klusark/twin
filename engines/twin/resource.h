@@ -36,6 +36,17 @@ class Hqr;
 class BlockLibrary;
 class Grid;
 class EntityInformation;
+class Model;
+class Animation;
+
+class Entity {
+public:
+	Entity(Model *m, Animation *a) : _model(m), _anim(a) { }
+	~Entity();
+	void update(uint32 time);
+	Model *_model;
+	Animation *_anim;
+};
 
 class Resource {
 public:
@@ -45,6 +56,7 @@ public:
 	Grid *getGrid(int id);
 	Block *getBlock(int id);
 	BlockLibrary *getBlockLibrary(int id);
+	Entity *getEntity(uint16 entity, uint16 body, uint16 anim);
 private:
 	void loadGridDefaults();
 
@@ -55,6 +67,8 @@ private:
 
 	Hqr *_bkg;
 	Hqr *_ress;
+	Hqr *_body;
+	Hqr *_anim;
 
 	EntityInformation *_ei;
 
