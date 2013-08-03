@@ -149,7 +149,7 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 						p->_colour = (data << 4) >> 4;
 					} else {
 						uint16 data = stream->readUint16LE();
-						if (i < 4) {
+						if (i < 4 && flag & 0x8000 || i < 3) {
 							p->_data[i] = data;
 						}
 					}
@@ -237,6 +237,9 @@ void Hierarchy::computeWorldMatrix(Math::Matrix4 parentMtx) {
 }
 
 Math::Vector3d Vertex::getPos(Model *m) {
+	if (_bone == 0) {
+		return _pos;
+	}
 	Math::Vector4d mv(_pos.x(), _pos.y(), _pos.z(), 1);
 	Hierarchy *h = &m->_heir[_bone];
 	mv = h->_worldMatrix * mv;
