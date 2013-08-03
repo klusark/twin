@@ -98,7 +98,7 @@ public:
 	void computeWorldMatrix(Math::Matrix4 parentMtx);
 	Math::Matrix4 computeLocalMatrix();
 	Math::Matrix4 _worldMatrix;
-	Hierarchy *_children[8];
+	Hierarchy *_children[16];
 	uint16 _numChildren;
 	Vertex *_vertex;
 	uint16 _index;

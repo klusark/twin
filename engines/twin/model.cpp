@@ -203,6 +203,9 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 		Hierarchy *ph =  &_heirs[b->_parent];
 		ph->_children[ph->_numChildren] = h;
 		ph->_numChildren++;
+		if (ph->_numChildren >= 16) {
+			error("Too many children");
+		}
 	}
 
 	recalculateHierarchy();
@@ -218,6 +221,9 @@ void Model::recalculateHierarchy() {
 Math::Matrix4 Hierarchy::computeLocalMatrix() {
 	Math::Matrix4 matrix;
 	matrix.setToIdentity();
+	if (_index == 0) {
+		return matrix;
+	}
 	Math::Vector3d pos = _vertex->_pos;
 	if (_isTransltion) {
 		pos += _translation;
