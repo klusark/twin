@@ -77,8 +77,8 @@ void EntityInformation::loadLBA2(Common::SeekableReadStream *stream) {
 				stream->readByte();
 				stream->readByte();
 				byte size = stream->readByte();
-				a._animIndex = stream->readByte();
-				for (byte j = 2; j < size; ++j) {
+				a._animIndex = stream->readUint16LE();
+				for (byte j = 3; j < size; ++j) {
 					stream->readByte();
 				}
 				e->_anims.push_back(a);
