@@ -93,7 +93,11 @@ void Animation::update(uint32 time) {
 		next = &_keyframes[_startFrame];
 	}
 	float interp = (float)_time / k->_length;
-	for (int i = 0; i < _model->_numBones; ++i) {
+	int numBones = _model->_numBones;
+	if (numBones > _numBones) {
+		numBones = _numBones;
+	}
+	for (int i = 0; i < numBones; ++i) {
 		Boneframe *b = &k->_bones[i];
 		Boneframe *bn = &next->_bones[i];
 		Hierarchy *h = &_model->_heirs[i];
