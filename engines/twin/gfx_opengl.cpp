@@ -187,7 +187,20 @@ void GfxOpenGL::drawModel(Model *m, bool fromIsland) {
 		glRotatef(_rotX, 0, 1, 0);
 	}
 
-		for (uint j = 0; j < m->_numPoints; j++) {
+	for (uint j = 0; j < m->_numSpheres; ++j) {
+		Sphere *s = &m->_spheres[j];
+		Vertex *v = &m->_verticies[s->_vertex];
+		Math::Vector3d vec = v->getPos(m);
+
+		glColor4ub(_palette->_palette[s->_colour]._r, _palette->_palette[s->_colour]._g, _palette->_palette[s->_colour]._b, 255);
+
+		glPushMatrix();
+		glTranslatef(vec.x(), vec.y(), vec.z());
+		drawSphere(s->_size, 8, 8);
+		glPopMatrix();
+	}
+
+	for (uint j = 0; j < m->_numPoints; ++j) {
 		Point *p = &m->_points[j];
 		glColor4ub(_palette->_palette[p->_colour]._r, _palette->_palette[p->_colour]._g, _palette->_palette[p->_colour]._b, 255);
 
@@ -201,6 +214,7 @@ void GfxOpenGL::drawModel(Model *m, bool fromIsland) {
 		glVertex3fv(vec2.getData());
 		glEnd();
 	}
+
 	for (uint j = 0; j < m->_numPolygons; j++) {
 		Polygon *p = &m->_polygons[j];
 		if (fromIsland) {
@@ -254,21 +268,6 @@ void GfxOpenGL::drawModel(Model *m, bool fromIsland) {
 			glDisable(GL_BLEND);
 		}
 	}
-
-
-
-	for (uint j = 0; j < m->_numSpheres; j++) {
-		Sphere *s = &m->_spheres[j];
-		Vertex *v = &m->_verticies[s->_vertex];
-		Math::Vector3d vec = v->getPos(m);
-
-		glColor4ub(_palette->_palette[s->_colour]._r, _palette->_palette[s->_colour]._g, _palette->_palette[s->_colour]._b, 255);
-
-		glPushMatrix();
-		glTranslatef(vec.x(), vec.y(), vec.z());
-		drawSphere(s->_size, 8, 8);
-		glPopMatrix();
-	}	
 
 	if (!fromIsland) {
 		glPopMatrix();
