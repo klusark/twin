@@ -91,8 +91,9 @@ public:
 
 class Hierarchy {
 public:
-	Hierarchy() {
+	Hierarchy() :_translation(0,0,0) {
 		_numChildren = 0;
+		_isTransltion = true;
 	}
 	void computeWorldMatrix(Math::Matrix4 parentMtx);
 	Math::Matrix4 computeLocalMatrix();
@@ -101,11 +102,18 @@ public:
 	uint16 _numChildren;
 	Vertex *_vertex;
 	uint16 _index;
+
+	bool _isTransltion;
+	Math::Vector3d _translation;
+	Math::Angle _pitch;
+	Math::Angle _yaw;
+	Math::Angle _roll;
 };
 
 class Model {
 public:
 	Model(Common::SeekableReadStream *stream);
+	void recalculateHierarchy();
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 

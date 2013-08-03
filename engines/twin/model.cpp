@@ -204,6 +204,11 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 		ph->_children[ph->_numChildren] = h;
 		ph->_numChildren++;
 	}
+
+	recalculateHierarchy();
+}
+
+void Model::recalculateHierarchy() {
 	Math::Matrix4 matrix;
 	matrix.setToIdentity();
 
@@ -213,7 +218,13 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 Math::Matrix4 Hierarchy::computeLocalMatrix() {
 	Math::Matrix4 matrix;
 	matrix.setToIdentity();
-	matrix.setPosition(_vertex->_pos);
+	Math::Vector3d pos = _vertex->_pos;
+	if (_isTransltion) {
+		pos += _translation;
+	} else {
+		matrix.buildFromPitchYawRoll(_pitch, _yaw, _roll);
+	}
+	matrix.setPosition(pos);
 	return matrix;
 }
 

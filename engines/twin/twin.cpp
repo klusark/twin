@@ -38,6 +38,8 @@
 #include "engines/twin/animation.h"
 #include "engines/twin/model.h"
 #include "engines/twin/entity_information.h"
+#include "engines/twin/island.h"
+#include "engines/twin/animation.h"
 
 
 namespace Twin {
@@ -146,10 +148,20 @@ Common::Error TwinEngine::run() {
 	_renderer->setColourPalette(&cp);
 	_renderer->loadModelTexture(ress.createReadStreamForIndex(6));
 
+	Hqr CITABAU;
+	CITABAU.open("DESERT.ILE");
+	Hqr CITABAU2;
+	CITABAU2.open("DESERT.OBL");
+	Island idland(&CITABAU, &CITABAU2);
+	Hqr anim;
+	anim.open("ANIM.HQR");
+
+	Animation a(anim.createReadStreamForIndex(67), m);
+
 	int grid = 0;
 	Grid *g = g_resource->getGrid(grid);
 	bool mouseDown = false, wheelDown = false, rDown = false;
-
+	uint32 lastTime = g_system->getMillis();
 	for (;;) {
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -162,6 +174,7 @@ Common::Error TwinEngine::run() {
 				delete m;
 				g = g_resource->getGrid(grid);
 				m = new Model(body.createReadStreamForIndex(grid));
+				a.setModel(m);
 			} else if (type == Common::EVENT_WHEELDOWN) {
 				--grid;
 				if (grid < 0) {
@@ -171,6 +184,7 @@ Common::Error TwinEngine::run() {
 					delete m;
 					g = g_resource->getGrid(grid);
 					m = new Model(body.createReadStreamForIndex(grid));
+					a.setModel(m);
 				}
 			} else if (type == Common::EVENT_LBUTTONDOWN) {
 				mouseDown = true;
@@ -195,9 +209,15 @@ Common::Error TwinEngine::run() {
 			}
 		}
 
+		uint32 currentTime = g_system->getMillis();
+		uint32 deltaTime = currentTime - lastTime;
+		lastTime = currentTime;
+
 		_renderer->clearScreen();
-		_renderer->drawGrid(g);
+		a.update(deltaTime);
+		//_renderer->drawGrid(g);
 		_renderer->drawModel(m);
+		//_renderer->drawIsland(&idland);
 		_renderer->flipBuffer();
 	}
 

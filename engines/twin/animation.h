@@ -23,6 +23,7 @@
 #ifndef TWIN_ANIMATION_H
 #define TWIN_ANIMATION_H
 
+#include "math/vector3d.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -30,33 +31,44 @@ class SeekableReadStream;
 
 namespace Twin {
 
+class Model;
+
 class Boneframe {
 public:
 	uint16 _type;
-	int16 _x;
-	int16 _y;
-	int16 _z;
+	Math::Vector3d _pos;
+	Math::Angle _pitch;
+	Math::Angle _yaw;
+	Math::Angle _roll;
 };
 
 class Keyframe {
 public:
 	uint16 _length;
-	int16 _x;
+		int16 _x;
 	int16 _y;
 	int16 _z;
+
 	Boneframe *_bones;
 };
 
 class Animation {
 public:
-	Animation(Common::SeekableReadStream *stream);
+	Animation(Common::SeekableReadStream *stream, Model *m);
 	~Animation();
+
+	void update(uint32 time);
+	void setModel(Model *m) { _model = m; }
 private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
+	uint16 _startFrame;
 	uint16 _numKeys;
 	uint16 _numBones;
 	Keyframe *_keyframes;
+	Model *_model;
+	uint32 _currentFrame;
+	uint32 _time;
 };
 
 } // end of namespace Twin
