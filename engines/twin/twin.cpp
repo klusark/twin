@@ -39,6 +39,8 @@
 #include "engines/twin/model.h"
 #include "engines/twin/entity_information.h"
 #include "engines/twin/island.h"
+#include "engines/twin/video_player.h"
+#include "engines/twin/video_player_smk.h"
 #include "engines/twin/animation.h"
 
 
@@ -148,6 +150,11 @@ Common::Error TwinEngine::run() {
 	_renderer->setColourPalette(&cp);
 	_renderer->loadModelTexture(ress.createReadStreamForIndex(6));
 
+
+
+	//VideoPlayerSmacker *player = new VideoPlayerSmacker(_renderer, nullptr);
+	//player->play(16);
+
 	Hqr CITABAU;
 	CITABAU.open("DESERT.ILE");
 	Hqr CITABAU2;
@@ -157,6 +164,7 @@ Common::Error TwinEngine::run() {
 	anim.open("ANIM.HQR");
 
 	Animation a(anim.createReadStreamForIndex(67), m);
+
 
 	int grid = 0;
 	Grid *g = g_resource->getGrid(grid);
