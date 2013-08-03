@@ -45,8 +45,31 @@ void VideoPlayerSmacker::play(int index) {
 }
 
 void VideoPlayerSmacker::play(Common::SeekableReadStream *stream) {
-	 // TODO skip video events
-	while (!_smkDecoder->endOfVideo()) {
+	_smkDecoder->loadStream(stream);
+	_smkDecoder->start();
+
+	// TODO choose the right Audio Channel (some movies have different tracks that must be played)
+	
+	const byte* palette = _smkDecoder->getPalette();
+
+	int32 w = _renderer->getScreenWidth();
+	int32 h = (200 * w) / 320; // FIXME put this values in constants (frame size)
+	int32 x = 0;
+	int32 y = (_renderer->getScreenHeight() - h) / 2;
+
+	bool done = false;
+	Common::Event event;
+
+	while (!done && !_smkDecoder->endOfVideo()) {
+		// TODO find a better way to skip this
+		while (g_system->getEventManager()->pollEvent(event)) {
+			Common::EventType type = event.type;
+			if (type == Common::EVENT_KEYDOWN || type == Common::EVENT_KEYUP) {
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					done = true;
+				}
+			} 
+		}
 
 		if (_smkDecoder->needsUpdate()) {
 			const Graphics::Surface *frame = _smkDecoder->decodeNextFrame();
