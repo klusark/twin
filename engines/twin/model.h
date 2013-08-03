@@ -45,6 +45,8 @@ public:
 	byte _colour;
 	bool _hasTransparency;
 	bool _hasTex;
+
+	bool operator < (const Polygon &poly) const;
 };
 
 class Vertex {

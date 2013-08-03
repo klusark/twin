@@ -22,6 +22,7 @@
 
 #include "common/stream.h"
 #include "common/textconsole.h"
+#include "common/algorithm.h"
 
 #include "math/vector3d.h"
 #include "math/vector4d.h"
@@ -188,6 +189,7 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 		t->_h = stream->readByte();
 	}
 
+	Common::sort(_polygons, &_polygons[_numPolygons]);
 
 	_heirs = new Hierarchy[_numBones];
 
@@ -250,6 +252,13 @@ Math::Vector3d Vertex::getPos(Model *m) {
 	Hierarchy *h = &m->_heir[_bone];
 	mv = h->_worldMatrix * mv;
 	return Math::Vector3d(mv.getData());
+}
+
+bool Polygon::operator < (const Polygon &poly) const {
+	if (!_hasTransparency && poly._hasTransparency) {
+		return true;
+	}
+	return false;
 }
 
 } // end of namespace Twin

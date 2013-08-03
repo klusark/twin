@@ -165,9 +165,10 @@ void GfxOpenGL::loadModelTexture(Common::SeekableReadStream *stream) {
 void GfxOpenGL::drawModel(Model *m, bool fromIsland) {
 	if (!fromIsland) {
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_ALPHA_TEST);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -271,7 +272,7 @@ void GfxOpenGL::drawModel(Model *m, bool fromIsland) {
 
 	if (!fromIsland) {
 		glPopMatrix();
-
+		glDisable(GL_CULL_FACE);
 		glDisable(GL_DEPTH_TEST);
 	}
 }
