@@ -38,6 +38,11 @@ void ColourPalette::load(Common::SeekableReadStream *stream) {
 		_palette[i]._r = stream->readByte();
 		_palette[i]._g = stream->readByte();
 		_palette[i]._b = stream->readByte();
+		if (i == 0) {
+			_palette[i]._a = 0;
+		} else {
+			_palette[i]._a = 255;
+		}
 	}
 }
 

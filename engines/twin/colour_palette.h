@@ -42,6 +42,7 @@ public:
 		byte _r;
 		byte _g;
 		byte _b;
+		byte _a;
 	};
 
 	Colour _palette[256];

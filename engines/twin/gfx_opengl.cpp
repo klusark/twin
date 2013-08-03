@@ -165,6 +165,9 @@ void GfxOpenGL::loadModelTexture(Common::SeekableReadStream *stream) {
 void GfxOpenGL::drawModel(Model *m, bool fromIsland) {
 	if (!fromIsland) {
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_ALPHA_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -181,6 +184,21 @@ void GfxOpenGL::drawModel(Model *m, bool fromIsland) {
 		glTranslatef((_cameraX/(float)_screenWidth), -(_cameraY/(float)_screenHeight), (_cameraZ/(float)_screenHeight));
 		glRotatef(_rotY, 1, 0, 0);
 		glRotatef(_rotX, 0, 1, 0);
+	}
+
+		for (uint j = 0; j < m->_numPoints; j++) {
+		Point *p = &m->_points[j];
+		glColor4ub(_palette->_palette[p->_colour]._r, _palette->_palette[p->_colour]._g, _palette->_palette[p->_colour]._b, 255);
+
+		Vertex *v1 = &m->_verticies[p->_v1];
+		Math::Vector3d vec1 = v1->getPos(m);
+		Vertex *v2 = &m->_verticies[p->_v2];
+		Math::Vector3d vec2 = v2->getPos(m);
+
+		glBegin(GL_LINES);
+		glVertex3fv(vec1.getData());
+		glVertex3fv(vec2.getData());
+		glEnd();
 	}
 	for (uint j = 0; j < m->_numPolygons; j++) {
 		Polygon *p = &m->_polygons[j];
@@ -218,7 +236,11 @@ void GfxOpenGL::drawModel(Model *m, bool fromIsland) {
 				glTexCoord2f(x, y);
 				glColor4ub(255, 255, 255, 255);
 			} else {
-				glColor4ub(_palette->_palette[p->_colour]._r, _palette->_palette[p->_colour]._g, _palette->_palette[p->_colour]._b, 255);
+				byte a = 255;
+				if (p->_hasTransparency) {
+					a = 126;
+				}
+				glColor4ub(_palette->_palette[p->_colour]._r, _palette->_palette[p->_colour]._g, _palette->_palette[p->_colour]._b, a);
 			}
 			glNormal3f(n->_x, n->_y, n->_z);
 			glVertex3fv(mv.getData());
@@ -227,23 +249,12 @@ void GfxOpenGL::drawModel(Model *m, bool fromIsland) {
 		glEnd();
 		if (p->_hasTex) {
 			glDisable(GL_TEXTURE_2D);
+			glDisable(GL_ALPHA_TEST);
+			glDisable(GL_BLEND);
 		}
 	}
 
-	for (uint j = 0; j < m->_numPoints; j++) {
-		Point *p = &m->_points[j];
-		glColor4ub(_palette->_palette[p->_colour]._r, _palette->_palette[p->_colour]._g, _palette->_palette[p->_colour]._b, 255);
 
-		Vertex *v1 = &m->_verticies[p->_v1];
-		Math::Vector3d vec1 = v1->getPos(m);
-		Vertex *v2 = &m->_verticies[p->_v2];
-		Math::Vector3d vec2 = v2->getPos(m);
-
-		glBegin(GL_LINES);
-		glVertex3fv(vec1.getData());
-		glVertex3fv(vec2.getData());
-		glEnd();
-	}
 
 	for (uint j = 0; j < m->_numSpheres; j++) {
 		Sphere *s = &m->_spheres[j];
@@ -460,11 +471,7 @@ void GfxOpenGL::loadTexture(byte *buf, uint32 *texId, byte **tex, uint32 width, 
 		pixels[i*4 + 0] = _palette->_palette[val]._r;
 		pixels[i*4 + 1] = _palette->_palette[val]._g;
 		pixels[i*4 + 2] = _palette->_palette[val]._b;
-		if (val == 0) {
-			pixels[i*4 + 3] = 0;
-		} else {
-			pixels[i*4 + 3] = 255;
-		}
+		pixels[i*4 + 3] = _palette->_palette[val]._a;
 	}
 
 	glBindTexture(GL_TEXTURE_2D, texNum);

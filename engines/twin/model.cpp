@@ -115,6 +115,7 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 			p->_num = val / 2;
 			p->_colour = 0;
 			p->_hasTex = flag & 0x8 && val > 16;
+			p->_hasTransparency = flag & 0x2;
 			int texc = 0;
 			for (int i = 0; i < (val / 2); ++i) {
 				if (i == 14 && p->_hasTex) {
@@ -143,10 +144,9 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 					if (p->_hasTex && i == 3 && val != 32) {
 						p->_tex = stream->readByte();
 						stream->readByte();
-						//p->_data[i] = stream->readByte();
 					} else if (i == 4) {
 						uint16 data = stream->readUint16LE();
-						p->_colour = (data << 4) >> 4;
+						p->_colour = (data & 0x00FF);
 					} else {
 						uint16 data = stream->readUint16LE();
 						if (i < 4 && flag & 0x8000 || i < 3) {

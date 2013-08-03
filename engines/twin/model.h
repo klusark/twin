@@ -43,6 +43,7 @@ public:
 	byte _texX[4];
 	byte _texY[4];
 	byte _colour;
+	bool _hasTransparency;
 	bool _hasTex;
 };
 
