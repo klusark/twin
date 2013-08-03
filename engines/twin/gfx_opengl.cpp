@@ -213,8 +213,8 @@ void GfxOpenGL::drawModel(Model *m, bool fromIsland) {
 				Texture *t = &m->_textures[p->_tex];
 				float x = p->_texX[i];
 				float y = p->_texY[i];
-				x /= (t->_w );
-				y /= (t->_h);
+				x /= (t->_w + 1);
+				y /= (t->_h + 1);
 				glTexCoord2f(x, y);
 				glColor4ub(255, 255, 255, 255);
 			} else {
