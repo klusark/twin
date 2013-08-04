@@ -36,6 +36,7 @@ class Scene {
 public:
 	Scene(Common::SeekableReadStream *stream);
 	void draw();
+	void update(uint32 delta);
 private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 

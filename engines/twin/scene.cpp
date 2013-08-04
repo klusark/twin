@@ -149,6 +149,11 @@ void Scene::loadLBA2(Common::SeekableReadStream *stream) {
 	stream->readUint16LE();
 }
 
+void Scene::update(uint32 delta) {
+	for (int i = 0; i < _numActors - 1; ++i) {
+		_actors[i]->update(delta);
+	}
+}
 void Scene::draw() {
 	for (int i = 0; i < _numActors - 1; ++i) {
 		_actors[i]->draw();

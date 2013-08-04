@@ -257,6 +257,7 @@ Common::Error TwinEngine::run() {
 		_renderer->drawGrid(g);
 		_renderer->drawModel(e->_model);
 		s->draw();
+		s->update(deltaTime);
 		//_renderer->drawIsland(&idland);
 		_renderer->flipBuffer();
 	}

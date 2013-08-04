@@ -26,6 +26,7 @@
 #include "engines/twin/twin.h"
 #include "engines/twin/resource.h"
 #include "engines/twin/gfx_base.h"
+#include "engines/twin/animation.h"
 #include "common/textconsole.h"
 
 namespace Twin {
@@ -75,6 +76,12 @@ void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 	_lifeScript = new uint8[_lifeScriptSize];
 	stream->read(_lifeScript, _lifeScriptSize);
 
+}
+
+void Actor::update(uint32 delta) {
+	if (_entity) {
+		_entity->_anim->update(delta);
+	}
 }
 
 void Actor::draw() {
