@@ -140,19 +140,23 @@ void GfxOpenGL::destroyBitmap(uint32 texID) {
 
 void GfxOpenGL::bindTexture(Texture *t) {
 	if (t->_renderData == NULL) {
-		GLuint *texNum = new GLuint;
-		GLint format = GL_RGBA;
-		GLint type = GL_UNSIGNED_BYTE;
-		glGenTextures(1, texNum);
-		glBindTexture(GL_TEXTURE_2D, *texNum);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glPixelStorei(GL_UNPACK_ROW_LENGTH, 256);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, t->_w + 1, t->_h + 1, 0, format, type, _modelPixels + t->_x * 4 + t->_y * 4 * 256);
-		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-		t->_renderData = texNum;
+		if (t->_x == 0 && t->_y == 0 && t->_w == 255 && t->_h == 255) {
+			t->_renderData = &_modelMaterial;
+		} else {
+			GLuint *texNum = new GLuint;
+			GLint format = GL_RGBA;
+			GLint type = GL_UNSIGNED_BYTE;
+			glGenTextures(1, texNum);
+			glBindTexture(GL_TEXTURE_2D, *texNum);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glPixelStorei(GL_UNPACK_ROW_LENGTH, 256);
+			glTexImage2D(GL_TEXTURE_2D, 0, format, t->_w + 1, t->_h + 1, 0, format, type, _modelPixels + t->_x * 4 + t->_y * 4 * 256);
+			glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+			t->_renderData = texNum;
+		}
 	}
 
 	GLuint texNum = *(GLuint *)t->_renderData;
@@ -236,12 +240,7 @@ void GfxOpenGL::drawModel(Model *m, bool fromIsland) {
 			p->_hasTex = false;
 		}
 		if (p->_hasTex) {
-
-			if (p->_tex == 0) {
-				glBindTexture(GL_TEXTURE_2D, _modelMaterial);
-			} else {
-				bindTexture(&m->_textures[p->_tex]);
-			}
+			bindTexture(&m->_textures[p->_tex]);
 			glEnable(GL_TEXTURE_2D);
 		}
 
