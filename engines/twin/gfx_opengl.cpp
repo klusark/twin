@@ -176,7 +176,10 @@ void GfxOpenGL::freeModel(Model *m) {
 		Texture *t = &m->_textures[i];
 		if (t->_renderData != nullptr) {
 			GLuint texid = *(GLuint *)t->_renderData;
-			glDeleteTextures(1, &texid);
+			if (texid != _modelMaterial) {
+				glDeleteTextures(1, &texid);
+			}
+			t->_renderData = nullptr;
 		}
 	}
 }
