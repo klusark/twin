@@ -170,9 +170,12 @@ Common::Error TwinEngine::run() {
 	bool entityInfoChanged = false;
 	//Animation a(anim.createReadStreamForIndex(67), m);
 
+	Hqr scene;
+	scene.open("SCENE.HQR");
 
-	int grid = 0;
+	int grid = 15;
 	Grid *g = g_resource->getGrid(grid);
+	Scene *s = new Scene(scene.createReadStreamForIndex(grid + 1));
 	bool mouseDown = false, wheelDown = false, rDown = false;
 	uint32 lastTime = g_system->getMillis();
 	for (;;) {
@@ -203,14 +206,18 @@ Common::Error TwinEngine::run() {
 			} else if (type == Common::EVENT_WHEELUP) {
 				++grid;
 				delete g;
+				delete s;
 				g = g_resource->getGrid(grid);
+				s = new Scene(scene.createReadStreamForIndex(grid + 1));
 			} else if (type == Common::EVENT_WHEELDOWN) {
 				--grid;
 				if (grid < 0) {
 					grid = 0;
 				} else {
 					delete g;
+					delete s;
 					g = g_resource->getGrid(grid);
+					s = new Scene(scene.createReadStreamForIndex(grid + 1));
 				}
 			} else if (type == Common::EVENT_LBUTTONDOWN) {
 				mouseDown = true;
@@ -247,13 +254,16 @@ Common::Error TwinEngine::run() {
 
 		_renderer->clearScreen();
 		e->update(deltaTime);
-		//_renderer->drawGrid(g);
+		_renderer->drawGrid(g);
 		_renderer->drawModel(e->_model);
+		s->draw();
 		//_renderer->drawIsland(&idland);
 		_renderer->flipBuffer();
 	}
 
 	delete e;
+	delete s;
+	delete g;
 
 	return Common::kNoError;
 }

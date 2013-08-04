@@ -37,6 +37,7 @@
 #include "engines/twin/block_library.h"
 #include "engines/twin/block.h"
 #include "engines/twin/island.h"
+#include "engines/twin/actor.h"
 
 #ifdef USE_OPENGL
 
@@ -169,6 +170,34 @@ void GfxOpenGL::loadModelTexture(Common::SeekableReadStream *stream) {
 	delete stream;
 
 	loadTexture(data, (uint32 *)&_modelMaterial, &_modelPixels, 256, 256);
+}
+
+void GfxOpenGL::drawActor(Actor *a) {
+	float orthoProjX = 320;
+	float orthoProjY = 240;
+	float projPosX = ((a->_x - a->_z) * 24.0f) / 512.0f + orthoProjX;
+	float projPosY = (((a->_x + a->_z) * 12.0f) - a->_y * 30.0f) / 512.0f + orthoProjY;
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, 1, -1, 0, 0.1, 10);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt( 0, 0, 1, 0, 0, 0, 0, 1, 0 );
+
+	glTranslatef((_cameraX/(float)_screenWidth), -(_cameraY/(float)_screenHeight), (_cameraZ/(float)_screenHeight));
+	glTranslatef(projPosX/1024, -(projPosY/768 ), 0);
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	drawModel(a->_entity->_model, true);
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
 }
 
 void GfxOpenGL::freeModel(Model *m) {

@@ -30,15 +30,17 @@ class SeekableReadStream;
 
 namespace Twin {
 
+class Entity;
 
 class Actor {
 public:
 	Actor(Common::SeekableReadStream *stream);
-private:
+	void draw();
+//private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
 
-	uint16 _entity;
+	uint16 _entityID;
 	byte _body;
 	byte _anim;
 	uint16 _sprite;
@@ -51,6 +53,7 @@ private:
 	uint16 _lifeScriptSize;
 	uint8 *_lifeScript;
 
+	Entity *_entity;
 
 };
 

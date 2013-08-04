@@ -35,6 +35,7 @@ class Actor;
 class Scene {
 public:
 	Scene(Common::SeekableReadStream *stream);
+	void draw();
 private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 

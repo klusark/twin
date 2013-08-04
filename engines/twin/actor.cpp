@@ -24,10 +24,13 @@
 
 #include "engines/twin/actor.h"
 #include "engines/twin/twin.h"
+#include "engines/twin/resource.h"
+#include "engines/twin/gfx_base.h"
+#include "common/textconsole.h"
 
 namespace Twin {
 
-Actor::Actor(Common::SeekableReadStream *stream) {
+Actor::Actor(Common::SeekableReadStream *stream) : _entity(nullptr) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
 	}
@@ -37,13 +40,19 @@ Actor::Actor(Common::SeekableReadStream *stream) {
 void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 	//These sizes are probably mostly wrong, but the overall actor size is right
 	uint16 flags = stream->readUint16LE();
-	_entity = stream->readUint16LE();
 	_body = stream->readByte();
+	stream->readByte();
+	_entityID = stream->readUint16LE();
 	_anim = stream->readByte();
 	_sprite = stream->readUint16LE();
+	stream->readUint16LE();
 	_x = stream->readUint16LE();
 	_y = stream->readUint16LE();
 	_z = stream->readUint16LE();
+	if (_entityID != 0xffff) {
+		_entity = g_resource->getEntity(_entityID, 0, 0);
+	}
+
 	stream->readByte();
 	stream->readUint16LE();
 	stream->readUint16LE();
@@ -52,8 +61,6 @@ void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 	stream->readUint16LE();
 	stream->readUint16LE();
 	stream->readUint16LE();
-	stream->readUint16LE();
-	stream->readByte();
 	stream->readByte();
 	stream->readByte();
 	stream->readByte();
@@ -70,5 +77,10 @@ void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 
 }
 
+void Actor::draw() {
+	if (_entity) {
+		g_renderer->drawActor(this);
+	}
+}
 
 } // end of namespace Twin
