@@ -61,7 +61,11 @@ Resource::Resource() {
 }
 
 Resource::~Resource() {
-
+	delete _bkg;
+	delete _ress;
+	delete _ei;
+	delete _body;
+	delete _anim;
 }
 
 Grid *Resource::getGrid(int id) {

@@ -49,6 +49,11 @@
 
 namespace Twin {
 
+GfxOpenGL::~GfxOpenGL() {
+	glDeleteTextures(1, &_modelMaterial);
+	delete[] _modelPixels;
+}
+
 byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	_pixelFormat = g_system->setupScreen(screenW, screenH, fullscreen, true).getFormat();
 	_screenWidth = screenW;
@@ -160,6 +165,16 @@ void GfxOpenGL::loadModelTexture(Common::SeekableReadStream *stream) {
 	delete stream;
 
 	loadTexture(data, (uint32 *)&_modelMaterial, &_modelPixels, 256, 256);
+}
+
+void GfxOpenGL::freeModel(Model *m) {
+	for (uint32 i = 0; i < m->_numTextures; ++i) {
+		Texture *t = &m->_textures[i];
+		if (t->_renderData != nullptr) {
+			GLuint texid = *(GLuint *)t->_renderData;
+			glDeleteTextures(1, &texid);
+		}
+	}
 }
 
 void GfxOpenGL::drawModel(Model *m, bool fromIsland) {

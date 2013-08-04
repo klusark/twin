@@ -30,6 +30,8 @@ namespace Twin {
 //TODO: Turn this into a base class;
 typedef GfxOpenGL GfxBase;
 
+extern GfxBase *g_renderer;
+
 } // end of namespace Twin
 
 

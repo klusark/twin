@@ -69,6 +69,7 @@ class GfxOpenGL {
 
 public:
 	GfxOpenGL() {}
+	~GfxOpenGL();
 	byte *setupScreen(int screenW, int screenH, bool fullscreen);
 	void clearScreen();
 	void flipBuffer();
@@ -76,6 +77,7 @@ public:
 	void drawBitmap(int texID, int x, int y, int w, int h);
 	void destroyBitmap(uint32 texID);
 	void drawModel(Model *m, bool fromIsland = false);
+	void freeModel(Model *m);
 	void drawBlock(Block *block, int32 x, int32 y, int32 z);
 	void drawGrid(Grid *g);
 	void drawSphere(double radius, int slices, int stacks);

@@ -47,6 +47,7 @@
 namespace Twin {
 
 TwinEngine *g_twin = NULL;
+GfxBase *g_renderer = NULL;
 
 TwinEngine::TwinEngine(OSystem *syst, TwinGameType type) :
 		Engine(syst), _type(type) {
@@ -131,6 +132,7 @@ void TwinEngine::intro() {
 
 void TwinEngine::createRenderer() {
 	_renderer = new GfxOpenGL();
+	g_renderer = _renderer;
 }
 
 Common::Error TwinEngine::run() {

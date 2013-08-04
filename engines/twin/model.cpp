@@ -41,6 +41,7 @@ Model::Model(Common::SeekableReadStream *stream) {
 }
 
 Model::~Model() {
+	g_renderer->freeModel(this);
 	delete[] _polygons;
 	delete[] _verticies;
 	delete[] _bones;
