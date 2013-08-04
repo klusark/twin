@@ -187,7 +187,7 @@ void GfxOpenGL::drawActor(Actor *a) {
 	gluLookAt( 0, 0, 1, 0, 0, 0, 0, 1, 0 );
 
 	glTranslatef((_cameraX/(float)_screenWidth), -(_cameraY/(float)_screenHeight), (_cameraZ/(float)_screenHeight));
-	glTranslatef(projPosX/1024, -(projPosY/768 ), 0);
+	glTranslatef(projPosX/(float)_screenWidth, -(projPosY/(float)_screenHeight ), 0);
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
