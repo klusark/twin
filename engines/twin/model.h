@@ -116,6 +116,7 @@ public:
 class Model {
 public:
 	Model(Common::SeekableReadStream *stream);
+	~Model();
 	void recalculateHierarchy();
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);

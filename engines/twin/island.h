@@ -58,14 +58,18 @@ struct IslandFace {
 };
 
 /* This structure maps an object positioning, index in OBL, and rotation data entry in the ILE files */
-struct IslandObjectInfo {
+class IslandObjectInfo {
+public:
+	~IslandObjectInfo();
 	uint32 _index;
 	Math::Vector3d _pos;
 	byte _angle;
 	Model *_model;
 };
 
-struct IslandSection {
+class IslandSection {
+public:
+	~IslandSection();
 	uint16 _numFaces;
 	IslandFace *_faces;
 	byte y;
@@ -77,6 +81,7 @@ struct IslandSection {
 class Island {
 public:
 	Island(Hqr *hqr, Hqr *obl);
+	~Island();
 
 private:
 

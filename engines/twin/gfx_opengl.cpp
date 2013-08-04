@@ -434,8 +434,8 @@ void GfxOpenGL::drawIsland(Island *island) {
 			glEnd();
 			glDisable(GL_TEXTURE_2D);
 
-			for (uint32 i = 0; i < s->_numObjects; ++i) {
-				IslandObjectInfo *info = &s->_objects[i];
+			for (uint32 k = 0; k < s->_numObjects; ++k) {
+				IslandObjectInfo *info = &s->_objects[k];
 				glPushMatrix();
 
 				glTranslatef(info->_pos.z() - 1, info->_pos.y(), -(info->_pos.x() - 1));

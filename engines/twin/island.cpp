@@ -67,6 +67,11 @@ Island::Island(Hqr *hqr, Hqr *obl) {
 	loadIsland();
 }
 
+Island::~Island() {
+	delete[] _sections;
+	delete[] _texture;
+}
+
 /*
 	HQR file entries
 		0 - sections layout (max of 256 sections)
@@ -241,10 +246,10 @@ void Island::loadIslandSection(int sectionIdx, int entryIdx) {
 					int32 yi = y + idxOrder[i] % 2;
 					IslandVertex *v = &f->_vertices[j];
 					++j;
-					float x = ((float)(xi) - 32) / 0x20;
-					float y = ((float)(heightmap[xi][yi])) / 0x4000;
-					float z = ((float)(64 - yi) - 32) / 0x20;
-					v->_pos.set(x, y, z);
+					float xc = ((float)(xi) - 32) / 0x20;
+					float yc = ((float)(heightmap[xi][yi])) / 0x4000;
+					float zc = ((float)(64 - yi) - 32) / 0x20;
+					v->_pos.set(xc, yc, zc);
 
 
 					v->r = 1;
@@ -278,6 +283,15 @@ void Island::loadIslandSection(int sectionIdx, int entryIdx) {
 	}
 
 	delete [] textureInfo;
+}
+
+IslandSection::~IslandSection() {
+	delete[] _faces;
+	delete[] _objects;
+}
+
+IslandObjectInfo::~IslandObjectInfo() {
+	delete _model;
 }
 
 } // end of namespace Twin

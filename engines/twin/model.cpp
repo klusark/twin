@@ -37,6 +37,18 @@ Model::Model(Common::SeekableReadStream *stream) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
 	}
+	delete stream;
+}
+
+Model::~Model() {
+	delete[] _polygons;
+	delete[] _verticies;
+	delete[] _bones;
+	delete[] _normals;
+	delete[] _points;
+	delete[] _heirs;
+	delete[] _spheres;
+	delete[] _textures;
 }
 
 void Model::loadLBA2(Common::SeekableReadStream *stream) {

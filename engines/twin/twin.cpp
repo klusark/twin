@@ -251,6 +251,8 @@ Common::Error TwinEngine::run() {
 		_renderer->flipBuffer();
 	}
 
+	delete e;
+
 	return Common::kNoError;
 }
 
