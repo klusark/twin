@@ -132,6 +132,9 @@ void Resource::loadGridDefaults() {
 	delete stream;
 }
 
+Animation *Resource::getAnimation(uint16 id, Model *m) {
+	return new Animation(_anim->createReadStreamForIndex(id), m);
+}
 
 Entity *Resource::getEntity(uint16 entity, uint16 body, uint16 anim) {
 	if (entity >= _ei->_numEntities) {
@@ -146,7 +149,7 @@ Entity *Resource::getEntity(uint16 entity, uint16 body, uint16 anim) {
 	}
 
 	Model *m = new Model(_body->createReadStreamForIndex(e->_bodies[body]._bodyIndex));
-	Animation *a = new Animation(_anim->createReadStreamForIndex(e->_anims[anim]._animIndex), m);
+	Animation *a = getAnimation(e->_anims[anim]._animIndex, m);
 	Entity *ent = new Entity(m, a);
 	return ent;
 }

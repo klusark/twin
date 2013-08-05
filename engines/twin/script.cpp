@@ -34,6 +34,7 @@ Script::Script(Common::SeekableReadStream *stream) : _actor(nullptr) {
 		loadLBA2(stream);
 	}
 	_isExecuting = true;
+	_isYielded = false;
 }
 
 Script::~Script() {
@@ -49,17 +50,23 @@ void Script::loadLBA2(Common::SeekableReadStream *stream) {
 }
 
 void Script::run() {
-	if (!_isExecuting) {
-		return;
+	while (_isExecuting && !_isYielded) {
+		byte opcode = _ptr[0];
+		++_ptr;
+		execute(opcode);
 	}
-	byte opcode = _ptr[0];
-	++_ptr;
-	execute(opcode);
-	run();
+	_isYielded = false;
+}
+
+void Script::start() {
+	_isExecuting = true;
 }
 
 void Script::stop() {
 	_isExecuting = false;
+}
+void Script::yield() {
+	_isYielded = true;
 }
 
 void Script::jump(uint16 size) {
@@ -72,6 +79,10 @@ void Script::jumpAddress(uint16 size) {
 
 uint16 Script::getGameVar(byte id) {
 	return _gameVars[id];
+}
+
+void Script::setGameVar(byte id, uint16 val) {
+	_gameVars[id] = val;
 }
 
 byte Script::getParamByte() {

@@ -272,9 +272,6 @@ void GfxOpenGL::drawModel(Model *m, bool fromIsland) {
 
 	for (uint j = 0; j < m->_numPolygons; j++) {
 		Polygon *p = &m->_polygons[j];
-		if (fromIsland) {
-			p->_hasTex = false;
-		}
 		if (p->_hasTex) {
 			bindTexture(&m->_textures[p->_tex]);
 			glEnable(GL_TEXTURE_2D);

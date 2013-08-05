@@ -80,17 +80,23 @@ void Scene::loadLBA2(Common::SeekableReadStream *stream) {
 	_heroY = stream->readUint16LE();
 	_heroZ = stream->readUint16LE();
 
+	_hero = new Actor();
+	_hero->setPos(_heroX, _heroY, _heroZ);
+
 	_trackScript = new ScriptTrackV2(stream);
+	_trackScript->setActor(_hero);
 
-	_lifeScript = new ScriptLifeV2(stream);
+	_lifeScript = new ScriptLifeV2(stream, _trackScript);
+	_lifeScript->setActor(_hero);
 
+	_hero->_lifeScript = _lifeScript;
+	_hero->_trackScript = _trackScript;
 
 	_numActors = stream->readUint16LE();
 
-	//The hero is counted as an actor, but is not included in the list of actors
-	--_numActors;
 	_actors = new Actor *[_numActors];
-	for (int i = 0; i < _numActors; ++i) {
+	_actors[0] = _hero;
+	for (int i = 1; i < _numActors; ++i) {
 		_actors[i] = new Actor(stream);
 	}
 
@@ -152,8 +158,6 @@ void Scene::loadLBA2(Common::SeekableReadStream *stream) {
 }
 
 void Scene::update(uint32 delta) {
-	_trackScript->run();
-	_lifeScript->run();
 	for (int i = 0; i < _numActors - 1; ++i) {
 		_actors[i]->update(delta);
 	}

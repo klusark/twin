@@ -33,7 +33,8 @@ namespace Twin {
 #define OPCODE(op, func) case op: func(); break
 #define COND_OPCODE(op, func) case op: return func()
 
-ScriptLifeV2::ScriptLifeV2(Common::SeekableReadStream *stream) : Script(stream), _isInSwitch(false) {
+ScriptLifeV2::ScriptLifeV2(Common::SeekableReadStream *stream, Script *track) : 
+	Script(stream), _isInSwitch(false), _track(track), _comportementAddress(0) {
 
 }
 
@@ -68,12 +69,17 @@ void ScriptLifeV2::execute(byte opcode) {
 		OPCODE(0x0E, ONEIF);
 		OPCODE(0x0F, ELSE);
 
+		OPCODE(0x11, BODY);
+		OPCODE(0x12, BODY_OBJ);
+		OPCODE(0x13, ANIM);
+		OPCODE(0x14, ANIM_OBJ);
 		OPCODE(0x15, SET_CAMERA);
 		OPCODE(0x16, CAMERA_CENTER);
 		OPCODE(0x17, SET_TRACK);
 		OPCODE(0x18, SET_TRACK_OBJ);
 		OPCODE(0x19, MESSAGE);
 
+		OPCODE(0x1D, CAM_FOLLOW);
 		OPCODE(0x1F, SET_VAR_CUBE);
 
 		OPCODE(0x1B, SET_DIRMODE);
@@ -282,6 +288,7 @@ bool ScriptLifeV2::DISTANCE_MESSAGE() {
 void ScriptLifeV2::END() {
 	stop();
 }
+
 void ScriptLifeV2::IF() {
 	bool cond = checkCondition();
 
@@ -301,12 +308,30 @@ void ScriptLifeV2::ONEIF() {
 }
 
 void ScriptLifeV2::ELSE() {
-	uint16 id = getParamUint16();
-	//jump(id);
+	uint16 address = getParamUint16();
+	jumpAddress(address);
+}
+
+void ScriptLifeV2::BODY() {
+	byte actor = getParamByte();
+}
+
+void ScriptLifeV2::BODY_OBJ() {
+	byte actor = getParamByte();
+	byte body = getParamByte();
+}
+
+void ScriptLifeV2::ANIM() {
+	uint32 id = getParamUint16();
+}
+
+void ScriptLifeV2::ANIM_OBJ() {
+	byte actor = getParamByte();
+	uint32 id = getParamUint16();
 }
 
 void ScriptLifeV2::SET_CAMERA() {
-	byte unknown = getParamByte();
+	uint16 unknown = getParamUint16();
 }
 
 void ScriptLifeV2::CAMERA_CENTER() {
@@ -314,7 +339,9 @@ void ScriptLifeV2::CAMERA_CENTER() {
 }
 
 void ScriptLifeV2::SET_TRACK() {
-	uint16 id = getParamUint16();
+	uint16 address = getParamUint16();
+	_track->jumpAddress(address);
+	_track->start();
 }
 
 void ScriptLifeV2::SET_TRACK_OBJ() {
@@ -326,6 +353,10 @@ void ScriptLifeV2::MESSAGE() {
 	uint16 id = getParamUint16();
 }
 
+void ScriptLifeV2::CAM_FOLLOW() {
+	byte actor = getParamByte();
+}
+
 void ScriptLifeV2::SET_VAR_CUBE() {
 	byte id = getParamByte();
 	byte value = getParamByte();
@@ -333,22 +364,29 @@ void ScriptLifeV2::SET_VAR_CUBE() {
 
 void ScriptLifeV2::SET_DIRMODE() {
 	byte dirmode = getParamByte();
-	byte actor = getParamByte();
+	if (dirmode == 2 || dirmode == 4) {
+		byte actor = getParamByte();
+	}
 }
 
 void ScriptLifeV2::SET_COMPORTEMENT() {
 	uint16 address = getParamUint16();
+	_comportementAddress = address;
 }
 void ScriptLifeV2::SET_COMPORTEMENT_OBJ() {
 	byte actor = getParamByte();
 	uint16 address = getParamUint16();
 }
 
-STUB_SCRIPT(END_COMPORTEMENT);
+void ScriptLifeV2::END_COMPORTEMENT() {
+	jumpAddress(_comportementAddress);
+	yield();
+}
 
 void ScriptLifeV2::SET_VAR_GAME() {
 	byte var = getParamByte();
 	uint16 value = getParamUint16();
+	setGameVar(var, value);
 }
 
 void ScriptLifeV2::KILL_OBJ() {
@@ -435,10 +473,14 @@ void ScriptLifeV2::SAMPLE() {
 void ScriptLifeV2::ADD_VAR_GAME() {
 	byte var = getParamByte();
 	uint16 value = getParamUint16();
+	uint16 val = getGameVar(var);
+	setGameVar(var, val + value);
 }
 void ScriptLifeV2::SUB_VAR_GAME() {
 	byte var = getParamByte();
 	uint16 value = getParamUint16();
+	uint16 val = getGameVar(var);
+	setGameVar(var, val - value);
 }
 
 } // end of namespace Twin

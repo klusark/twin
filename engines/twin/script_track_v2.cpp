@@ -33,7 +33,7 @@ namespace Twin {
 #define OPCODE(op, func) case op: func(); break
 
 ScriptTrackV2::ScriptTrackV2(Common::SeekableReadStream *stream) : Script(stream) {
-
+	stop();
 }
 
 void ScriptTrackV2::execute(byte opcode) {

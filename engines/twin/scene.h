@@ -45,6 +45,9 @@ private:
 
 	Grid *_grid;
 
+	//Probably don't just want this per scene
+	Actor *_hero;
+
 	byte _textBank;
 	byte _gameOverScene;
 	uint16 _ambience[4];

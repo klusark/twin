@@ -33,10 +33,14 @@ namespace Twin {
 
 class ScriptLifeV2 : public Script {
 public:
-	ScriptLifeV2(Common::SeekableReadStream *stream);
+	ScriptLifeV2(Common::SeekableReadStream *stream, Script *track);
 	
 private:
 	bool ScriptLifeV2::testCond(uint16 a, uint16 b, byte oper);
+
+	Script *_track;
+
+	uint16 _comportementAddress;
 
 	void execute(byte opcode) override;
 
@@ -78,12 +82,17 @@ private:
 	void ONEIF();
 	void ELSE();
 
+	void BODY();
+	void BODY_OBJ();
+	void ANIM();
+	void ANIM_OBJ();
 	void SET_CAMERA();
 	void CAMERA_CENTER();
 	void SET_TRACK();
 	void SET_TRACK_OBJ();
 	void MESSAGE();
 
+	void CAM_FOLLOW();
 	void SET_VAR_CUBE();
 
 	void SET_DIRMODE();

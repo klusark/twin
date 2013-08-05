@@ -39,6 +39,13 @@ Actor::Actor(Common::SeekableReadStream *stream) : _entity(nullptr) {
 	}
 }
 
+Actor::Actor() : _entity(nullptr) {
+	_entity = g_resource->getEntity(0, 0, 0);
+	_x = 0;
+	_y = 0;
+	_z = 0;
+}
+
 
 void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 	//These sizes are probably mostly wrong, but the overall actor size is right
@@ -80,14 +87,12 @@ void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 		stream->readByte();
 	}
 
-	ScriptTrackV2 *trackScript = new ScriptTrackV2(stream);
-	trackScript->setActor(this);
-	_trackScript = trackScript;
+	_trackScript = new ScriptTrackV2(stream);
+	_trackScript->setActor(this);
 
-	ScriptLifeV2 *lifeScript = new ScriptLifeV2(stream);
-	lifeScript->setActor(this);
-	_lifeScript = lifeScript;
 
+	_lifeScript = new ScriptLifeV2(stream, _trackScript);
+	_lifeScript->setActor(this);
 }
 
 void Actor::update(uint32 delta) {
@@ -105,6 +110,10 @@ void Actor::draw() {
 }
 
 void Actor::setAnimation(uint16 anim) {
+	if (_entity) {
+		delete _entity->_anim;
+		_entity->_anim = g_resource->getAnimation(anim, _entity->_model);
+	}
 }
 
 } // end of namespace Twin

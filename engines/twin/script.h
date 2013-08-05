@@ -38,14 +38,17 @@ public:
 	virtual ~Script();
 	void run();
 	void setActor(Actor *a) { _actor = a; };
-protected:
+//protected:
 	byte getParamByte();
 	uint16 getParamUint16();
 	int16 getParamInt16();
 	void stop();
+	void start();
+	void yield();
 	void jump(uint16 size);
 	void jumpAddress(uint16 address);
 	uint16 getGameVar(byte id);
+	void setGameVar(byte id, uint16 val);
 
 	Actor *_actor;
 
@@ -53,6 +56,7 @@ private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
 	bool _isExecuting;
+	bool _isYielded;
 	uint16 _length;
 	byte *_data;
 	

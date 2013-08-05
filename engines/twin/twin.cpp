@@ -170,7 +170,7 @@ Common::Error TwinEngine::run() {
 	bool entityInfoChanged = false;
 
 
-	int grid = 3;
+	int grid = 0;
 	Scene *s = g_resource->getScene(grid);
 	bool mouseDown = false, wheelDown = false, rDown = false;
 	uint32 lastTime = g_system->getMillis();
@@ -245,11 +245,11 @@ Common::Error TwinEngine::run() {
 		lastTime = currentTime;
 
 		_renderer->clearScreen();
-		e->update(deltaTime);
+		//e->update(deltaTime);
 
 		s->draw();
 		s->update(deltaTime);
-		_renderer->drawModel(e->_model);
+		//_renderer->drawModel(e->_model);
 		//_renderer->drawIsland(&idland);
 		_renderer->flipBuffer();
 	}

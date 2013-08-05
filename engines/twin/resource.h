@@ -63,6 +63,7 @@ public:
 	Grid *getGrid(int id);
 	Block *getBlock(int id);
 	BlockLibrary *getBlockLibrary(int id);
+	Animation *getAnimation(uint16 id, Model *m);
 	Entity *getEntity(uint16 entity, uint16 body, uint16 anim);
 	Scene *getScene(uint16 id);
 private:

@@ -36,9 +36,11 @@ class Script;
 class Actor {
 public:
 	Actor(Common::SeekableReadStream *stream);
+	Actor();
 	void draw();
 	void update(uint32 delta);
 	void setAnimation(uint16 anim);
+	void setPos(uint16 x, uint16 y, uint16 z) { _x = x; _y = y; _z = z; }
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
