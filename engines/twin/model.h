@@ -27,6 +27,8 @@
 #include "math/vector4d.h"
 #include "math/matrix4.h"
 
+#include "common/array.h"
+
 namespace Common {
 class SeekableReadStream;
 }
@@ -95,14 +97,12 @@ public:
 class Hierarchy {
 public:
 	Hierarchy() :_translation(0,0,0) {
-		_numChildren = 0;
 		_isTransltion = true;
 	}
 	void computeWorldMatrix(Math::Matrix4 parentMtx);
 	Math::Matrix4 computeLocalMatrix();
 	Math::Matrix4 _worldMatrix;
-	Hierarchy *_children[16];
-	uint16 _numChildren;
+	Common::Array<Hierarchy *> _children;
 	Vertex *_vertex;
 	uint16 _index;
 

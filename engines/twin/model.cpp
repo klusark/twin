@@ -216,11 +216,7 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 			continue;
 		}
 		Hierarchy *ph =  &_heirs[b->_parent];
-		ph->_children[ph->_numChildren] = h;
-		ph->_numChildren++;
-		if (ph->_numChildren >= 16) {
-			error("Too many children");
-		}
+		ph->_children.push_back(h);
 	}
 
 	recalculateHierarchy();
@@ -252,7 +248,8 @@ Math::Matrix4 Hierarchy::computeLocalMatrix() {
 void Hierarchy::computeWorldMatrix(Math::Matrix4 parentMtx) {
 	Math::Matrix4 localMtx = computeLocalMatrix();
 	_worldMatrix = parentMtx * localMtx;
-	for (int i = 0; i < _numChildren; ++i) {
+	int size = _children.size();
+	for (int i = 0; i < size; ++i) {
 		_children[i]->computeWorldMatrix(_worldMatrix);
 	}
 }
