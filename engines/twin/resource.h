@@ -38,6 +38,7 @@ class Grid;
 class EntityInformation;
 class Model;
 class Animation;
+class Scene;
 
 class Entity {
 public:
@@ -46,6 +47,12 @@ public:
 	void update(uint32 time);
 	Model *_model;
 	Animation *_anim;
+};
+
+class SceneAssociation {
+public:
+	bool _isIsland;
+	byte _id;
 };
 
 class Resource {
@@ -57,6 +64,7 @@ public:
 	Block *getBlock(int id);
 	BlockLibrary *getBlockLibrary(int id);
 	Entity *getEntity(uint16 entity, uint16 body, uint16 anim);
+	Scene *getScene(uint16 id);
 private:
 	void loadGridDefaults();
 
@@ -64,13 +72,18 @@ private:
 	uint16 _firstGridFragment;
 	uint16 _firstLibrary;
 	uint16 _firstBlock;
+	uint16 _numBlocks;
+	uint16 _numScenes;
 
 	Hqr *_bkg;
 	Hqr *_ress;
 	Hqr *_body;
 	Hqr *_anim;
+	Hqr *_scene;
 
 	EntityInformation *_ei;
+
+	SceneAssociation _scenes[256];
 
 	Common::HashMap<int, Block *> _blocks;
 	Common::HashMap<int, BlockLibrary *> _blockLibraries;

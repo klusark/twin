@@ -31,14 +31,18 @@ class SeekableReadStream;
 namespace Twin {
 
 class Actor;
+class Grid;
 
 class Scene {
 public:
 	Scene(Common::SeekableReadStream *stream);
 	void draw();
 	void update(uint32 delta);
+	void setGrid(Grid *g) { _grid = g; }
 private:
 	void loadLBA2(Common::SeekableReadStream *stream);
+
+	Grid *_grid;
 
 	byte _textBank;
 	byte _gameOverScene;

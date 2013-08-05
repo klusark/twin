@@ -28,7 +28,7 @@
 
 namespace Twin {
 
-Scene::Scene(Common::SeekableReadStream *stream) {
+Scene::Scene(Common::SeekableReadStream *stream) : _grid(nullptr) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
 	}
@@ -87,13 +87,17 @@ void Scene::loadLBA2(Common::SeekableReadStream *stream) {
 	stream->read(_lifeScript, _lifeScriptSize);
 
 	_numActors = stream->readUint16LE();
+
+	//The hero is counted as an actor, but is not included in the list of actors
+	--_numActors;
 	_actors = new Actor *[_numActors];
-	for (int i = 0; i < _numActors - 1; ++i) {
+	for (int i = 0; i < _numActors; ++i) {
 		_actors[i] = new Actor(stream);
 	}
 
 	stream->readUint32LE();
 	_numZones = stream->readUint16LE();
+	return;
 	for (int i = 0; i < _numZones; ++i) {
 		//SKIP data for now
 		stream->readUint16LE();
@@ -155,6 +159,9 @@ void Scene::update(uint32 delta) {
 	}
 }
 void Scene::draw() {
+	if (_grid) {
+		g_renderer->drawGrid(_grid);
+	}
 	for (int i = 0; i < _numActors - 1; ++i) {
 		_actors[i]->draw();
 	}

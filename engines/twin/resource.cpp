@@ -31,6 +31,7 @@
 #include "engines/twin/entity_information.h"
 #include "engines/twin/animation.h"
 #include "engines/twin/model.h"
+#include "engines/twin/scene.h"
 
 namespace Twin {
 
@@ -58,6 +59,9 @@ Resource::Resource() {
 
 	_anim = new Hqr();
 	_anim->open("ANIM.HQR");
+
+	_scene = new Hqr();
+	_scene->open("SCENE.HQR");
 }
 
 Resource::~Resource() {
@@ -66,6 +70,15 @@ Resource::~Resource() {
 	delete _ei;
 	delete _body;
 	delete _anim;
+	delete _scene;
+}
+
+Scene *Resource::getScene(uint16 id) {
+	Scene *s = new Scene(_scene->createReadStreamForIndex(id + 1));
+	if (!_scenes[id]._isIsland) {
+		s->setGrid(getGrid(_scenes[id]._id));
+	}
+	return s;
 }
 
 Grid *Resource::getGrid(int id) {
@@ -99,6 +112,23 @@ void Resource::loadGridDefaults() {
 	_firstGridFragment = stream->readUint16LE();
 	_firstLibrary = stream->readUint16LE();
 	_firstBlock = stream->readUint16LE();
+	_numBlocks = stream->readUint16LE();
+	_numScenes = 0;
+	delete stream;
+	stream = _bkg->createReadStreamForIndex(_firstBlock + _numBlocks);
+	for (;;) {
+		byte opcode = stream->readByte();
+		byte id = stream->readByte();
+		if (opcode == 0) {
+			break;
+		} else if (opcode == 1) {
+			_scenes[_numScenes]._isIsland = false;
+		} else if (opcode == 2) {
+			_scenes[_numScenes]._isIsland = true;
+		}
+		_scenes[_numScenes]._id = id;
+		++_numScenes;
+	}
 	delete stream;
 }
 
