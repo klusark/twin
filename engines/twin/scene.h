@@ -34,6 +34,19 @@ class Actor;
 class Grid;
 class Script;
 
+class Zone {
+public:
+	uint32 _x1;
+	uint32 _y1;
+	uint32 _z1;
+	uint32 _x2;
+	uint32 _y2;
+	uint32 _z2;
+	uint32 _info[8];
+	uint16 _type;
+	uint16 _snap;
+};
+
 class Scene {
 public:
 	Scene(Common::SeekableReadStream *stream);
@@ -65,6 +78,7 @@ private:
 	Actor **_actors;
 
 	uint16 _numZones;
+	Zone *_zones;
 	uint16 _numTracks;
 	uint16 _numEndThings;
 

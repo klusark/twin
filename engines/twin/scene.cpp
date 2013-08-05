@@ -102,38 +102,25 @@ void Scene::loadLBA2(Common::SeekableReadStream *stream) {
 
 	stream->readUint32LE();
 	_numZones = stream->readUint16LE();
+	_zones = new Zone[_numZones];
 	for (int i = 0; i < _numZones; ++i) {
-		//SKIP data for now
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
+		Zone *z = &_zones[i];
+		z->_x1 = stream->readUint32LE();
+		z->_y1 = stream->readUint32LE();
+		z->_z1 = stream->readUint32LE();
+		z->_x2 = stream->readUint32LE();
+		z->_y2 = stream->readUint32LE();
+		z->_z2 = stream->readUint32LE();
+		z->_info[0] = stream->readUint32LE();
+		z->_info[1] = stream->readUint32LE();
+		z->_info[2] = stream->readUint32LE();
+		z->_info[3] = stream->readUint32LE();
+		z->_info[4] = stream->readUint32LE();
+		z->_info[5] = stream->readUint32LE();
+		z->_info[6] = stream->readUint32LE();
+		z->_info[7] = stream->readUint32LE();
+		z->_type = stream->readUint16LE();
+		z->_snap = stream->readUint16LE();
 	}
 
 	_numTracks = stream->readUint16LE();
