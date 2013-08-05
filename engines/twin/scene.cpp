@@ -96,7 +96,6 @@ void Scene::loadLBA2(Common::SeekableReadStream *stream) {
 
 	stream->readUint32LE();
 	_numZones = stream->readUint16LE();
-	return;
 	for (int i = 0; i < _numZones; ++i) {
 		//SKIP data for now
 		stream->readUint16LE();

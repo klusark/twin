@@ -41,6 +41,10 @@ private:
 	void execute(byte opcode) override;
 
 	bool checkCondition();
+	bool checkCondition(byte cond);
+
+	bool _isInSwitch;
+	byte _switchCond;
 
 	//Condition
 	bool COL();
@@ -50,35 +54,48 @@ private:
 	bool ZONE_OBJ();
 
 	bool CURRENT_TRACK();
-
+	bool CURRENT_TRACK_OBJ();
+	bool VAR_CUBE();
+	bool CONE_VIEW();
 	bool HIT_BY();
-
+	bool ACTION();
 	bool VAR_GAME();
-
+	bool LIFE_POINT();
+	bool LIFE_POINT_OBJ();
 	bool NUM_LITTLE_KEYS();
-
+	bool NUM_GOLD_PIECES();
+	bool BEHAVIOUR();
 	bool CHAPTER();
+
+	bool ANGLE();
+	bool DISTANCE_MESSAGE();
 
 	//Opcodes
 	void END();
 
 	void IF();
 	void SWIF();
-
+	void ONEIF();
 	void ELSE();
 
+	void SET_CAMERA();
+	void CAMERA_CENTER();
 	void SET_TRACK();
-
+	void SET_TRACK_OBJ();
 	void MESSAGE();
 
 	void SET_VAR_CUBE();
 
+	void SET_DIRMODE();
+
 	void SET_COMPORTEMENT();
 	void SET_COMPORTEMENT_OBJ();
 	void END_COMPORTEMENT();
-
+	void SET_VAR_GAME();
+	void KILL_OBJ();
 	void SUICIDE();
-
+	void USE_ONE_LITTLE_KEY();
+	void GIVE_GOLD_PIECES();
 	void END_LIFE();
 
 	void GIVE_BONUS();
@@ -91,7 +108,16 @@ private:
 
 	void BETA();
 
+	void CINEMA_MODE();
+
 	void AND_IF();
+	void SWITCH();
+	void OR_CASE();
+	void CASE();
+	void DEFAULT();
+	void BREAK();
+	void END_SWITCH();
+	void SET_HIT_ZONE();
 
 	void SAMPLE();
 

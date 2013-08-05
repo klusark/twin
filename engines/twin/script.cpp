@@ -55,6 +55,7 @@ void Script::run() {
 	byte opcode = _ptr[0];
 	++_ptr;
 	execute(opcode);
+	run();
 }
 
 void Script::stop() {

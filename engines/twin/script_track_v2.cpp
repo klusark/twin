@@ -30,7 +30,7 @@
 namespace Twin {
 
 
-#define OPCODE(op, func) case op: func(); break;
+#define OPCODE(op, func) case op: func(); break
 
 ScriptTrackV2::ScriptTrackV2(Common::SeekableReadStream *stream) : Script(stream) {
 
@@ -45,6 +45,8 @@ void ScriptTrackV2::execute(byte opcode) {
 		OPCODE(0x04, GOTO_POINT);
 		OPCODE(0x05, WAIT_ANIM);
 
+		OPCODE(0x07, ANGLE);
+		OPCODE(0x08, POS_POINT);
 		OPCODE(0x09, LABEL);
 		OPCODE(0x0A, GOTO);
 		OPCODE(0x0B, STOP);
@@ -60,12 +62,19 @@ void ScriptTrackV2::execute(byte opcode) {
 		OPCODE(0x18, OPEN_DOWN);
 
 		OPCODE(0x1A, WAIT_DOOR);
-		 
+		OPCODE(0x1B, SAMPLE_RND);
+		OPCODE(0x1C, SAMPLE_ALWAYS);
+		OPCODE(0x1D, SAMPLE_STOP);
+		OPCODE(0x1E, PLAY_ACF);
+		OPCODE(0x1F, REPEAT_SAMPLE);
+		OPCODE(0x20, SIMPLE_SAMPLE);
+		OPCODE(0x21, FACE_HERO);
+		OPCODE(0x22, ANGLE_RND);
 		OPCODE(0x23, REPLACE);
 		OPCODE(0x24, WAIT_NUM_DECIMAL);
 
 		OPCODE(0x26, SPRITE);
-		 
+		OPCODE(0x27, WAIT_NUM_SECOND_RND);
 	default:
 		warning("asdf");
 	};
@@ -87,9 +96,17 @@ void ScriptTrackV2::ANIM() {
 	}
 }
 void ScriptTrackV2::GOTO_POINT() {
-	uint16 id = getParamByte();
+	byte id = getParamByte();
 }
 STUB_SCRIPT(WAIT_ANIM);
+
+void ScriptTrackV2::ANGLE() {
+	int16 angle = getParamInt16();
+}
+
+void ScriptTrackV2::POS_POINT() {
+	byte id = getParamByte();
+}
 
 void ScriptTrackV2::LABEL() {
 	byte id = getParamByte();
@@ -113,22 +130,60 @@ void ScriptTrackV2::BACKGROUND() {
 }
 
 void ScriptTrackV2::WAIT_NUM_SECOND() {
-	uint16 numSeconds = getParamUint16();
+	byte numSeconds = getParamByte();
+	jump(4);
 }
 
 void ScriptTrackV2::OPEN_LEFT() {
 	int16 distance = getParamInt16();
 }
+
 void ScriptTrackV2::OPEN_RIGHT() {
 	int16 distance = getParamInt16();
 }
+
 void ScriptTrackV2::OPEN_UP() {
 	int16 distance = getParamInt16();
 }
+
 void ScriptTrackV2::OPEN_DOWN() {
 	int16 distance = getParamInt16();
 }
+
 STUB_SCRIPT(WAIT_DOOR);
+
+void ScriptTrackV2::SAMPLE_RND() {
+	int16 param = getParamInt16();
+}
+
+void ScriptTrackV2::SAMPLE_ALWAYS() {
+	int16 param = getParamInt16();
+}
+
+void ScriptTrackV2::SAMPLE_STOP() {
+	int16 param = getParamInt16();
+}
+
+void ScriptTrackV2::PLAY_ACF() {
+	error("Read a null terminated string here");
+}
+
+void ScriptTrackV2::REPEAT_SAMPLE() {
+	int16 param = getParamInt16();
+}
+
+void ScriptTrackV2::SIMPLE_SAMPLE() {
+	int16 param = getParamInt16();
+}
+
+void ScriptTrackV2::FACE_HERO() {
+	uint16 param = getParamUint16();
+}
+
+void ScriptTrackV2::ANGLE_RND() {
+	int16 param1 = getParamInt16();
+	uint16 param2 = getParamUint16();
+}
 
 STUB_SCRIPT(REPLACE);
 
@@ -139,4 +194,10 @@ void ScriptTrackV2::WAIT_NUM_DECIMAL() {
 void ScriptTrackV2::SPRITE() {
 	uint16 id = getParamUint16();
 }
+
+void ScriptTrackV2::WAIT_NUM_SECOND_RND() {
+	byte numSeconds = getParamByte();
+	jump(4);
+}
+
 } // end of namespace Twin

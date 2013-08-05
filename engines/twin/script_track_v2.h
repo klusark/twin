@@ -45,6 +45,8 @@ private:
 	void GOTO_POINT();
 	void WAIT_ANIM();
 
+	void ANGLE();
+	void POS_POINT();
 	void LABEL();
 	void GOTO();
 	void STOP();
@@ -60,11 +62,19 @@ private:
 	void OPEN_DOWN();
 
 	void WAIT_DOOR();
-
+	void SAMPLE_RND();
+	void SAMPLE_ALWAYS();
+	void SAMPLE_STOP();
+	void PLAY_ACF();
+	void REPEAT_SAMPLE();
+	void SIMPLE_SAMPLE();
+	void FACE_HERO();
+	void ANGLE_RND();
 	void REPLACE();
 	void WAIT_NUM_DECIMAL();
 
 	void SPRITE();
+	void WAIT_NUM_SECOND_RND();
 };
 
 } // end of namespace Twin
