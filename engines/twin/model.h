@@ -80,7 +80,7 @@ public:
 	void *_renderData;
 };
 
-class Point {
+class Line {
 public:
 	uint16 _v1;
 	uint16 _v2;
@@ -127,14 +127,14 @@ public:
 	uint32 _numPolygons;
 	uint32 _numSpheres;
 	uint32 _numTextures;
-	uint32 _numPoints;
+	uint32 _numLines;
 
 	Polygon *_polygons;
 	Vertex *_verticies;
 	Normal *_normals;
 	Bone *_bones;
 	Texture *_textures;
-	Point *_points;
+	Line *_lines;
 	Sphere *_spheres;
 	Hierarchy *_heir;
 	Hierarchy *_heirs;

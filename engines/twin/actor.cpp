@@ -29,17 +29,18 @@
 #include "engines/twin/animation.h"
 #include "engines/twin/script_track_v2.h"
 #include "engines/twin/script_life_v2.h"
+#include "engines/twin/scene.h"
 #include "common/textconsole.h"
 
 namespace Twin {
 
-Actor::Actor(Common::SeekableReadStream *stream) : _entity(nullptr) {
+Actor::Actor(Common::SeekableReadStream *stream) : _entity(nullptr), _dest(nullptr), _dead(false) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
 	}
 }
 
-Actor::Actor() : _entity(nullptr) {
+Actor::Actor() : _entity(nullptr), _dest(nullptr), _dead(false) {
 	_entity = g_resource->getEntity(0, 0, 0);
 	_x = 0;
 	_y = 0;
@@ -95,15 +96,48 @@ void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 	_lifeScript->setActor(this);
 }
 
+
 void Actor::update(uint32 delta) {
+	if (_dead) {
+		return;
+	}
 	_lifeScript->run();
 	_trackScript->run();
 	if (_entity) {
 		_entity->_anim->update(delta);
 	}
+
+	if (_dest) {
+		int xdiff = _dest->_x - _x;
+		int ydiff = _dest->_y - _y;
+		int zdiff = _dest->_z - _z;
+
+		if (xdiff < 0) {
+			_x = MAX(_x - delta, _dest->_x);
+		} else if (xdiff > 0) {
+			_x = MIN(_x + delta, _dest->_x);
+		}
+		if (ydiff < 0) {
+			_y = MAX(_y - delta, _dest->_y);
+		} else if (ydiff > 0) {
+			_y = MIN(_y + delta, _dest->_y);
+		}
+		if (zdiff < 0) {
+			_z = MAX(_z - delta, _dest->_z);
+		} else if (zdiff > 0) {
+			_z = MIN(_z + delta, _dest->_z);
+		}
+
+		if (_x ==_dest->_x && _y == _dest->_y && _z == _dest->_z) {
+			_dest = nullptr;
+		}
+	}
 }
 
 void Actor::draw() {
+	if (_dead) {
+		return;
+	}
 	if (_entity) {
 		g_renderer->drawActor(this);
 	}
@@ -114,6 +148,10 @@ void Actor::setAnimation(uint16 anim) {
 		delete _entity->_anim;
 		_entity->_anim = g_resource->getAnimation(anim, _entity->_model);
 	}
+}
+
+void Actor::gotoPoint(Point *p) {
+	_dest = p;
 }
 
 } // end of namespace Twin

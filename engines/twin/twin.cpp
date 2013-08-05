@@ -171,7 +171,7 @@ Common::Error TwinEngine::run() {
 
 
 	int grid = 0;
-	Scene *s = g_resource->getScene(grid);
+	_scene = g_resource->getScene(grid);
 	bool mouseDown = false, wheelDown = false, rDown = false;
 	uint32 lastTime = g_system->getMillis();
 	for (;;) {
@@ -201,15 +201,15 @@ Common::Error TwinEngine::run() {
 				}
 			} else if (type == Common::EVENT_WHEELUP) {
 				++grid;
-				delete s;
-				s = g_resource->getScene(grid);
+				delete _scene;
+				_scene = g_resource->getScene(grid);
 			} else if (type == Common::EVENT_WHEELDOWN) {
 				--grid;
 				if (grid < 0) {
 					grid = 0;
 				} else {
-					delete s;
-					s = g_resource->getScene(grid);
+					delete _scene;
+					_scene = g_resource->getScene(grid);
 				}
 			} else if (type == Common::EVENT_LBUTTONDOWN) {
 				mouseDown = true;
@@ -247,15 +247,15 @@ Common::Error TwinEngine::run() {
 		_renderer->clearScreen();
 		//e->update(deltaTime);
 
-		s->draw();
-		s->update(deltaTime);
+		_scene->draw();
+		_scene->update(deltaTime);
 		//_renderer->drawModel(e->_model);
 		//_renderer->drawIsland(&idland);
 		_renderer->flipBuffer();
 	}
 
 	delete e;
-	delete s;
+	delete _scene;
 
 	return Common::kNoError;
 }

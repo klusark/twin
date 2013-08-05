@@ -32,6 +32,7 @@ namespace Twin {
 
 class Entity;
 class Script;
+class Point;
 
 class Actor {
 public:
@@ -41,6 +42,8 @@ public:
 	void update(uint32 delta);
 	void setAnimation(uint16 anim);
 	void setPos(uint16 x, uint16 y, uint16 z) { _x = x; _y = y; _z = z; }
+	void gotoPoint(Point *p);
+	void kill() { _dead = true; }
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
@@ -58,6 +61,9 @@ public:
 
 	Entity *_entity;
 
+	Point *_dest;
+
+	bool _dead;
 };
 
 } // end of namespace Twin

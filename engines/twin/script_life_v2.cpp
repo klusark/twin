@@ -25,6 +25,7 @@
 
 #include "engines/twin/script_life_v2.h"
 #include "engines/twin/actor.h"
+#include "engines/twin/scene.h"
 #include "engines/twin/twin.h"
 
 namespace Twin {
@@ -183,14 +184,19 @@ bool ScriptLifeV2::DISTANCE() {
 bool ScriptLifeV2::ZONE() {
 	byte oper = getParamByte();
 	byte zone = getParamByte();
-	return false;
+	Scene *s = g_twin->getCurrentScene();
+	Zone *z = s->getZone(zone);
+	return z->isActorInside(_actor);
 }
 
 bool ScriptLifeV2::ZONE_OBJ() {
 	byte oper = getParamByte();
 	byte actor = getParamByte();
 	byte zone = getParamByte();
-	return false;
+	Scene *s = g_twin->getCurrentScene();
+	Actor *a = s->getActor(actor);
+	Zone *z = s->getZone(zone);
+	return z->isActorInside(a);
 }
 
 bool ScriptLifeV2::CURRENT_TRACK() {
@@ -393,7 +399,9 @@ void ScriptLifeV2::KILL_OBJ() {
 	byte actor = getParamByte();
 }
 
-STUB_SCRIPT(SUICIDE);
+void ScriptLifeV2::SUICIDE() {
+	_actor->kill();
+}
 
 STUB_SCRIPT(USE_ONE_LITTLE_KEY);
 

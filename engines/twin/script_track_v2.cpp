@@ -26,6 +26,7 @@
 #include "engines/twin/script_track_v2.h"
 #include "engines/twin/actor.h"
 #include "engines/twin/twin.h"
+#include "engines/twin/scene.h"
 
 namespace Twin {
 
@@ -97,6 +98,8 @@ void ScriptTrackV2::ANIM() {
 }
 void ScriptTrackV2::GOTO_POINT() {
 	byte id = getParamByte();
+	Scene *s = g_twin->getCurrentScene();
+	_actor->gotoPoint(s->getPoint(id));
 }
 STUB_SCRIPT(WAIT_ANIM);
 
@@ -106,6 +109,9 @@ void ScriptTrackV2::ANGLE() {
 
 void ScriptTrackV2::POS_POINT() {
 	byte id = getParamByte();
+	Scene *s = g_twin->getCurrentScene();
+	Point *p = s->getPoint(id);
+	_actor->setPos(p->_x, p->_y, p->_z);
 }
 
 void ScriptTrackV2::LABEL() {

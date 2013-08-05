@@ -45,6 +45,14 @@ public:
 	uint32 _info[8];
 	uint16 _type;
 	uint16 _snap;
+	bool isActorInside(Actor *a);
+};
+
+class Point {
+public:
+	uint32 _x;
+	uint32 _y;
+	uint32 _z;
 };
 
 class Scene {
@@ -53,6 +61,9 @@ public:
 	void draw();
 	void update(uint32 delta);
 	void setGrid(Grid *g) { _grid = g; }
+	Point *getPoint(byte id) { return &_points[id]; }
+	Actor *getActor(byte id) { return _actors[id]; }
+	Zone *getZone(byte id) { return &_zones[id]; }
 private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
@@ -79,7 +90,8 @@ private:
 
 	uint16 _numZones;
 	Zone *_zones;
-	uint16 _numTracks;
+	uint16 _numPoints;
+	Point *_points;
 	uint16 _numEndThings;
 
 };

@@ -21,6 +21,7 @@
  */
 
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 #include "engines/twin/script.h"
 #include "engines/twin/twin.h"
@@ -50,6 +51,7 @@ void Script::loadLBA2(Common::SeekableReadStream *stream) {
 }
 
 void Script::run() {
+	warning("start");
 	while (_isExecuting && !_isYielded) {
 		byte opcode = _ptr[0];
 		++_ptr;

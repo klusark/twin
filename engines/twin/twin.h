@@ -35,6 +35,8 @@ struct Surface;
 
 namespace Twin {
 
+class Scene;
+
 enum TwinGameType {
 	GType_LBA,
 	GType_LBA2
@@ -43,6 +45,7 @@ enum TwinGameType {
 class TwinEngine : public Engine {
 	GfxBase *_renderer;
 	TwinGameType _type;
+	Scene *_scene;
 protected:
 	// Engine APIs
 	virtual Common::Error run();
@@ -52,7 +55,7 @@ protected:
 public:
 	TwinEngine(OSystem *syst, TwinGameType type);
 	virtual ~TwinEngine();
-
+	Scene *getCurrentScene() { return _scene; }
 	TwinGameType getGameType() { return _type; }
 
 };

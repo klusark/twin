@@ -123,15 +123,13 @@ void Scene::loadLBA2(Common::SeekableReadStream *stream) {
 		z->_snap = stream->readUint16LE();
 	}
 
-	_numTracks = stream->readUint16LE();
-
-	for (int i = 0; i < _numTracks; ++i) {
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
+	_numPoints = stream->readUint16LE();
+	_points = new Point[_numPoints];
+	for (int i = 0; i < _numPoints; ++i) {
+		Point *p = &_points[i];
+		p->_x = stream->readUint32LE();
+		p->_y = stream->readUint32LE();
+		p->_z = stream->readUint32LE();
 	}
 
 	//Figure out what this data is
@@ -158,4 +156,10 @@ void Scene::draw() {
 	}
 }
 
+bool Zone::isActorInside(Actor *a) {
+	if (a->_x > _x1 && a->_x < _x2 && a->_y > _y1 && a->_y < _y2 && a->_y > _y1 && a->_y < _y2) {
+		return true;
+	}
+	return false;
+}
 } // end of namespace Twin

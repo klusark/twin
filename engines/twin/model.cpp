@@ -46,7 +46,7 @@ Model::~Model() {
 	delete[] _verticies;
 	delete[] _bones;
 	delete[] _normals;
-	delete[] _points;
+	delete[] _lines;
 	delete[] _heirs;
 	delete[] _spheres;
 	delete[] _textures;
@@ -69,8 +69,8 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 	_numPolygons = stream->readUint32LE();
 	uint32 polygonOffset = stream->readUint32LE();
 
-	_numPoints = stream->readUint32LE();
-	uint32 pointsOffset = stream->readUint32LE();
+	_numLines = stream->readUint32LE();
+	uint32 linesOffset = stream->readUint32LE();
 
 	_numSpheres = stream->readUint32LE();
 	uint32 sphereOffset = stream->readUint32LE();
@@ -174,9 +174,9 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 		}
 	}
 
-	_points = new Point[_numPoints];
-	for (uint32 i = 0; i < _numPoints; ++i) {
-		Point *p = &_points[i];
+	_lines = new Line[_numLines];
+	for (uint32 i = 0; i < _numLines; ++i) {
+		Line *p = &_lines[i];
 		stream->readUint16LE();
 		p->_colour = stream->readUint16LE();
 		p->_v1 = stream->readUint16LE();

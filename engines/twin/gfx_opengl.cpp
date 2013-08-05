@@ -255,8 +255,8 @@ void GfxOpenGL::drawModel(Model *m, bool fromIsland) {
 		glPopMatrix();
 	}
 
-	for (uint j = 0; j < m->_numPoints; ++j) {
-		Point *p = &m->_points[j];
+	for (uint j = 0; j < m->_numLines; ++j) {
+		Line *p = &m->_lines[j];
 		glColor4ub(_palette->_palette[p->_colour]._r, _palette->_palette[p->_colour]._g, _palette->_palette[p->_colour]._b, 255);
 
 		Vertex *v1 = &m->_verticies[p->_v1];
