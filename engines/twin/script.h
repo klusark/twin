@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TWIN_ACTOR_H
-#define TWIN_ACTOR_H
+#ifndef TWIN_SCRIPT_H
+#define TWIN_SCRIPT_H
 
 
 namespace Common {
@@ -30,32 +30,37 @@ class SeekableReadStream;
 
 namespace Twin {
 
-class Entity;
-class Script;
+class Actor;
 
-class Actor {
+class Script {
 public:
-	Actor(Common::SeekableReadStream *stream);
-	void draw();
-	void update(uint32 delta);
-	void setAnimation(uint16 anim);
-//private:
+	Script(Common::SeekableReadStream *stream);
+	virtual ~Script();
+	void run();
+	void setActor(Actor *a) { _actor = a; };
+protected:
+	byte getParamByte();
+	uint16 getParamUint16();
+	int16 getParamInt16();
+	void stop();
+	void jump(uint16 size);
+	void jumpAddress(uint16 address);
+	uint16 getGameVar(byte id);
+
+	Actor *_actor;
+
+private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
+	bool _isExecuting;
+	uint16 _length;
+	byte *_data;
+	
+	byte *_ptr;
 
-	uint16 _entityID;
-	byte _body;
-	byte _anim;
-	uint16 _sprite;
-	uint16 _x;
-	uint16 _y;
-	uint16 _z;
+	static uint16 _gameVars[256];
 
-	Script *_trackScript;
-	Script *_lifeScript;
-
-	Entity *_entity;
-
+	virtual void execute(byte opcode) = 0; 
 };
 
 } // end of namespace Twin

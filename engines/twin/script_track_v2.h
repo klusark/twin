@@ -20,9 +20,10 @@
  *
  */
 
-#ifndef TWIN_ACTOR_H
-#define TWIN_ACTOR_H
+#ifndef TWIN_SCRIPT_TRACK_V2_H
+#define TWIN_SCRIPT_TRACK_V2_H
 
+#include "engines/twin/script.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -30,32 +31,40 @@ class SeekableReadStream;
 
 namespace Twin {
 
-class Entity;
-class Script;
-
-class Actor {
+class ScriptTrackV2 : public Script {
 public:
-	Actor(Common::SeekableReadStream *stream);
-	void draw();
-	void update(uint32 delta);
-	void setAnimation(uint16 anim);
-//private:
-	void loadLBA2(Common::SeekableReadStream *stream);
+	ScriptTrackV2(Common::SeekableReadStream *stream);
+private:
+	void execute(byte opcode) override;
 
+	//Opcodes
+	void END();
+	void NOP();
+	void BODY();
+	void ANIM();
+	void GOTO_POINT();
+	void WAIT_ANIM();
 
-	uint16 _entityID;
-	byte _body;
-	byte _anim;
-	uint16 _sprite;
-	uint16 _x;
-	uint16 _y;
-	uint16 _z;
+	void LABEL();
+	void GOTO();
+	void STOP();
 
-	Script *_trackScript;
-	Script *_lifeScript;
+	void SAMPLE();
 
-	Entity *_entity;
+	void BACKGROUND();
+	void WAIT_NUM_SECOND();
 
+	void OPEN_LEFT();
+	void OPEN_RIGHT();
+	void OPEN_UP();
+	void OPEN_DOWN();
+
+	void WAIT_DOOR();
+
+	void REPLACE();
+	void WAIT_NUM_DECIMAL();
+
+	void SPRITE();
 };
 
 } // end of namespace Twin

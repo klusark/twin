@@ -18,6 +18,9 @@ MODULE_OBJS := \
 	model.o \
 	resource.o \
 	scene.o \
+	script.o \
+	script_life_v2.o \
+	script_track_v2.o \
 	twin.o \
 	video_player.o \
 	video_player_fla.o \

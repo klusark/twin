@@ -27,6 +27,8 @@
 #include "engines/twin/resource.h"
 #include "engines/twin/gfx_base.h"
 #include "engines/twin/animation.h"
+#include "engines/twin/script_track_v2.h"
+#include "engines/twin/script_life_v2.h"
 #include "common/textconsole.h"
 
 namespace Twin {
@@ -78,17 +80,19 @@ void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 		stream->readByte();
 	}
 
-	_moveScriptSize = stream->readUint16LE();
-	_moveScript = new uint8[_moveScriptSize];
-	stream->read(_moveScript, _moveScriptSize);
+	ScriptTrackV2 *trackScript = new ScriptTrackV2(stream);
+	trackScript->setActor(this);
+	_trackScript = trackScript;
 
-	_lifeScriptSize = stream->readUint16LE();
-	_lifeScript = new uint8[_lifeScriptSize];
-	stream->read(_lifeScript, _lifeScriptSize);
+	ScriptLifeV2 *lifeScript = new ScriptLifeV2(stream);
+	lifeScript->setActor(this);
+	_lifeScript = lifeScript;
 
 }
 
 void Actor::update(uint32 delta) {
+	_lifeScript->run();
+	_trackScript->run();
 	if (_entity) {
 		_entity->_anim->update(delta);
 	}
@@ -98,6 +102,9 @@ void Actor::draw() {
 	if (_entity) {
 		g_renderer->drawActor(this);
 	}
+}
+
+void Actor::setAnimation(uint16 anim) {
 }
 
 } // end of namespace Twin

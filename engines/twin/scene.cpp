@@ -25,6 +25,8 @@
 #include "engines/twin/actor.h"
 #include "engines/twin/scene.h"
 #include "engines/twin/twin.h"
+#include "engines/twin/script_track_v2.h"
+#include "engines/twin/script_life_v2.h"
 
 namespace Twin {
 
@@ -78,13 +80,10 @@ void Scene::loadLBA2(Common::SeekableReadStream *stream) {
 	_heroY = stream->readUint16LE();
 	_heroZ = stream->readUint16LE();
 
-	_moveScriptSize = stream->readUint16LE();
-	_moveScript = new uint8[_moveScriptSize];
-	stream->read(_moveScript, _moveScriptSize);
+	_trackScript = new ScriptTrackV2(stream);
 
-	_lifeScriptSize = stream->readUint16LE();
-	_lifeScript = new uint8[_lifeScriptSize];
-	stream->read(_lifeScript, _lifeScriptSize);
+	_lifeScript = new ScriptLifeV2(stream);
+
 
 	_numActors = stream->readUint16LE();
 
@@ -154,6 +153,8 @@ void Scene::loadLBA2(Common::SeekableReadStream *stream) {
 }
 
 void Scene::update(uint32 delta) {
+	_trackScript->run();
+	_lifeScript->run();
 	for (int i = 0; i < _numActors - 1; ++i) {
 		_actors[i]->update(delta);
 	}

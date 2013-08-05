@@ -32,6 +32,7 @@ namespace Twin {
 
 class Actor;
 class Grid;
+class Script;
 
 class Scene {
 public:
@@ -54,11 +55,8 @@ private:
 	uint16 _heroY;
 	uint16 _heroZ;
 
-	uint16 _moveScriptSize;
-	uint8 *_moveScript;
-
-	uint16 _lifeScriptSize;
-	uint8 *_lifeScript;
+	Script *_trackScript;
+	Script *_lifeScript;
 
 	uint16 _numActors;
 	Actor **_actors;

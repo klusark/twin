@@ -20,9 +20,10 @@
  *
  */
 
-#ifndef TWIN_ACTOR_H
-#define TWIN_ACTOR_H
+#ifndef TWIN_SCRIPT_LIFE_V2_H
+#define TWIN_SCRIPT_LIFE_V2_H
 
+#include "engines/twin/script.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -30,32 +31,72 @@ class SeekableReadStream;
 
 namespace Twin {
 
-class Entity;
-class Script;
-
-class Actor {
+class ScriptLifeV2 : public Script {
 public:
-	Actor(Common::SeekableReadStream *stream);
-	void draw();
-	void update(uint32 delta);
-	void setAnimation(uint16 anim);
-//private:
-	void loadLBA2(Common::SeekableReadStream *stream);
+	ScriptLifeV2(Common::SeekableReadStream *stream);
+	
+private:
+	bool ScriptLifeV2::testCond(uint16 a, uint16 b, byte oper);
 
+	void execute(byte opcode) override;
 
-	uint16 _entityID;
-	byte _body;
-	byte _anim;
-	uint16 _sprite;
-	uint16 _x;
-	uint16 _y;
-	uint16 _z;
+	bool checkCondition();
 
-	Script *_trackScript;
-	Script *_lifeScript;
+	//Condition
+	bool COL();
+	bool COL_OBJ();
+	bool DISTANCE();
+	bool ZONE();
+	bool ZONE_OBJ();
 
-	Entity *_entity;
+	bool CURRENT_TRACK();
 
+	bool HIT_BY();
+
+	bool VAR_GAME();
+
+	bool NUM_LITTLE_KEYS();
+
+	bool CHAPTER();
+
+	//Opcodes
+	void END();
+
+	void IF();
+	void SWIF();
+
+	void ELSE();
+
+	void SET_TRACK();
+
+	void MESSAGE();
+
+	void SET_VAR_CUBE();
+
+	void SET_COMPORTEMENT();
+	void SET_COMPORTEMENT_OBJ();
+	void END_COMPORTEMENT();
+
+	void SUICIDE();
+
+	void END_LIFE();
+
+	void GIVE_BONUS();
+
+	void OR_IF();
+
+	void POS_POINT();
+
+	void SET_HOLO_POS();
+
+	void BETA();
+
+	void AND_IF();
+
+	void SAMPLE();
+
+	void ADD_VAR_GAME();
+	void SUB_VAR_GAME();
 };
 
 } // end of namespace Twin
