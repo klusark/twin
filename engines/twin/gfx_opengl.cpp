@@ -194,7 +194,11 @@ void GfxOpenGL::drawActor(Actor *a) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
+
+	glRotatef(45, 1, 0, 0);
+	glRotatef(45, 0, 1, 0);
 	drawModel(a->_entity->_model, true);
+
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
