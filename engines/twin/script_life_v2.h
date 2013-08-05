@@ -31,14 +31,16 @@ class SeekableReadStream;
 
 namespace Twin {
 
+class ScriptTrackV2;
+
 class ScriptLifeV2 : public Script {
 public:
-	ScriptLifeV2(Common::SeekableReadStream *stream, Script *track);
+	ScriptLifeV2(Common::SeekableReadStream *stream, ScriptTrackV2 *track);
 	
 private:
 	bool ScriptLifeV2::testCond(uint16 a, uint16 b, byte oper);
 
-	Script *_track;
+	ScriptTrackV2 *_track;
 
 	uint16 _comportementAddress;
 
@@ -49,6 +51,7 @@ private:
 
 	bool _isInSwitch;
 	byte _switchCond;
+	byte _switchParam;
 
 	//Condition
 	bool COL();
@@ -92,10 +95,11 @@ private:
 	void SET_TRACK_OBJ();
 	void MESSAGE();
 
-	void CAM_FOLLOW();
-	void SET_VAR_CUBE();
-
 	void SET_DIRMODE();
+	void SET_DIRMODE_OBJ();
+	void CAM_FOLLOW();
+	void SET_BEHAVIOUR();
+	void SET_VAR_CUBE();
 
 	void SET_COMPORTEMENT();
 	void SET_COMPORTEMENT_OBJ();
@@ -117,6 +121,8 @@ private:
 
 	void BETA();
 
+	void SAVE_HERO();
+	void RESTORE_HERO();
 	void CINEMA_MODE();
 
 	void AND_IF();
@@ -132,6 +138,8 @@ private:
 
 	void ADD_VAR_GAME();
 	void SUB_VAR_GAME();
+
+	void SET_ANIM_DIAL();
 };
 
 } // end of namespace Twin

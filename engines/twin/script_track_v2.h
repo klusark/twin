@@ -34,8 +34,11 @@ namespace Twin {
 class ScriptTrackV2 : public Script {
 public:
 	ScriptTrackV2(Common::SeekableReadStream *stream);
+	byte getLabel() { return _label; }
 private:
 	void execute(byte opcode) override;
+
+	byte _label;
 
 	//Opcodes
 	void END();

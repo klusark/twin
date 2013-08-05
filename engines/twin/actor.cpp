@@ -92,7 +92,7 @@ void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 	_trackScript->setActor(this);
 
 
-	_lifeScript = new ScriptLifeV2(stream, _trackScript);
+	_lifeScript = new ScriptLifeV2(stream, (ScriptTrackV2 *)_trackScript);
 	_lifeScript->setActor(this);
 }
 

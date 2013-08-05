@@ -24,6 +24,7 @@
 #include "common/textconsole.h"
 
 #include "engines/twin/script_life_v2.h"
+#include "engines/twin/script_track_v2.h"
 #include "engines/twin/actor.h"
 #include "engines/twin/scene.h"
 #include "engines/twin/twin.h"
@@ -34,7 +35,7 @@ namespace Twin {
 #define OPCODE(op, func) case op: func(); break
 #define COND_OPCODE(op, func) case op: return func()
 
-ScriptLifeV2::ScriptLifeV2(Common::SeekableReadStream *stream, Script *track) : 
+ScriptLifeV2::ScriptLifeV2(Common::SeekableReadStream *stream, ScriptTrackV2 *track) : 
 	Script(stream), _isInSwitch(false), _track(track), _comportementAddress(0) {
 
 }
@@ -80,10 +81,11 @@ void ScriptLifeV2::execute(byte opcode) {
 		OPCODE(0x18, SET_TRACK_OBJ);
 		OPCODE(0x19, MESSAGE);
 
-		OPCODE(0x1D, CAM_FOLLOW);
-		OPCODE(0x1F, SET_VAR_CUBE);
-
 		OPCODE(0x1B, SET_DIRMODE);
+		OPCODE(0x1C, SET_DIRMODE_OBJ);
+		OPCODE(0x1D, CAM_FOLLOW);
+		OPCODE(0x1E, SET_BEHAVIOUR);
+		OPCODE(0x1F, SET_VAR_CUBE);
 
 		OPCODE(0x21, SET_COMPORTEMENT);
 		OPCODE(0x22, SET_COMPORTEMENT_OBJ);
@@ -106,6 +108,8 @@ void ScriptLifeV2::execute(byte opcode) {
 		OPCODE(0x50, BETA);
 
 		OPCODE(0x5C, CINEMA_MODE);
+		OPCODE(0x5D, SAVE_HERO);
+		OPCODE(0x5E, RESTORE_HERO);
 
 		OPCODE(0x70, AND_IF);
 		OPCODE(0x71, SWITCH);
@@ -120,6 +124,8 @@ void ScriptLifeV2::execute(byte opcode) {
 
 		OPCODE(0x80, ADD_VAR_GAME);
 		OPCODE(0x81, SUB_VAR_GAME);
+
+		OPCODE(0x93, SET_ANIM_DIAL);
 	default:
 		warning("asdf");
 	};
@@ -202,7 +208,7 @@ bool ScriptLifeV2::ZONE_OBJ() {
 bool ScriptLifeV2::CURRENT_TRACK() {
 	byte oper = getParamByte();
 	byte track = getParamByte();
-	return false;
+	return testCond(track, _track->getLabel(), oper);
 }
 
 bool ScriptLifeV2::CURRENT_TRACK_OBJ() {
@@ -237,7 +243,10 @@ bool ScriptLifeV2::ACTION() {
 	return false;
 }
 bool ScriptLifeV2::VAR_GAME() {
-	byte varID = getParamByte();
+	byte varID = _switchParam;
+	if (!_isInSwitch) {
+		varID = getParamByte();
+	}
 	byte oper = getParamByte();
 	uint16 value = getParamUint16();
 	uint16 varVal = getGameVar(varID);
@@ -271,8 +280,8 @@ bool ScriptLifeV2::BEHAVIOUR() {
 }
 bool ScriptLifeV2::CHAPTER() {
 	byte oper = getParamByte();
-	byte actor = getParamByte();
-	return false;
+	byte value = getParamByte();
+	return value == 0;
 }
 
 bool ScriptLifeV2::ANGLE() {
@@ -363,12 +372,24 @@ void ScriptLifeV2::CAM_FOLLOW() {
 	byte actor = getParamByte();
 }
 
+void ScriptLifeV2::SET_BEHAVIOUR() {
+	byte param = getParamByte();
+}
+
 void ScriptLifeV2::SET_VAR_CUBE() {
 	byte id = getParamByte();
 	byte value = getParamByte();
 }
 
 void ScriptLifeV2::SET_DIRMODE() {
+	byte dirmode = getParamByte();
+	if (dirmode == 2 || dirmode == 4) {
+		byte actor = getParamByte();
+	}
+}
+
+void ScriptLifeV2::SET_DIRMODE_OBJ() {
+	byte actor = getParamByte();
 	byte dirmode = getParamByte();
 	if (dirmode == 2 || dirmode == 4) {
 		byte actor = getParamByte();
@@ -424,6 +445,9 @@ void ScriptLifeV2::OR_IF() {
 
 void ScriptLifeV2::POS_POINT() {
 	byte point = getParamByte();
+	Scene *s = g_twin->getCurrentScene();
+	Point *p = s->getPoint(point);
+	_actor->setPos(p->_x, p->_y, p->_z);
 }
 
 
@@ -433,6 +457,12 @@ void ScriptLifeV2::SET_HOLO_POS() {
 
 void ScriptLifeV2::BETA() {
 	uint16 angle = getParamUint16();
+}
+
+void ScriptLifeV2::SAVE_HERO() {
+}
+
+void ScriptLifeV2::RESTORE_HERO() {
 }
 
 void ScriptLifeV2::CINEMA_MODE() {
@@ -448,6 +478,7 @@ void ScriptLifeV2::SWITCH() {
 	//bool cond = checkCondition();
 	//uint16 address = getParamUint16();
 	_switchCond = getParamByte();
+	_switchParam = getParamByte();
 	_isInSwitch = true;
 }
 void ScriptLifeV2::OR_CASE() {
@@ -489,6 +520,10 @@ void ScriptLifeV2::SUB_VAR_GAME() {
 	uint16 value = getParamUint16();
 	uint16 val = getGameVar(var);
 	setGameVar(var, val - value);
+}
+
+void ScriptLifeV2::SET_ANIM_DIAL() {
+	uint16 unknown = getParamUint16();
 }
 
 } // end of namespace Twin

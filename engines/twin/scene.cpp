@@ -86,7 +86,7 @@ void Scene::loadLBA2(Common::SeekableReadStream *stream) {
 	_trackScript = new ScriptTrackV2(stream);
 	_trackScript->setActor(_hero);
 
-	_lifeScript = new ScriptLifeV2(stream, _trackScript);
+	_lifeScript = new ScriptLifeV2(stream, (ScriptTrackV2 *)_trackScript);
 	_lifeScript->setActor(_hero);
 
 	_hero->_lifeScript = _lifeScript;

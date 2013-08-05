@@ -116,6 +116,7 @@ void ScriptTrackV2::POS_POINT() {
 
 void ScriptTrackV2::LABEL() {
 	byte id = getParamByte();
+	_label = id;
 }
 
 void ScriptTrackV2::GOTO() {
