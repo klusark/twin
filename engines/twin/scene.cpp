@@ -82,6 +82,7 @@ void Scene::loadLBA2(Common::SeekableReadStream *stream) {
 
 	_hero = new Actor();
 	_hero->setPos(_heroX, _heroY, _heroZ);
+	_hero->_isHero = true;
 
 	_trackScript = new ScriptTrackV2(stream);
 	_trackScript->setActor(_hero);
@@ -144,7 +145,20 @@ void Scene::loadLBA2(Common::SeekableReadStream *stream) {
 
 void Scene::update(uint32 delta) {
 	for (int i = 0; i < _numActors; ++i) {
-		_actors[i]->update(delta);
+		Actor *a = _actors[i];
+		if (a->_isHero) {
+		for (int j = 0; j < _numZones; ++j) {
+			Zone *z = &_zones[j];
+			if (z->isActorInside(a)) {
+				switch (z->_type) {
+				case kCube:
+					g_twin->changeScene(z->_snap, z->_info[0], z->_info[1], z->_info[2]);
+					warning("ASDF");
+				}
+			}
+		}
+		}
+		a->update(delta);
 	}
 }
 void Scene::draw() {

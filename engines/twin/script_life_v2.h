@@ -89,8 +89,11 @@ private:
 
 	bool BETA_COND();
 
+	bool CARRIED_OBJ_BY();
 	bool ANGLE();
 	bool DISTANCE_MESSAGE();
+
+	bool PROCESSOR();
 
 	//Opcodes
 	void END();
@@ -99,6 +102,7 @@ private:
 
 	void NEVERIF();
 
+	void RETURN();
 	void IF();
 	void SWIF();
 	void ONEIF();
@@ -113,7 +117,7 @@ private:
 	void SET_TRACK();
 	void SET_TRACK_OBJ();
 	void MESSAGE();
-
+	void CAN_FALL();
 	void SET_DIRMODE();
 	void SET_DIRMODE_OBJ();
 	void CAM_FOLLOW();
@@ -130,9 +134,14 @@ private:
 	void GIVE_GOLD_PIECES();
 	void END_LIFE();
 
+	void SET_DOOR_LEFT();
+	void SET_DOOR_RIGHT();
+	void SET_DOOR_UP();
+	void SET_DOOR_DOWN();
 	void GIVE_BONUS();
 
 	void OR_IF();
+	void INVISIBLE();
 
 	void POS_POINT();
 
@@ -140,9 +149,14 @@ private:
 
 	void BETA();
 
+	void SET_FRAME();
+
+	void NO_SHOCK();
+
+	void CINEMA_MODE();
 	void SAVE_HERO();
 	void RESTORE_HERO();
-	void CINEMA_MODE();
+	void ANIM_SET();
 
 	void AND_IF();
 	void SWITCH();

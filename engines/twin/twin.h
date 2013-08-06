@@ -59,6 +59,7 @@ public:
 	Scene *getCurrentScene() { return _scene; }
 	TwinGameType getGameType() { return _type; }
 	bool isPressingAction() { return _action; }
+	void changeScene(uint16 id, uint16 heroX, uint16 heroY, uint16 heroZ);
 };
 
 extern TwinEngine *g_twin;

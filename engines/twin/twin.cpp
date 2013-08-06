@@ -138,6 +138,11 @@ void TwinEngine::createRenderer() {
 	g_renderer = _renderer;
 }
 
+void TwinEngine::changeScene(uint16 id, uint16 heroX, uint16 heroY, uint16 heroZ) {
+	_scene = g_resource->getScene(id);
+	_scene->_hero->setPos(heroX, heroY, heroZ);
+}
+
 Common::Error TwinEngine::run() {
 	g_resource = new Resource();
 	createRenderer();

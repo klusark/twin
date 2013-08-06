@@ -34,6 +34,16 @@ class Actor;
 class Grid;
 class Script;
 
+enum ZoneType {
+	kCube		= 0, // Change to another scene
+	kCamera		= 1, // Binds camera view
+	kSceneric	= 2, // For use in Life Script
+	kGrid		= 3, // Set disappearing Grid fragment
+	kObject		= 4, // Give bonus
+	kText		= 5, // Displays text message
+	kLadder		= 6  // Hero can climb on it
+};
+
 class Zone {
 public:
 	uint32 _x1;

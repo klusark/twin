@@ -34,7 +34,7 @@
 
 namespace Twin {
 
-Actor::Actor(Common::SeekableReadStream *stream) : _entity(nullptr), _dest(nullptr), _dead(false) {
+Actor::Actor(Common::SeekableReadStream *stream) : _entity(nullptr), _dest(nullptr), _dead(false), _isHero(false) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
 	}

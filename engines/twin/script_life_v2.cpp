@@ -68,6 +68,7 @@ void ScriptLifeV2::execute(byte opcode) {
 
 		OPCODE(0x04, NEVERIF);
 
+		OPCODE(0x0B, RETURN);
 		OPCODE(0x0C, IF);
 		OPCODE(0x0D, SWIF);
 		OPCODE(0x0E, ONEIF);
@@ -82,7 +83,7 @@ void ScriptLifeV2::execute(byte opcode) {
 		OPCODE(0x17, SET_TRACK);
 		OPCODE(0x18, SET_TRACK_OBJ);
 		OPCODE(0x19, MESSAGE);
-
+		OPCODE(0x1A, CAN_FALL);
 		OPCODE(0x1B, SET_DIRMODE);
 		OPCODE(0x1C, SET_DIRMODE_OBJ);
 		OPCODE(0x1D, CAM_FOLLOW);
@@ -99,9 +100,14 @@ void ScriptLifeV2::execute(byte opcode) {
 		OPCODE(0x28, GIVE_GOLD_PIECES);
 		OPCODE(0x29, END_LIFE);
 
+		OPCODE(0x2F, SET_DOOR_LEFT);
+		OPCODE(0x30, SET_DOOR_RIGHT);
+		OPCODE(0x31, SET_DOOR_UP);
+		OPCODE(0x32, SET_DOOR_DOWN);
 		OPCODE(0x33, GIVE_BONUS);
 
 		OPCODE(0x37, OR_IF);
+		OPCODE(0x38, INVISIBLE);
 
 		OPCODE(0x3A, POS_POINT);
 
@@ -109,9 +115,14 @@ void ScriptLifeV2::execute(byte opcode) {
 
 		OPCODE(0x50, BETA);
 
+		OPCODE(0x53, SET_FRAME);
+
+		OPCODE(0x5A, NO_SHOCK);
+
 		OPCODE(0x5C, CINEMA_MODE);
 		OPCODE(0x5D, SAVE_HERO);
 		OPCODE(0x5E, RESTORE_HERO);
+		OPCODE(0x5F, ANIM_SET);
 
 		OPCODE(0x70, AND_IF);
 		OPCODE(0x71, SWITCH);
@@ -169,8 +180,11 @@ bool ScriptLifeV2::checkCondition(byte cond) {
 
 		COND_OPCODE(0x21, BETA_COND);
 
+		COND_OPCODE(0x23, CARRIED_OBJ_BY);
 		COND_OPCODE(0x24, ANGLE);
 		COND_OPCODE(0x25, DISTANCE_MESSAGE);
+
+		COND_OPCODE(0x2B, PROCESSOR);
 
 	default:
 		warning("asdf");
@@ -232,9 +246,14 @@ bool ScriptLifeV2::CURRENT_TRACK_OBJ() {
 }
 
 bool ScriptLifeV2::VAR_CUBE() {
+	byte varID = _currentState._switchParam;
+	if (!_currentState._isInSwitch) {
+		varID = getParamByte();
+	}
 	byte oper = getParamByte();
-	byte var = getParamByte();
-	byte val = getParamByte();
+	byte value = getParamByte();
+	byte varVal = getCubeVar(varID);
+	return testCond(value, varVal, oper);
 	return false;
 }
 
@@ -317,6 +336,13 @@ bool ScriptLifeV2::BETA_COND() {
 	return false;
 }
 
+bool ScriptLifeV2::CARRIED_OBJ_BY() {
+	byte oper = getParamByte();
+	byte param1 = getParamByte();
+	byte param2 = getParamByte();
+	return false;
+}
+
 bool ScriptLifeV2::ANGLE() {
 	byte oper = getParamByte();
 	byte param1 = getParamByte();
@@ -329,6 +355,12 @@ bool ScriptLifeV2::DISTANCE_MESSAGE() {
 	byte param1 = getParamByte();
 	uint16 param2 = getParamUint16();
 	return false;
+}
+
+bool ScriptLifeV2::PROCESSOR() {
+	byte oper = getParamByte();
+	byte param1 = getParamByte();
+	return true;
 }
 
 #define STUB_SCRIPT(func) void ScriptLifeV2::func() { }
@@ -352,6 +384,10 @@ void ScriptLifeV2::NEVERIF() {
 	bool cond = checkCondition();
 	uint16 address = getParamUint16();
 	jumpAddress(address);
+}
+
+void ScriptLifeV2::RETURN() {
+	jumpAddress(_comportementAddress);
 }
 
 void ScriptLifeV2::IF() {
@@ -434,6 +470,10 @@ void ScriptLifeV2::MESSAGE() {
 	uint16 id = getParamUint16();
 }
 
+void ScriptLifeV2::CAN_FALL() {
+	byte canfall = getParamByte();
+}
+
 void ScriptLifeV2::CAM_FOLLOW() {
 	byte actor = getParamByte();
 }
@@ -501,6 +541,22 @@ void ScriptLifeV2::END_LIFE() {
 	stop();
 }
 
+void ScriptLifeV2::SET_DOOR_LEFT() {
+	int16 distance = getParamInt16();
+}
+
+void ScriptLifeV2::SET_DOOR_RIGHT() {
+	int16 distance = getParamInt16();
+}
+
+void ScriptLifeV2::SET_DOOR_UP() {
+	int16 distance = getParamInt16();
+}
+
+void ScriptLifeV2::SET_DOOR_DOWN() {
+	int16 distance = getParamInt16();
+}
+
 void ScriptLifeV2::GIVE_BONUS() {
 	byte unknown = getParamByte();
 }
@@ -512,6 +568,10 @@ void ScriptLifeV2::OR_IF() {
 	if (cond) {
 		jumpAddress(address);
 	}
+}
+
+void ScriptLifeV2::INVISIBLE() {
+	byte state = getParamByte();
 }
 
 void ScriptLifeV2::POS_POINT() {
@@ -530,10 +590,22 @@ void ScriptLifeV2::BETA() {
 	uint16 angle = getParamUint16();
 }
 
+void ScriptLifeV2::SET_FRAME() {
+	byte frame = getParamByte();
+}
+
+void ScriptLifeV2::NO_SHOCK() {
+	byte shock = getParamByte();
+}
+
 void ScriptLifeV2::SAVE_HERO() {
 }
 
 void ScriptLifeV2::RESTORE_HERO() {
+}
+
+void ScriptLifeV2::ANIM_SET() {
+	uint16 anim = getParamUint16();
 }
 
 void ScriptLifeV2::CINEMA_MODE() {

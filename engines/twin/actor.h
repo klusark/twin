@@ -47,7 +47,7 @@ public:
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
-
+	bool _isHero;
 	uint16 _entityID;
 	byte _body;
 	byte _anim;
