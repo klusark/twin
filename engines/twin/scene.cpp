@@ -143,7 +143,7 @@ void Scene::loadLBA2(Common::SeekableReadStream *stream) {
 }
 
 void Scene::update(uint32 delta) {
-	for (int i = 0; i < _numActors - 1; ++i) {
+	for (int i = 0; i < _numActors; ++i) {
 		_actors[i]->update(delta);
 	}
 }
@@ -151,7 +151,7 @@ void Scene::draw() {
 	if (_grid) {
 		g_renderer->drawGrid(_grid);
 	}
-	for (int i = 0; i < _numActors - 1; ++i) {
+	for (int i = 0; i < _numActors; ++i) {
 		_actors[i]->draw();
 	}
 }

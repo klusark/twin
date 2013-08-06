@@ -56,6 +56,7 @@ private:
 
 	void SAMPLE();
 
+	void SPEED();
 	void BACKGROUND();
 	void WAIT_NUM_SECOND();
 

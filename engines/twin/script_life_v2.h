@@ -74,6 +74,10 @@ private:
 	bool BEHAVIOUR();
 	bool CHAPTER();
 
+	bool USE_INVERNTORY();
+
+	bool RND();
+
 	bool ANGLE();
 	bool DISTANCE_MESSAGE();
 
@@ -133,11 +137,14 @@ private:
 	void BREAK();
 	void END_SWITCH();
 	void SET_HIT_ZONE();
-
+	void SAVE_COMPORTEMENT();
+	void RESTORE_COMPORTEMENT();
 	void SAMPLE();
 
 	void ADD_VAR_GAME();
 	void SUB_VAR_GAME();
+
+	void NO_BODY();
 
 	void SET_ANIM_DIAL();
 };

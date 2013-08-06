@@ -119,11 +119,14 @@ void ScriptLifeV2::execute(byte opcode) {
 		OPCODE(0x75, BREAK);
 		OPCODE(0x76, END_SWITCH);
 		OPCODE(0x77, SET_HIT_ZONE);
-
+		OPCODE(0x78, SAVE_COMPORTEMENT);
+		OPCODE(0x79, RESTORE_COMPORTEMENT);
 		OPCODE(0x7A, SAMPLE);
 
 		OPCODE(0x80, ADD_VAR_GAME);
 		OPCODE(0x81, SUB_VAR_GAME);
+
+		OPCODE(0x87, NO_BODY);
 
 		OPCODE(0x93, SET_ANIM_DIAL);
 	default:
@@ -157,6 +160,10 @@ bool ScriptLifeV2::checkCondition(byte cond) {
 		COND_OPCODE(0x13, NUM_GOLD_PIECES);
 		COND_OPCODE(0x14, BEHAVIOUR);
 		COND_OPCODE(0x15, CHAPTER);
+
+		COND_OPCODE(0x19, USE_INVERNTORY);
+
+		COND_OPCODE(0x1F, RND);
 
 		COND_OPCODE(0x24, ANGLE);
 		COND_OPCODE(0x25, DISTANCE_MESSAGE);
@@ -286,6 +293,19 @@ bool ScriptLifeV2::CHAPTER() {
 	return value == 0;
 }
 
+bool ScriptLifeV2::USE_INVERNTORY() {
+	byte oper = getParamByte();
+	byte param1 = getParamByte();
+	byte param2 = getParamByte();
+	return false;
+}
+
+bool ScriptLifeV2::RND() {
+	byte oper = getParamByte();
+	byte value = getParamByte();
+	return false;
+}
+
 bool ScriptLifeV2::ANGLE() {
 	byte oper = getParamByte();
 	byte param1 = getParamByte();
@@ -340,6 +360,7 @@ void ScriptLifeV2::BODY_OBJ() {
 
 void ScriptLifeV2::ANIM() {
 	uint32 id = getParamUint16();
+	_actor->setAnimation(id);
 }
 
 void ScriptLifeV2::ANIM_OBJ() {
@@ -509,6 +530,12 @@ void ScriptLifeV2::SET_HIT_ZONE() {
 	byte param1 = getParamByte();
 }
 
+void ScriptLifeV2::SAVE_COMPORTEMENT() {
+}
+
+void ScriptLifeV2::RESTORE_COMPORTEMENT() {
+}
+
 void ScriptLifeV2::SAMPLE() {
 	uint16 id = getParamUint16();
 }
@@ -524,6 +551,11 @@ void ScriptLifeV2::SUB_VAR_GAME() {
 	uint16 value = getParamUint16();
 	uint16 val = getGameVar(var);
 	setGameVar(var, val - value);
+}
+
+void ScriptLifeV2::NO_BODY() {
+	//TODO: Probably shouldn't kill the actor, but that hides them for now
+	_actor->kill();
 }
 
 void ScriptLifeV2::SET_ANIM_DIAL() {

@@ -54,6 +54,7 @@ void ScriptTrackV2::execute(byte opcode) {
 
 		OPCODE(0x0E, SAMPLE);
 
+		OPCODE(0x10, SPEED);
 		OPCODE(0x11, BACKGROUND);
 		OPCODE(0x12, WAIT_NUM_SECOND);
 
@@ -130,6 +131,10 @@ void ScriptTrackV2::STOP() {
 
 void ScriptTrackV2::SAMPLE() {
 	uint16 id = getParamUint16();
+}
+
+void ScriptTrackV2::SPEED() {
+	int16 speed = getParamInt16();
 }
 
 void ScriptTrackV2::BACKGROUND() {
