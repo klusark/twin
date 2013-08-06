@@ -267,6 +267,7 @@ Common::Error TwinEngine::run() {
 
 		_scene->draw();
 		_scene->update(deltaTime);
+		_renderer->moveCamera(_scene->_hero->_x, _scene->_hero->_y, _scene->_hero->_z);
 		//_renderer->drawModel(e->_model);
 		//_renderer->drawIsland(&idland);
 		_renderer->flipBuffer();

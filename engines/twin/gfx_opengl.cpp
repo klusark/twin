@@ -91,6 +91,21 @@ void GfxOpenGL::flipBuffer() {
 	g_system->updateScreen();
 }
 
+int GfxOpenGL::getScreenWidth() {
+	return _screenWidth;
+}
+
+int GfxOpenGL::getScreenHeight() {
+	return _screenHeight;
+}
+
+void GfxOpenGL::moveCamera(int x, int y, int z) {
+
+	_cameraZ = 0;
+	_cameraX = -(((x - z) * 24.0f) / 512.0f);
+	_cameraY = -((((x + z) * 12.0f) - y * 30.0f) / 512.0f);
+}
+
 int GfxOpenGL::createBitmap(const Graphics::Surface *surf) {
 	// TODO: Care about NPOT-problems, and pixel-formats
 	GLuint texNum;
