@@ -23,6 +23,8 @@
 #ifndef TWIN_SCRIPT_LIFE_V2_H
 #define TWIN_SCRIPT_LIFE_V2_H
 
+#include "common/stack.h"
+
 #include "engines/twin/script.h"
 
 namespace Common {
@@ -32,6 +34,14 @@ class SeekableReadStream;
 namespace Twin {
 
 class ScriptTrackV2;
+
+class State {
+public:
+	State() : _isInSwitch(false) {}
+	bool _isInSwitch;
+	byte _switchCond;
+	byte _switchParam;
+};
 
 class ScriptLifeV2 : public Script {
 public:
@@ -49,9 +59,8 @@ private:
 	bool checkCondition();
 	bool checkCondition(byte cond);
 
-	bool _isInSwitch;
-	byte _switchCond;
-	byte _switchParam;
+	Common::Stack<State> _states;
+	State _currentState;
 
 	//Condition
 	bool COL();
@@ -77,6 +86,8 @@ private:
 	bool USE_INVERNTORY();
 
 	bool RND();
+
+	bool BETA_COND();
 
 	bool ANGLE();
 	bool DISTANCE_MESSAGE();

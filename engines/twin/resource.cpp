@@ -78,6 +78,7 @@ Scene *Resource::getScene(uint16 id) {
 	if (!_scenes[id]._isIsland) {
 		s->setGrid(getGrid(_scenes[id]._id));
 	}
+	s->setId(id);
 	return s;
 }
 

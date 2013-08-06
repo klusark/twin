@@ -49,6 +49,10 @@ public:
 	void jumpAddress(uint16 address);
 	uint16 getGameVar(byte id);
 	void setGameVar(byte id, uint16 val);
+
+	byte getCubeVar(byte id);
+	void setCubeVar(byte id, byte val);
+
 	void setOpcode(byte opcode);
 
 	Actor *_actor;
@@ -69,6 +73,7 @@ public:
 	byte *_opcodePtr;
 
 	static uint16 _gameVars[256];
+	static byte _cubeVars[256][256];
 
 	virtual void execute(byte opcode) = 0; 
 };

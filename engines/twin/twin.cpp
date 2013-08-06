@@ -43,6 +43,7 @@
 #include "engines/twin/video_player_smk.h"
 #include "engines/twin/animation.h"
 #include "engines/twin/script.h"
+#include "engines/twin/actor.h"
 
 
 namespace Twin {
@@ -53,6 +54,7 @@ GfxBase *g_renderer = NULL;
 TwinEngine::TwinEngine(OSystem *syst, TwinGameType type) :
 		Engine(syst), _type(type) {
 	g_twin = this;
+	_action = false;
 }
 
 TwinEngine::~TwinEngine() {
@@ -200,6 +202,13 @@ Common::Error TwinEngine::run() {
 				} else if (k == Common::KEYCODE_d && anim != 0) {
 					--anim;
 					entityInfoChanged = true;
+				} else if (k == Common::KEYCODE_SPACE) {
+					_action = false;
+				}
+			} else if (type == Common::EVENT_KEYDOWN) {
+				Common::KeyCode k = event.kbd.keycode;
+				if (k == Common::KEYCODE_SPACE) {
+					_action = true;
 				}
 			} else if (type == Common::EVENT_WHEELUP) {
 				++grid;
@@ -218,7 +227,9 @@ Common::Error TwinEngine::run() {
 			} else if (type == Common::EVENT_LBUTTONUP) {
 				mouseDown = false;
 			} else if (type == Common::EVENT_MOUSEMOVE && mouseDown) {
-				_renderer->moveCamera(event.relMouse.x, event.relMouse.y, 0);
+				//_renderer->moveCamera(event.relMouse.x, event.relMouse.y, 0);
+				_scene->_hero->_x += event.relMouse.x * 10;
+				_scene->_hero->_z += event.relMouse.y * 10;
 			} else if (type == Common::EVENT_MOUSEMOVE && wheelDown) {
 				_renderer->moveCamera(0, 0, event.relMouse.y);
 			} else if (type == Common::EVENT_MOUSEMOVE && rDown) {
@@ -235,7 +246,7 @@ Common::Error TwinEngine::run() {
 				return Common::kNoError;
 			}
 		}
-
+		warning("frame");
 		if (entityInfoChanged) {
 			entityInfoChanged = false;
 			delete e;
@@ -254,6 +265,7 @@ Common::Error TwinEngine::run() {
 		//_renderer->drawModel(e->_model);
 		//_renderer->drawIsland(&idland);
 		_renderer->flipBuffer();
+
 	}
 
 	delete e;

@@ -58,14 +58,18 @@ public:
 class Scene {
 public:
 	Scene(Common::SeekableReadStream *stream);
+	void setId(uint32 id) { _id = id; }
 	void draw();
 	void update(uint32 delta);
 	void setGrid(Grid *g) { _grid = g; }
 	Point *getPoint(byte id) { return &_points[id]; }
 	Actor *getActor(byte id) { return _actors[id]; }
 	Zone *getZone(byte id) { return &_zones[id]; }
+	uint32 getId() { return _id; }
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
+
+	uint32 _id;
 
 	Grid *_grid;
 

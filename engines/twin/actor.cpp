@@ -112,21 +112,27 @@ void Actor::update(uint32 delta) {
 		int ydiff = _dest->_y - _y;
 		int zdiff = _dest->_z - _z;
 
+		int x = _x, y = _y, z = _z;
+		int d = delta;
+
 		if (xdiff < 0) {
-			_x = MAX(_x - delta, _dest->_x);
+			x = MAX(_x - d, (int)_dest->_x);
 		} else if (xdiff > 0) {
-			_x = MIN(_x + delta, _dest->_x);
+			x = MIN(_x + d, (int)_dest->_x);
 		}
 		if (ydiff < 0) {
-			_y = MAX(_y - delta, _dest->_y);
+			y = MAX(_y - d, (int)_dest->_y);
 		} else if (ydiff > 0) {
-			_y = MIN(_y + delta, _dest->_y);
+			y = MIN(_y + d, (int)_dest->_y);
 		}
 		if (zdiff < 0) {
-			_z = MAX(_z - delta, _dest->_z);
+			z = MAX(_z - d, (int)_dest->_z);
 		} else if (zdiff > 0) {
-			_z = MIN(_z + delta, _dest->_z);
+			z = MIN(_z + d, (int)_dest->_z);
 		}
+		_x = x;
+		_y = y;
+		_z = z;
 
 		if (_x ==_dest->_x && _y == _dest->_y && _z == _dest->_z) {
 			_dest = nullptr;

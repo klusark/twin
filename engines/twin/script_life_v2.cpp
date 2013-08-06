@@ -32,11 +32,11 @@
 namespace Twin {
 
 
-#define OPCODE(op, func) case op: func(); break
-#define COND_OPCODE(op, func) case op: return func()
+#define OPCODE(op, func) case op: warning(#func); func(); break
+#define COND_OPCODE(op, func) case op: warning(#func); return func()
 
 ScriptLifeV2::ScriptLifeV2(Common::SeekableReadStream *stream, ScriptTrackV2 *track) : 
-	Script(stream), _isInSwitch(false), _track(track), _comportementAddress(0) {
+	Script(stream), _track(track), _comportementAddress(0) {
 
 }
 
@@ -167,6 +167,8 @@ bool ScriptLifeV2::checkCondition(byte cond) {
 
 		COND_OPCODE(0x1F, RND);
 
+		COND_OPCODE(0x21, BETA_COND);
+
 		COND_OPCODE(0x24, ANGLE);
 		COND_OPCODE(0x25, DISTANCE_MESSAGE);
 
@@ -200,7 +202,7 @@ bool ScriptLifeV2::ZONE() {
 	byte oper = getParamByte();
 	byte zone = getParamByte();
 	Scene *s = g_twin->getCurrentScene();
-	Zone *z = s->getZone(zone);
+	Zone *z = s->getZone(zone + 1);
 	return z->isActorInside(_actor);
 }
 
@@ -250,12 +252,13 @@ bool ScriptLifeV2::HIT_BY() {
 }
 bool ScriptLifeV2::ACTION() {
 	byte oper = getParamByte();
-	byte actor = getParamByte();
-	return false;
+	byte val = getParamByte();
+	byte actual = g_twin->isPressingAction();
+	return testCond(val, actual, oper);
 }
 bool ScriptLifeV2::VAR_GAME() {
-	byte varID = _switchParam;
-	if (!_isInSwitch) {
+	byte varID = _currentState._switchParam;
+	if (!_currentState._isInSwitch) {
 		varID = getParamByte();
 	}
 	byte oper = getParamByte();
@@ -308,6 +311,12 @@ bool ScriptLifeV2::RND() {
 	return false;
 }
 
+bool ScriptLifeV2::BETA_COND() {
+	byte oper = getParamByte();
+	uint16 value = getParamUint16();
+	return false;
+}
+
 bool ScriptLifeV2::ANGLE() {
 	byte oper = getParamByte();
 	byte param1 = getParamByte();
@@ -346,12 +355,15 @@ void ScriptLifeV2::NEVERIF() {
 }
 
 void ScriptLifeV2::IF() {
+	_states.push(_currentState);
+	_currentState._isInSwitch = false;
 	bool cond = checkCondition();
 
 	uint16 address = getParamUint16();
 	if (!cond) {
 		jumpAddress(address);
 	}
+	_currentState = _states.pop();
 }
 void ScriptLifeV2::SWIF() {
 	bool cond = checkCondition();
@@ -433,6 +445,7 @@ void ScriptLifeV2::SET_BEHAVIOUR() {
 void ScriptLifeV2::SET_VAR_CUBE() {
 	byte id = getParamByte();
 	byte value = getParamByte();
+	setCubeVar(id, value);
 }
 
 void ScriptLifeV2::SET_DIRMODE() {
@@ -539,18 +552,20 @@ void ScriptLifeV2::AND_IF() {
 void ScriptLifeV2::SWITCH() {
 	//bool cond = checkCondition();
 	//uint16 address = getParamUint16();
-	_switchCond = getParamByte();
-	if (_switchCond == 0xf) {
-		_switchParam = getParamByte();
+	_states.push(_currentState);
+
+	_currentState._switchCond = getParamByte();
+	if (_currentState._switchCond == 0xf) {
+		_currentState._switchParam = getParamByte();
 	}
-	_isInSwitch = true;
+	_currentState._isInSwitch = true;
 }
 void ScriptLifeV2::OR_CASE() {
 	error("not done");
 }
 void ScriptLifeV2::CASE() {
 	uint16 address = getParamUint16();
-	if (!checkCondition(_switchCond)) {
+	if (!checkCondition(_currentState._switchCond)) {
 		jumpAddress(address);
 	}
 }
@@ -562,7 +577,7 @@ void ScriptLifeV2::BREAK() {
 	jumpAddress(address);
 }
 void ScriptLifeV2::END_SWITCH() {
-	_isInSwitch = false;
+	_currentState = _states.pop();
 }
 
 void ScriptLifeV2::SET_HIT_ZONE() {

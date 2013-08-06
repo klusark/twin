@@ -46,6 +46,7 @@ class TwinEngine : public Engine {
 	GfxBase *_renderer;
 	TwinGameType _type;
 	Scene *_scene;
+	bool _action;
 protected:
 	// Engine APIs
 	virtual Common::Error run();
@@ -57,7 +58,7 @@ public:
 	virtual ~TwinEngine();
 	Scene *getCurrentScene() { return _scene; }
 	TwinGameType getGameType() { return _type; }
-
+	bool isPressingAction() { return _action; }
 };
 
 extern TwinEngine *g_twin;

@@ -25,10 +25,12 @@
 
 #include "engines/twin/script.h"
 #include "engines/twin/twin.h"
+#include "engines/twin/scene.h"
 
 namespace Twin {
 
 uint16 Script::_gameVars[256];
+byte Script::_cubeVars[256][256];
 
 Script::Script(Common::SeekableReadStream *stream) : _actor(nullptr), _isWaiting(false) {
 	if (g_twin->getGameType() == GType_LBA2) {
@@ -61,7 +63,7 @@ void Script::run(uint32 delta) {
 			_isWaiting = false;
 		}
 	}
-	//warning("start");
+	warning("start");
 	while (_isExecuting && !_isYielded && !_isWaiting) {
 		_opcodePtr = _ptr;
 		byte opcode = _ptr[0];
@@ -96,6 +98,16 @@ uint16 Script::getGameVar(byte id) {
 
 void Script::setGameVar(byte id, uint16 val) {
 	_gameVars[id] = val;
+}
+
+byte Script::getCubeVar(byte id) {
+	int sceneid = g_twin->getCurrentScene()->getId();
+	return _cubeVars[sceneid][id];
+}
+
+void Script::setCubeVar(byte id, byte val) {
+	int sceneid = g_twin->getCurrentScene()->getId();
+	_cubeVars[sceneid][id] = val;
 }
 
 byte Script::getParamByte() {
