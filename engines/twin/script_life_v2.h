@@ -84,6 +84,10 @@ private:
 	//Opcodes
 	void END();
 
+	void SNIF();
+
+	void NEVERIF();
+
 	void IF();
 	void SWIF();
 	void ONEIF();

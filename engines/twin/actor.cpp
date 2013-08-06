@@ -130,6 +130,8 @@ void Actor::update(uint32 delta) {
 
 		if (_x ==_dest->_x && _y == _dest->_y && _z == _dest->_z) {
 			_dest = nullptr;
+			*_destDone = true;
+			_destDone = nullptr;
 		}
 	}
 }
@@ -150,8 +152,9 @@ void Actor::setAnimation(uint16 anim) {
 	}
 }
 
-void Actor::gotoPoint(Point *p) {
+void Actor::gotoPoint(Point *p, bool *done) {
 	_dest = p;
+	_destDone = done;
 }
 
 } // end of namespace Twin

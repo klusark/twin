@@ -100,7 +100,8 @@ void ScriptTrackV2::ANIM() {
 void ScriptTrackV2::GOTO_POINT() {
 	byte id = getParamByte();
 	Scene *s = g_twin->getCurrentScene();
-	_actor->gotoPoint(s->getPoint(id));
+	_isExecuting = false;
+	_actor->gotoPoint(s->getPoint(id), &_isExecuting);
 }
 STUB_SCRIPT(WAIT_ANIM);
 

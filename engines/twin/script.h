@@ -49,13 +49,14 @@ public:
 	void jumpAddress(uint16 address);
 	uint16 getGameVar(byte id);
 	void setGameVar(byte id, uint16 val);
+	void setOpcode(byte opcode);
 
 	Actor *_actor;
 
 	bool _isWaiting;
 	uint32 _waitTime;
 	uint32 _waitedTime;
-private:
+//private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
 	bool _isExecuting;
@@ -65,6 +66,7 @@ private:
 	byte *_data;
 	
 	byte *_ptr;
+	byte *_opcodePtr;
 
 	static uint16 _gameVars[256];
 

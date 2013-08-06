@@ -157,7 +157,7 @@ void Scene::draw() {
 }
 
 bool Zone::isActorInside(Actor *a) {
-	if (a->_x > _x1 && a->_x < _x2 && a->_y > _y1 && a->_y < _y2 && a->_y > _y1 && a->_y < _y2) {
+	if (a->_x >= _x1 && a->_x <= _x2 && a->_y >= _y1 && a->_y <= _y2 && a->_z >= _z1 && a->_z <= _z2) {
 		return true;
 	}
 	return false;

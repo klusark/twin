@@ -42,7 +42,7 @@ public:
 	void update(uint32 delta);
 	void setAnimation(uint16 anim);
 	void setPos(uint16 x, uint16 y, uint16 z) { _x = x; _y = y; _z = z; }
-	void gotoPoint(Point *p);
+	void gotoPoint(Point *p, bool *done);
 	void kill() { _dead = true; }
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
@@ -62,6 +62,7 @@ public:
 	Entity *_entity;
 
 	Point *_dest;
+	bool *_destDone;
 
 	bool _dead;
 };

@@ -50,6 +50,10 @@ void Script::loadLBA2(Common::SeekableReadStream *stream) {
 	_ptr = _data;
 }
 
+void Script::setOpcode(byte opcode) {
+	*_opcodePtr = opcode;
+}
+
 void Script::run(uint32 delta) {
 	if (_isWaiting) {
 		_waitedTime += delta;
@@ -57,8 +61,9 @@ void Script::run(uint32 delta) {
 			_isWaiting = false;
 		}
 	}
-	warning("start");
+	//warning("start");
 	while (_isExecuting && !_isYielded && !_isWaiting) {
+		_opcodePtr = _ptr;
 		byte opcode = _ptr[0];
 		++_ptr;
 		execute(opcode);

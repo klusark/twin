@@ -61,10 +61,12 @@ bool ScriptLifeV2::testCond(uint16 a, uint16 b, byte oper) {
 }
 
 void ScriptLifeV2::execute(byte opcode) {
-	warning("%x", opcode);
-
 	switch (opcode) {
 		OPCODE(0x00, END);
+
+		OPCODE(0x02, SNIF);
+
+		OPCODE(0x04, NEVERIF);
 
 		OPCODE(0x0C, IF);
 		OPCODE(0x0D, SWIF);
@@ -275,7 +277,7 @@ bool ScriptLifeV2::LIFE_POINT_OBJ() {
 bool ScriptLifeV2::NUM_LITTLE_KEYS() {
 	byte oper = getParamByte();
 	byte numKeys = getParamByte();
-	return false;
+	return true;
 }
 bool ScriptLifeV2::NUM_GOLD_PIECES() {
 	byte oper = getParamByte();
@@ -326,6 +328,23 @@ void ScriptLifeV2::END() {
 	stop();
 }
 
+void ScriptLifeV2::SNIF() {
+	bool cond = checkCondition();
+
+	uint16 address = getParamUint16();
+	if (cond) {
+		jumpAddress(address);
+	} else {
+		setOpcode(0x0D); // SWIF
+	}
+}
+
+void ScriptLifeV2::NEVERIF() {
+	bool cond = checkCondition();
+	uint16 address = getParamUint16();
+	jumpAddress(address);
+}
+
 void ScriptLifeV2::IF() {
 	bool cond = checkCondition();
 
@@ -336,12 +355,24 @@ void ScriptLifeV2::IF() {
 }
 void ScriptLifeV2::SWIF() {
 	bool cond = checkCondition();
+
 	uint16 address = getParamUint16();
+	if (!cond) {
+		jumpAddress(address);
+	} else {
+		setOpcode(0x02); // SNIF
+	}
 }
 
 void ScriptLifeV2::ONEIF() {
 	bool cond = checkCondition();
+
 	uint16 address = getParamUint16();
+	if (!cond) {
+		jumpAddress(address);
+	} else {
+		setOpcode(0x04); // NEVERIF
+	}
 }
 
 void ScriptLifeV2::ELSE() {
@@ -463,7 +494,11 @@ void ScriptLifeV2::GIVE_BONUS() {
 
 void ScriptLifeV2::OR_IF() {
 	bool cond = checkCondition();
+
 	uint16 address = getParamUint16();
+	if (cond) {
+		jumpAddress(address);
+	}
 }
 
 void ScriptLifeV2::POS_POINT() {
@@ -494,7 +529,11 @@ void ScriptLifeV2::CINEMA_MODE() {
 
 void ScriptLifeV2::AND_IF() {
 	bool cond = checkCondition();
+
 	uint16 address = getParamUint16();
+	if (!cond) {
+		jumpAddress(address);
+	}
 }
 
 void ScriptLifeV2::SWITCH() {
