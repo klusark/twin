@@ -214,8 +214,10 @@ bool ScriptLifeV2::CURRENT_TRACK() {
 bool ScriptLifeV2::CURRENT_TRACK_OBJ() {
 	byte oper = getParamByte();
 	byte actor = getParamByte();
+	Scene *s = g_twin->getCurrentScene();
+	Actor *a = s->getActor(actor);
 	byte track = getParamByte();
-	return false;
+	return testCond(track, ((ScriptTrackV2 *)a->_trackScript)->getLabel(), oper);
 }
 
 bool ScriptLifeV2::VAR_CUBE() {
@@ -478,7 +480,9 @@ void ScriptLifeV2::SWITCH() {
 	//bool cond = checkCondition();
 	//uint16 address = getParamUint16();
 	_switchCond = getParamByte();
-	_switchParam = getParamByte();
+	if (_switchCond == 0xf) {
+		_switchParam = getParamByte();
+	}
 	_isInSwitch = true;
 }
 void ScriptLifeV2::OR_CASE() {

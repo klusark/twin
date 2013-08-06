@@ -64,7 +64,7 @@ public:
 	Point *getPoint(byte id) { return &_points[id]; }
 	Actor *getActor(byte id) { return _actors[id]; }
 	Zone *getZone(byte id) { return &_zones[id]; }
-private:
+//private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
 	Grid *_grid;

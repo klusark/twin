@@ -33,7 +33,7 @@ namespace Twin {
 
 #define OPCODE(op, func) case op: func(); break
 
-ScriptTrackV2::ScriptTrackV2(Common::SeekableReadStream *stream) : Script(stream) {
+ScriptTrackV2::ScriptTrackV2(Common::SeekableReadStream *stream) : Script(stream), _label(0) {
 	stop();
 }
 
@@ -139,6 +139,9 @@ void ScriptTrackV2::BACKGROUND() {
 void ScriptTrackV2::WAIT_NUM_SECOND() {
 	byte numSeconds = getParamByte();
 	jump(4);
+	_waitTime = numSeconds * 1000;
+	_waitedTime = 0;
+	_isWaiting = true;
 }
 
 void ScriptTrackV2::OPEN_LEFT() {

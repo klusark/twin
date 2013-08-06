@@ -42,6 +42,7 @@
 #include "engines/twin/video_player.h"
 #include "engines/twin/video_player_smk.h"
 #include "engines/twin/animation.h"
+#include "engines/twin/script.h"
 
 
 namespace Twin {
@@ -172,6 +173,7 @@ Common::Error TwinEngine::run() {
 
 	int grid = 0;
 	_scene = g_resource->getScene(grid);
+
 	bool mouseDown = false, wheelDown = false, rDown = false;
 	uint32 lastTime = g_system->getMillis();
 	for (;;) {

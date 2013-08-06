@@ -101,8 +101,8 @@ void Actor::update(uint32 delta) {
 	if (_dead) {
 		return;
 	}
-	_lifeScript->run();
-	_trackScript->run();
+	_lifeScript->run(delta);
+	_trackScript->run(delta);
 	if (_entity) {
 		_entity->_anim->update(delta);
 	}

@@ -36,7 +36,7 @@ class Script {
 public:
 	Script(Common::SeekableReadStream *stream);
 	virtual ~Script();
-	void run();
+	void run(uint32 delta);
 	void setActor(Actor *a) { _actor = a; };
 //protected:
 	byte getParamByte();
@@ -52,11 +52,15 @@ public:
 
 	Actor *_actor;
 
+	bool _isWaiting;
+	uint32 _waitTime;
+	uint32 _waitedTime;
 private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
 	bool _isExecuting;
 	bool _isYielded;
+
 	uint16 _length;
 	byte *_data;
 	
