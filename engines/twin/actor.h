@@ -23,6 +23,7 @@
 #ifndef TWIN_ACTOR_H
 #define TWIN_ACTOR_H
 
+#include "math/angle.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -44,6 +45,11 @@ public:
 	void setPos(uint16 x, uint16 y, uint16 z) { _x = x; _y = y; _z = z; }
 	void gotoPoint(Point *p, bool *done);
 	void kill() { _dead = true; }
+
+	void turnToAngle(Math::Angle angle);
+	void setAngle(Math::Angle angle) { _angle = angle; }
+	Math::Angle getAngleTo(Actor *a);
+	void faceActor(Actor *a) { _facingActor = a; }
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
@@ -65,6 +71,11 @@ public:
 	bool *_destDone;
 
 	bool _dead;
+	Math::Angle _angle;
+	Math::Angle _dstAngle;
+	bool _turning;
+
+	Actor *_facingActor;
 };
 
 } // end of namespace Twin

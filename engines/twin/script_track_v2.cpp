@@ -72,6 +72,8 @@ STUB_SCRIPT(WAIT_ANIM);
 
 void ScriptTrackV2::ANGLE() {
 	int16 angle = getParamInt16();
+	_actor->faceActor(nullptr);
+	_actor->turnToAngle(((angle * 360) / 4096) + 90);
 }
 
 void ScriptTrackV2::POS_POINT() {
@@ -159,6 +161,9 @@ void ScriptTrackV2::SIMPLE_SAMPLE() {
 
 void ScriptTrackV2::FACE_HERO() {
 	uint16 param = getParamUint16();
+	Scene *s = g_twin->getCurrentScene();
+	_actor->faceActor(s->_hero);
+
 }
 
 void ScriptTrackV2::ANGLE_RND() {

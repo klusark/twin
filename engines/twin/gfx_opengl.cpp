@@ -212,6 +212,7 @@ void GfxOpenGL::drawActor(Actor *a) {
 
 	glRotatef(45, 1, 0, 0);
 	glRotatef(45, 0, 1, 0);
+	glRotatef(-a->_angle.getDegrees(), 0, 1, 0);
 	drawModel(a->_entity->_model, true);
 
 	glDisable(GL_CULL_FACE);

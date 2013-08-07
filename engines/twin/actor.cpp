@@ -20,6 +20,8 @@
  *
  */
 
+#include "math/vector3d.h"
+
 #include "common/stream.h"
 
 #include "engines/twin/actor.h"
@@ -34,13 +36,15 @@
 
 namespace Twin {
 
-Actor::Actor(Common::SeekableReadStream *stream) : _entity(nullptr), _dest(nullptr), _dead(false), _isHero(false) {
+Actor::Actor(Common::SeekableReadStream *stream) :
+		_entity(nullptr), _dest(nullptr), _dead(false), _isHero(false), _angle(0),
+		_facingActor(nullptr), _turning(false) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
 	}
 }
 
-Actor::Actor() : _entity(nullptr), _dest(nullptr), _dead(false) {
+Actor::Actor() : _entity(nullptr), _dest(nullptr), _dead(false), _facingActor(nullptr), _turning(false) {
 	_entity = g_resource->getEntity(0, 0, 0);
 	_x = 0;
 	_y = 0;
@@ -140,6 +144,30 @@ void Actor::update(uint32 delta) {
 			_destDone = nullptr;
 		}
 	}
+
+	if (_facingActor) {
+		Math::Angle angle = getAngleTo(_facingActor);
+		turnToAngle(angle);
+	}
+
+	if (_turning) {
+		float turnSpeed = delta/10.0f;
+		Math::Angle next = _angle;
+
+		if ((_angle < _dstAngle && (_dstAngle - _angle < 180)) || (_dstAngle < _angle && (_angle - _dstAngle > 180))) {
+			next = _angle + turnSpeed;
+		} else {
+			next = _angle - turnSpeed;
+		}
+
+		if ((_angle < _dstAngle && next > _dstAngle) || (_angle > _dstAngle && next < _dstAngle)) {
+			next = _dstAngle;
+			_turning = false;
+		}
+		next.normalize(0);
+
+		_angle = next;
+	}
 }
 
 void Actor::draw() {
@@ -161,6 +189,23 @@ void Actor::setAnimation(uint16 anim) {
 void Actor::gotoPoint(Point *p, bool *done) {
 	_dest = p;
 	_destDone = done;
+}
+
+Math::Angle Actor::getAngleTo(Actor *a) {
+	Math::Vector3d veca(a->_x, a->_y, a->_z);
+	Math::Vector3d vecb(_x, _y, _z);
+
+	float xdiff = a->_x - _x;
+	float ydiff = a->_z - _z;
+
+	float rad = asin(ydiff / sqrt(xdiff * xdiff + ydiff * ydiff));
+
+	return Math::Angle::fromRadians(rad);
+}
+
+void Actor::turnToAngle(Math::Angle angle) {
+	_turning = true;
+	_dstAngle = angle;
 }
 
 } // end of namespace Twin
