@@ -69,16 +69,32 @@ void ScriptLifeV2::execute(byte opcode) {
 }
 bool ScriptLifeV2::checkCondition() {
 	byte cond = getParamByte();
+	loadConditionParam(cond);
 	return checkCondition(cond);
 }
 
+void ScriptLifeV2::loadConditionParam() {
+	byte param = getParamByte();
+	_currentState._param = param;
+}
+
+void ScriptLifeV2::loadConditionParam(byte cond) {
+	switch (cond) {
+		#define COND_OPCODE(op, func, param) case op: if (param != 0) { loadConditionParam(); } break
+			LIFE_COND_OPCODES
+		#undef COND_OPCODE
+
+	default:
+		warning("asdf");
+	}
+}
 
 bool ScriptLifeV2::checkCondition(byte cond) {
-
+	byte oper = getParamByte();
 	switch (cond) {
-		#define COND_OPCODE(op, func) case op: warning(#func); return func()
+		#define COND_OPCODE(op, func, params) case op: warning(#func); return func(oper)
 			LIFE_COND_OPCODES
-		#undef OPCODE
+		#undef COND_OPCODE
 
 	default:
 		warning("asdf");
@@ -86,173 +102,146 @@ bool ScriptLifeV2::checkCondition(byte cond) {
 	return false;
 }
 
-bool ScriptLifeV2::COL() {
-	byte oper = getParamByte();
+bool ScriptLifeV2::COL(byte oper) {
 	byte actor = getParamByte();
 	return false;
 }
 
-bool ScriptLifeV2::COL_OBJ() {
-	byte oper = getParamByte();
-	byte actor1 = getParamByte();
+bool ScriptLifeV2::COL_OBJ(byte oper) {
 	byte actor2 = getParamByte();
 	return false;
 }
 
-bool ScriptLifeV2::DISTANCE() {
-	byte oper = getParamByte();
-	byte actor = getParamByte();
+bool ScriptLifeV2::DISTANCE(byte oper) {
 	uint16 distance = getParamUint16();
 	return false;
 }
 
-bool ScriptLifeV2::ZONE() {
-	byte oper = getParamByte();
+bool ScriptLifeV2::ZONE(byte oper) {
 	byte zone = getParamByte();
 	Scene *s = g_twin->getCurrentScene();
 	Zone *z = s->getZone(zone + 1);
 	return z->isActorInside(_actor);
 }
 
-bool ScriptLifeV2::ZONE_OBJ() {
-	byte oper = getParamByte();
-	byte actor = getParamByte();
+bool ScriptLifeV2::ZONE_OBJ(byte oper) {
+	byte actor = _currentState._param;
 	byte zone = getParamByte();
+
 	Scene *s = g_twin->getCurrentScene();
 	Actor *a = s->getActor(actor);
 	Zone *z = s->getZone(zone);
 	return z->isActorInside(a);
 }
 
-bool ScriptLifeV2::CURRENT_TRACK() {
-	byte oper = getParamByte();
+bool ScriptLifeV2::CURRENT_TRACK(byte oper) {
 	byte track = getParamByte();
 	return testCond(track, _track->getLabel(), oper);
 }
 
-bool ScriptLifeV2::CURRENT_TRACK_OBJ() {
-	byte oper = getParamByte();
-	byte actor = getParamByte();
+bool ScriptLifeV2::CURRENT_TRACK_OBJ(byte oper) {
+	byte actor = _currentState._param;
 	Scene *s = g_twin->getCurrentScene();
 	Actor *a = s->getActor(actor);
 	byte track = getParamByte();
 	return testCond(track, ((ScriptTrackV2 *)a->_trackScript)->getLabel(), oper);
 }
 
-bool ScriptLifeV2::VAR_CUBE() {
-	byte varID = _currentState._switchParam;
-	if (!_currentState._isInSwitch) {
-		varID = getParamByte();
-	}
-	byte oper = getParamByte();
+bool ScriptLifeV2::VAR_CUBE(byte oper) {
+	byte varID = _currentState._param;
 	byte value = getParamByte();
 	byte varVal = getCubeVar(varID);
 	return testCond(value, varVal, oper);
-	return false;
 }
 
-bool ScriptLifeV2::CONE_VIEW() {
-	byte oper = getParamByte();
-	byte actor = getParamByte();
+bool ScriptLifeV2::CONE_VIEW(byte oper) {
+	byte actor = _currentState._param;
 	uint16 value = getParamUint16();
 	return false;
 }
 
-bool ScriptLifeV2::HIT_BY() {
-	byte oper = getParamByte();
+bool ScriptLifeV2::HIT_BY(byte oper) {
 	byte actor = getParamByte();
 	return false;
 }
-bool ScriptLifeV2::ACTION() {
-	byte oper = getParamByte();
+bool ScriptLifeV2::ACTION(byte oper) {
 	byte val = getParamByte();
 	byte actual = g_twin->isPressingAction();
 	return testCond(val, actual, oper);
 }
-bool ScriptLifeV2::VAR_GAME() {
-	byte varID = _currentState._switchParam;
-	if (!_currentState._isInSwitch) {
-		varID = getParamByte();
-	}
-	byte oper = getParamByte();
+bool ScriptLifeV2::VAR_GAME(byte oper) {
+	byte varID = _currentState._param;
 	uint16 value = getParamUint16();
 	uint16 varVal = getGameVar(varID);
 	return testCond(value, varVal, oper);
 }
-bool ScriptLifeV2::LIFE_POINT() {
-	byte oper = getParamByte();
+bool ScriptLifeV2::LIFE_POINT(byte oper) {
 	uint16 value = getParamUint16();
 	return false;
 }
-bool ScriptLifeV2::LIFE_POINT_OBJ() {
-	byte oper = getParamByte();
-	byte actor = getParamByte();
+bool ScriptLifeV2::LIFE_POINT_OBJ(byte oper) {
+	byte actor = _currentState._param;
 	uint16 value = getParamUint16();
 	return false;
 }
-bool ScriptLifeV2::NUM_LITTLE_KEYS() {
-	byte oper = getParamByte();
+bool ScriptLifeV2::NUM_LITTLE_KEYS(byte oper) {
 	byte numKeys = getParamByte();
 	return true;
 }
-bool ScriptLifeV2::NUM_GOLD_PIECES() {
-	byte oper = getParamByte();
+bool ScriptLifeV2::NUM_GOLD_PIECES(byte oper) {
 	uint16 numGold = getParamUint16();
 	return false;
 }
-bool ScriptLifeV2::BEHAVIOUR() {
-	byte oper = getParamByte();
+bool ScriptLifeV2::BEHAVIOUR(byte oper) {
 	byte numKeys = getParamByte();
 	return false;
 }
-bool ScriptLifeV2::CHAPTER() {
-	byte oper = getParamByte();
+bool ScriptLifeV2::CHAPTER(byte oper) {
 	byte value = getParamByte();
 	return value == 0;
 }
 
-bool ScriptLifeV2::USE_INVERNTORY() {
-	byte oper = getParamByte();
-	byte param1 = getParamByte();
+bool ScriptLifeV2::USE_INVERNTORY(byte oper) {
+	byte param1 = _currentState._param;
 	byte param2 = getParamByte();
 	return false;
 }
 
-bool ScriptLifeV2::RND() {
-	byte oper = getParamByte();
+bool ScriptLifeV2::RND(byte oper) {
 	byte value = getParamByte();
 	return false;
 }
 
-bool ScriptLifeV2::BETA_COND() {
-	byte oper = getParamByte();
+bool ScriptLifeV2::BETA_COND(byte oper) {
 	uint16 value = getParamUint16();
 	return false;
 }
 
-bool ScriptLifeV2::CARRIED_OBJ_BY() {
-	byte oper = getParamByte();
-	byte param1 = getParamByte();
+bool ScriptLifeV2::CARRIED_OBJ_BY(byte oper) {
+	byte param1 = _currentState._param;
 	byte param2 = getParamByte();
 	return false;
 }
 
-bool ScriptLifeV2::ANGLE() {
-	byte oper = getParamByte();
-	byte param1 = getParamByte();
+bool ScriptLifeV2::ANGLE(byte oper) {
+	byte param1 = _currentState._param;
 	int16 param2 = getParamInt16();
 	return false;
 }
 
-bool ScriptLifeV2::DISTANCE_MESSAGE() {
-	byte oper = getParamByte();
-	byte param1 = getParamByte();
+bool ScriptLifeV2::DISTANCE_MESSAGE(byte oper) {
+	byte param1 = _currentState._param;
 	uint16 param2 = getParamUint16();
 	return false;
 }
 
-bool ScriptLifeV2::PROCESSOR() {
-	byte oper = getParamByte();
+bool ScriptLifeV2::HIT_OBJ_BY(byte oper) {
+	byte param1 = _currentState._param;
+	byte param2 = getParamByte();
+	return false;
+}
+
+bool ScriptLifeV2::PROCESSOR(byte oper) {
 	byte param1 = getParamByte();
 	return true;
 }
@@ -435,6 +424,11 @@ void ScriptLifeV2::END_LIFE() {
 	stop();
 }
 
+void ScriptLifeV2::MESSAGE_OBJ() {
+	byte actor = getParamByte();
+	uint16 textid = getParamUint16();
+}
+
 void ScriptLifeV2::SET_DOOR_LEFT() {
 	int16 distance = getParamInt16();
 }
@@ -516,14 +510,11 @@ void ScriptLifeV2::AND_IF() {
 }
 
 void ScriptLifeV2::SWITCH() {
-	//bool cond = checkCondition();
-	//uint16 address = getParamUint16();
 	_states.push(_currentState);
 
 	_currentState._switchCond = getParamByte();
-	if (_currentState._switchCond == 0xf) {
-		_currentState._switchParam = getParamByte();
-	}
+	loadConditionParam(_currentState._switchCond);
+
 	_currentState._isInSwitch = true;
 }
 void ScriptLifeV2::OR_CASE() {
@@ -548,6 +539,7 @@ void ScriptLifeV2::END_SWITCH() {
 
 void ScriptLifeV2::SET_HIT_ZONE() {
 	byte param1 = getParamByte();
+	byte param2 = getParamByte();
 }
 
 void ScriptLifeV2::SAVE_COMPORTEMENT() {
@@ -558,6 +550,10 @@ void ScriptLifeV2::RESTORE_COMPORTEMENT() {
 
 void ScriptLifeV2::SAMPLE() {
 	uint16 id = getParamUint16();
+}
+
+void ScriptLifeV2::BACKGROUND() {
+	byte id = getParamByte();
 }
 
 void ScriptLifeV2::ADD_VAR_GAME() {

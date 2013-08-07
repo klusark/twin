@@ -72,6 +72,8 @@ namespace Twin {
 	OPCODE(0x28, GIVE_GOLD_PIECES);		\
 	OPCODE(0x29, END_LIFE);				\
 										\
+	OPCODE(0x2C, MESSAGE_OBJ);			\
+										\
 	OPCODE(0x2F, SET_DOOR_LEFT);		\
 	OPCODE(0x30, SET_DOOR_RIGHT);		\
 	OPCODE(0x31, SET_DOOR_UP);			\
@@ -108,6 +110,8 @@ namespace Twin {
 	OPCODE(0x79, RESTORE_COMPORTEMENT);	\
 	OPCODE(0x7A, SAMPLE);				\
 										\
+	OPCODE(0x7F, BACKGROUND);			\
+										\
 	OPCODE(0x80, ADD_VAR_GAME);			\
 	OPCODE(0x81, SUB_VAR_GAME);			\
 										\
@@ -117,37 +121,38 @@ namespace Twin {
 
 
 #define LIFE_COND_OPCODES					\
-	COND_OPCODE(0x00, COL);					\
-	COND_OPCODE(0x01, COL_OBJ);				\
-	COND_OPCODE(0x02, DISTANCE);			\
-	COND_OPCODE(0x03, ZONE);				\
-	COND_OPCODE(0x04, ZONE_OBJ);			\
+	COND_OPCODE(0x00, COL, 0);				\
+	COND_OPCODE(0x01, COL_OBJ, 1);			\
+	COND_OPCODE(0x02, DISTANCE, 1);			\
+	COND_OPCODE(0x03, ZONE, 0);				\
+	COND_OPCODE(0x04, ZONE_OBJ, 1);			\
 											\
-	COND_OPCODE(0x09, CURRENT_TRACK);		\
-	COND_OPCODE(0x0A, CURRENT_TRACK_OBJ);	\
-	COND_OPCODE(0x0B, VAR_CUBE);			\
-	COND_OPCODE(0x0C, CONE_VIEW);			\
-	COND_OPCODE(0x0D, HIT_BY);				\
-	COND_OPCODE(0x0E, ACTION);				\
-	COND_OPCODE(0x0F, VAR_GAME);			\
-	COND_OPCODE(0x10, LIFE_POINT);			\
-	COND_OPCODE(0x11, LIFE_POINT_OBJ);		\
-	COND_OPCODE(0x12, NUM_LITTLE_KEYS);		\
-	COND_OPCODE(0x13, NUM_GOLD_PIECES);		\
-	COND_OPCODE(0x14, BEHAVIOUR);			\
-	COND_OPCODE(0x15, CHAPTER);				\
+	COND_OPCODE(0x09, CURRENT_TRACK, 0);	\
+	COND_OPCODE(0x0A, CURRENT_TRACK_OBJ, 1);\
+	COND_OPCODE(0x0B, VAR_CUBE, 1);			\
+	COND_OPCODE(0x0C, CONE_VIEW, 1);		\
+	COND_OPCODE(0x0D, HIT_BY, 0);			\
+	COND_OPCODE(0x0E, ACTION, 0);			\
+	COND_OPCODE(0x0F, VAR_GAME, 1);			\
+	COND_OPCODE(0x10, LIFE_POINT, 0);		\
+	COND_OPCODE(0x11, LIFE_POINT_OBJ, 1);	\
+	COND_OPCODE(0x12, NUM_LITTLE_KEYS, 0);	\
+	COND_OPCODE(0x13, NUM_GOLD_PIECES, 0);	\
+	COND_OPCODE(0x14, BEHAVIOUR, 0);		\
+	COND_OPCODE(0x15, CHAPTER,0 );			\
 											\
-	COND_OPCODE(0x19, USE_INVERNTORY);		\
+	COND_OPCODE(0x19, USE_INVERNTORY, 1);	\
 											\
-	COND_OPCODE(0x1F, RND);					\
+	COND_OPCODE(0x1F, RND, 1);				\
 											\
-	COND_OPCODE(0x21, BETA_COND);			\
+	COND_OPCODE(0x21, BETA_COND, 0);		\
 											\
-	COND_OPCODE(0x23, CARRIED_OBJ_BY);		\
-	COND_OPCODE(0x24, ANGLE);				\
-	COND_OPCODE(0x25, DISTANCE_MESSAGE);	\
+	COND_OPCODE(0x23, CARRIED_OBJ_BY, 1);	\
+	COND_OPCODE(0x24, ANGLE, 1);			\
+	COND_OPCODE(0x25, DISTANCE_MESSAGE, 1);	\
+	COND_OPCODE(0x26, HIT_OBJ_BY, 1);		\
 											\
-	COND_OPCODE(0x2B, PROCESSOR);			\
+	COND_OPCODE(0x2B, PROCESSOR, 0);		\
 
 
 class ScriptTrackV2;
@@ -157,7 +162,7 @@ public:
 	State() : _isInSwitch(false) {}
 	bool _isInSwitch;
 	byte _switchCond;
-	byte _switchParam;
+	byte _param;
 };
 
 class ScriptLifeV2 : public Script {
@@ -175,14 +180,16 @@ private:
 
 	bool checkCondition();
 	bool checkCondition(byte cond);
+	void loadConditionParam();
+	void loadConditionParam(byte cond);
 
 	Common::Stack<State> _states;
 	State _currentState;
 
 	//Condition
-	#define COND_OPCODE(op, func) bool func()
+	#define COND_OPCODE(op, func, param) bool func(byte oper)
 		LIFE_COND_OPCODES
-	#undef OPCODE
+	#undef COND_OPCODE
 
 	//Opcodes
 	#define OPCODE(op, func) void func()
