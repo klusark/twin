@@ -31,6 +31,48 @@ class SeekableReadStream;
 
 namespace Twin {
 
+
+#define TRACK_OPCODES					\
+	OPCODE(0x00, END);					\
+	OPCODE(0x01, NOP);					\
+	OPCODE(0x02, BODY);					\
+	OPCODE(0x03, ANIM);					\
+	OPCODE(0x04, GOTO_POINT);			\
+	OPCODE(0x05, WAIT_ANIM);			\
+										\
+	OPCODE(0x07, ANGLE);				\
+	OPCODE(0x08, POS_POINT);			\
+	OPCODE(0x09, LABEL);				\
+	OPCODE(0x0A, GOTO);					\
+	OPCODE(0x0B, STOP);					\
+										\
+	OPCODE(0x0E, SAMPLE);				\
+										\
+	OPCODE(0x10, SPEED);				\
+	OPCODE(0x11, BACKGROUND);			\
+	OPCODE(0x12, WAIT_NUM_SECOND);		\
+										\
+	OPCODE(0x15, OPEN_LEFT);			\
+	OPCODE(0x16, OPEN_RIGHT);			\
+	OPCODE(0x17, OPEN_UP);				\
+	OPCODE(0x18, OPEN_DOWN);			\
+										\
+	OPCODE(0x1A, WAIT_DOOR);			\
+	OPCODE(0x1B, SAMPLE_RND);			\
+	OPCODE(0x1C, SAMPLE_ALWAYS);		\
+	OPCODE(0x1D, SAMPLE_STOP);			\
+	OPCODE(0x1E, PLAY_ACF);				\
+	OPCODE(0x1F, REPEAT_SAMPLE);		\
+	OPCODE(0x20, SIMPLE_SAMPLE);		\
+	OPCODE(0x21, FACE_HERO);			\
+	OPCODE(0x22, ANGLE_RND);			\
+	OPCODE(0x23, REPLACE);				\
+	OPCODE(0x24, WAIT_NUM_DECIMAL);		\
+										\
+	OPCODE(0x26, SPRITE);				\
+	OPCODE(0x27, WAIT_NUM_SECOND_RND);	\
+
+
 class ScriptTrackV2 : public Script {
 public:
 	ScriptTrackV2(Common::SeekableReadStream *stream);
@@ -41,44 +83,9 @@ private:
 	byte _label;
 
 	//Opcodes
-	void END();
-	void NOP();
-	void BODY();
-	void ANIM();
-	void GOTO_POINT();
-	void WAIT_ANIM();
-
-	void ANGLE();
-	void POS_POINT();
-	void LABEL();
-	void GOTO();
-	void STOP();
-
-	void SAMPLE();
-
-	void SPEED();
-	void BACKGROUND();
-	void WAIT_NUM_SECOND();
-
-	void OPEN_LEFT();
-	void OPEN_RIGHT();
-	void OPEN_UP();
-	void OPEN_DOWN();
-
-	void WAIT_DOOR();
-	void SAMPLE_RND();
-	void SAMPLE_ALWAYS();
-	void SAMPLE_STOP();
-	void PLAY_ACF();
-	void REPEAT_SAMPLE();
-	void SIMPLE_SAMPLE();
-	void FACE_HERO();
-	void ANGLE_RND();
-	void REPLACE();
-	void WAIT_NUM_DECIMAL();
-
-	void SPRITE();
-	void WAIT_NUM_SECOND_RND();
+	#define OPCODE(op, func) void func()
+		TRACK_OPCODES
+	#undef OPCODE
 };
 
 } // end of namespace Twin

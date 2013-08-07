@@ -32,8 +32,6 @@
 namespace Twin {
 
 
-#define OPCODE(op, func) case op: warning(#func); func(); break
-#define COND_OPCODE(op, func) case op: warning(#func); return func()
 
 ScriptLifeV2::ScriptLifeV2(Common::SeekableReadStream *stream, ScriptTrackV2 *track) : 
 	Script(stream), _track(track), _comportementAddress(0) {
@@ -62,86 +60,9 @@ bool ScriptLifeV2::testCond(uint16 a, uint16 b, byte oper) {
 
 void ScriptLifeV2::execute(byte opcode) {
 	switch (opcode) {
-		OPCODE(0x00, END);
-
-		OPCODE(0x02, SNIF);
-
-		OPCODE(0x04, NEVERIF);
-
-		OPCODE(0x0B, RETURN);
-		OPCODE(0x0C, IF);
-		OPCODE(0x0D, SWIF);
-		OPCODE(0x0E, ONEIF);
-		OPCODE(0x0F, ELSE);
-
-		OPCODE(0x11, BODY);
-		OPCODE(0x12, BODY_OBJ);
-		OPCODE(0x13, ANIM);
-		OPCODE(0x14, ANIM_OBJ);
-		OPCODE(0x15, SET_CAMERA);
-		OPCODE(0x16, CAMERA_CENTER);
-		OPCODE(0x17, SET_TRACK);
-		OPCODE(0x18, SET_TRACK_OBJ);
-		OPCODE(0x19, MESSAGE);
-		OPCODE(0x1A, CAN_FALL);
-		OPCODE(0x1B, SET_DIRMODE);
-		OPCODE(0x1C, SET_DIRMODE_OBJ);
-		OPCODE(0x1D, CAM_FOLLOW);
-		OPCODE(0x1E, SET_BEHAVIOUR);
-		OPCODE(0x1F, SET_VAR_CUBE);
-
-		OPCODE(0x21, SET_COMPORTEMENT);
-		OPCODE(0x22, SET_COMPORTEMENT_OBJ);
-		OPCODE(0x23, END_COMPORTEMENT);
-		OPCODE(0x24, SET_VAR_GAME);
-		OPCODE(0x25, KILL_OBJ);
-		OPCODE(0x26, SUICIDE);
-		OPCODE(0x27, USE_ONE_LITTLE_KEY);
-		OPCODE(0x28, GIVE_GOLD_PIECES);
-		OPCODE(0x29, END_LIFE);
-
-		OPCODE(0x2F, SET_DOOR_LEFT);
-		OPCODE(0x30, SET_DOOR_RIGHT);
-		OPCODE(0x31, SET_DOOR_UP);
-		OPCODE(0x32, SET_DOOR_DOWN);
-		OPCODE(0x33, GIVE_BONUS);
-
-		OPCODE(0x37, OR_IF);
-		OPCODE(0x38, INVISIBLE);
-
-		OPCODE(0x3A, POS_POINT);
-
-		OPCODE(0x48, SET_HOLO_POS);
-
-		OPCODE(0x50, BETA);
-
-		OPCODE(0x53, SET_FRAME);
-
-		OPCODE(0x5A, NO_SHOCK);
-
-		OPCODE(0x5C, CINEMA_MODE);
-		OPCODE(0x5D, SAVE_HERO);
-		OPCODE(0x5E, RESTORE_HERO);
-		OPCODE(0x5F, ANIM_SET);
-
-		OPCODE(0x70, AND_IF);
-		OPCODE(0x71, SWITCH);
-		OPCODE(0x72, OR_CASE);
-		OPCODE(0x73, CASE);
-		OPCODE(0x74, DEFAULT);
-		OPCODE(0x75, BREAK);
-		OPCODE(0x76, END_SWITCH);
-		OPCODE(0x77, SET_HIT_ZONE);
-		OPCODE(0x78, SAVE_COMPORTEMENT);
-		OPCODE(0x79, RESTORE_COMPORTEMENT);
-		OPCODE(0x7A, SAMPLE);
-
-		OPCODE(0x80, ADD_VAR_GAME);
-		OPCODE(0x81, SUB_VAR_GAME);
-
-		OPCODE(0x87, NO_BODY);
-
-		OPCODE(0x93, SET_ANIM_DIAL);
+		#define OPCODE(op, func) case op: warning(#func); func(); break
+			LIFE_OPCODES
+		#undef OPCODE
 	default:
 		warning("asdf");
 	};
@@ -151,40 +72,13 @@ bool ScriptLifeV2::checkCondition() {
 	return checkCondition(cond);
 }
 
+
 bool ScriptLifeV2::checkCondition(byte cond) {
 
 	switch (cond) {
-		COND_OPCODE(0x00, COL);
-		COND_OPCODE(0x01, COL_OBJ);
-		COND_OPCODE(0x02, DISTANCE);
-		COND_OPCODE(0x03, ZONE);
-		COND_OPCODE(0x04, ZONE_OBJ);
-
-		COND_OPCODE(0x09, CURRENT_TRACK);
-		COND_OPCODE(0x0A, CURRENT_TRACK_OBJ);
-		COND_OPCODE(0x0B, VAR_CUBE);
-		COND_OPCODE(0x0C, CONE_VIEW);
-		COND_OPCODE(0x0D, HIT_BY);
-		COND_OPCODE(0x0E, ACTION);
-		COND_OPCODE(0x0F, VAR_GAME);
-		COND_OPCODE(0x10, LIFE_POINT);
-		COND_OPCODE(0x11, LIFE_POINT_OBJ);
-		COND_OPCODE(0x12, NUM_LITTLE_KEYS);
-		COND_OPCODE(0x13, NUM_GOLD_PIECES);
-		COND_OPCODE(0x14, BEHAVIOUR);
-		COND_OPCODE(0x15, CHAPTER);
-
-		COND_OPCODE(0x19, USE_INVERNTORY);
-
-		COND_OPCODE(0x1F, RND);
-
-		COND_OPCODE(0x21, BETA_COND);
-
-		COND_OPCODE(0x23, CARRIED_OBJ_BY);
-		COND_OPCODE(0x24, ANGLE);
-		COND_OPCODE(0x25, DISTANCE_MESSAGE);
-
-		COND_OPCODE(0x2B, PROCESSOR);
+		#define COND_OPCODE(op, func) case op: warning(#func); return func()
+			LIFE_COND_OPCODES
+		#undef OPCODE
 
 	default:
 		warning("asdf");
