@@ -212,7 +212,17 @@ bool ScriptLifeV2::RND(byte oper) {
 	return false;
 }
 
+bool ScriptLifeV2::RAIL(byte oper) {
+	byte value = getParamByte();
+	return false;
+}
+
 bool ScriptLifeV2::BETA_COND(byte oper) {
+	uint16 value = getParamUint16();
+	return false;
+}
+
+bool ScriptLifeV2::BETA_OBJ(byte oper) {
 	uint16 value = getParamUint16();
 	return false;
 }
@@ -479,6 +489,10 @@ void ScriptLifeV2::BETA() {
 }
 
 void ScriptLifeV2::SET_FRAME() {
+	uint16 sprite = getParamUint16();
+}
+
+void ScriptLifeV2::SET_SPRITE() {
 	byte frame = getParamByte();
 }
 

@@ -90,6 +90,7 @@ namespace Twin {
 	OPCODE(0x50, BETA);					\
 										\
 	OPCODE(0x53, SET_FRAME);			\
+	OPCODE(0x54, SET_SPRITE);			\
 										\
 	OPCODE(0x5A, NO_SHOCK);				\
 										\
@@ -144,9 +145,9 @@ namespace Twin {
 	COND_OPCODE(0x19, USE_INVERNTORY, 1);	\
 											\
 	COND_OPCODE(0x1F, RND, 1);				\
-											\
+	COND_OPCODE(0x20, RAIL, 1);				\
 	COND_OPCODE(0x21, BETA_COND, 0);		\
-											\
+	COND_OPCODE(0x22, BETA_OBJ, 1);			\
 	COND_OPCODE(0x23, CARRIED_OBJ_BY, 1);	\
 	COND_OPCODE(0x24, ANGLE, 1);			\
 	COND_OPCODE(0x25, DISTANCE_MESSAGE, 1);	\
