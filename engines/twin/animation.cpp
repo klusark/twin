@@ -28,7 +28,7 @@
 
 namespace Twin {
 
-Animation::Animation(Common::SeekableReadStream *stream, Model *m) {
+Animation::Animation(Common::SeekableReadStream *stream, Model *m, uint16 id) : _id(id) {
 	_model = m;
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);

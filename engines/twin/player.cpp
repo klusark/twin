@@ -21,10 +21,22 @@
  */
 
 #include "engines/twin/player.h"
+#include "engines/twin/resource.h"
 
 namespace Twin {
 
 Player::Player() {
+
+}
+
+void Player::handleKeyDown(Common::KeyCode key) {
+	if (key == Common::KEYCODE_UP) {
+		delete _entity;
+		_entity = g_resource->getEntity(0, 0, kForward);
+	}
+}
+
+void Player::handleKeyUp(Common::KeyCode key) {
 
 }
 

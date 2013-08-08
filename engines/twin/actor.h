@@ -25,6 +25,8 @@
 
 #include "math/angle.h"
 
+#include "engines/twin/scene.h"
+
 namespace Common {
 class SeekableReadStream;
 }
@@ -42,7 +44,7 @@ public:
 	void draw();
 	void update(uint32 delta);
 	void setAnimation(uint16 anim);
-	void setPos(uint16 x, uint16 y, uint16 z) { _x = x; _y = y; _z = z; }
+	void setPos(uint16 x, uint16 y, uint16 z);
 	void gotoPoint(Point *p, bool *done);
 	void kill() { _dead = true; }
 
@@ -58,9 +60,7 @@ public:
 	byte _body;
 	byte _anim;
 	uint16 _sprite;
-	uint16 _x;
-	uint16 _y;
-	uint16 _z;
+	Point _pos;
 
 	Script *_trackScript;
 	Script *_lifeScript;

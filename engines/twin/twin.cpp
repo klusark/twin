@@ -174,50 +174,19 @@ Common::Error TwinEngine::run() {
 	CITABAU2.open("DESERT.OBL");
 	Island idland(&CITABAU, &CITABAU2);
 
-	uint32 body = 0;
-	uint32 entity = 0;
-	uint32 anim = 0;
-	Entity *e = g_resource->getEntity(entity, body, anim);
-	bool entityInfoChanged = false;
-
-
 	int grid = 0;
 	_scene = g_resource->getScene(grid);
 
-	bool mouseDown = false, wheelDown = false, rDown = false;
+	bool mouseDown = false;
 	uint32 lastTime = g_system->getMillis();
 	for (;;) {
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			Common::EventType type = event.type;
 			if (type == Common::EVENT_KEYUP) {
-				Common::KeyCode k = event.kbd.keycode;
-				if (k == Common::KEYCODE_q) {
-					++entity;
-					entityInfoChanged = true;
-				} else if (k == Common::KEYCODE_a && entity != 0) {
-					--entity;
-					entityInfoChanged = true;
-				} else if (k == Common::KEYCODE_w) {
-					++body;
-					entityInfoChanged = true;
-				} else if (k == Common::KEYCODE_s && body != 0) {
-					--body;
-					entityInfoChanged = true;
-				} else if (k == Common::KEYCODE_e) {
-					++anim;
-					entityInfoChanged = true;
-				} else if (k == Common::KEYCODE_d && anim != 0) {
-					--anim;
-					entityInfoChanged = true;
-				} else if (k == Common::KEYCODE_SPACE) {
-					_action = false;
-				}
+				_player->handleKeyUp(event.kbd.keycode);
 			} else if (type == Common::EVENT_KEYDOWN) {
-				Common::KeyCode k = event.kbd.keycode;
-				if (k == Common::KEYCODE_SPACE) {
-					_action = true;
-				}
+				_player->handleKeyDown(event.kbd.keycode);
 			} else if (type == Common::EVENT_WHEELUP) {
 				++grid;
 				delete _scene;
@@ -230,54 +199,31 @@ Common::Error TwinEngine::run() {
 					delete _scene;
 					_scene = g_resource->getScene(grid);
 				}
-			} else if (type == Common::EVENT_LBUTTONDOWN) {
-				mouseDown = true;
-			} else if (type == Common::EVENT_LBUTTONUP) {
-				mouseDown = false;
 			} else if (type == Common::EVENT_MOUSEMOVE && mouseDown) {
-				//_renderer->moveCamera(event.relMouse.x, event.relMouse.y, 0);
-				_player->_x += event.relMouse.x * 10;
-				_player->_z += event.relMouse.y * 10;
-			} else if (type == Common::EVENT_MOUSEMOVE && wheelDown) {
-				_renderer->moveCamera(0, 0, event.relMouse.y);
-			} else if (type == Common::EVENT_MOUSEMOVE && rDown) {
-				_renderer->rotateObject(event.relMouse.x, event.relMouse.y, 0);
-			} else if (type == Common::EVENT_MBUTTONDOWN) {
-				wheelDown = true;
-			} else if (type == Common::EVENT_MBUTTONUP) {
-				wheelDown = false;
-			} else if (type == Common::EVENT_RBUTTONDOWN) {
-				rDown = true;
-			} else if (type == Common::EVENT_RBUTTONUP) {
-				rDown = false;
-			} else if (type == Common::EVENT_QUIT) {
+				_player->_pos._x += event.relMouse.x * 10;
+				_player->_pos._z += event.relMouse.y * 10;
+			}
+			if (type == Common::EVENT_QUIT) {
 				return Common::kNoError;
 			}
 		}
 		warning("frame");
-		if (entityInfoChanged) {
-			entityInfoChanged = false;
-			delete e;
-			e = g_resource->getEntity(entity, body, anim);
-		}
 
 		uint32 currentTime = g_system->getMillis();
 		uint32 deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
 
 		_renderer->clearScreen();
-		//e->update(deltaTime);
 
 		_scene->draw();
 		_scene->update(deltaTime);
-		_renderer->moveCamera(_player->_x, _player->_y, _player->_z);
-		//_renderer->drawModel(e->_model);
-		//_renderer->drawIsland(&idland);
+		_renderer->moveCamera(_player->_pos._x, _player->_pos._y, _player->_pos._z);
+
 		_renderer->flipBuffer();
 
 	}
 
-	delete e;
+
 	delete _scene;
 
 	return Common::kNoError;

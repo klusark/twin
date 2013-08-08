@@ -45,7 +45,7 @@ public:
 class Keyframe {
 public:
 	uint16 _length;
-		int16 _x;
+	int16 _x;
 	int16 _y;
 	int16 _z;
 
@@ -54,11 +54,12 @@ public:
 
 class Animation {
 public:
-	Animation(Common::SeekableReadStream *stream, Model *m);
+	Animation(Common::SeekableReadStream *stream, Model *m, uint16 id);
 	~Animation();
 
 	void update(uint32 time);
 	void setModel(Model *m) { _model = m; }
+	uint16 getId() { return _id; }
 private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
@@ -69,6 +70,8 @@ private:
 	Model *_model;
 	uint32 _currentFrame;
 	uint32 _time;
+
+	uint16 _id;
 };
 
 } // end of namespace Twin

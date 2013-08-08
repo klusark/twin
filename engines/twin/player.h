@@ -24,6 +24,7 @@
 #define TWIN_PLAYER_H
 
 #include "engines/twin/actor.h"
+#include "common/events.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -61,6 +62,9 @@ enum AnimationTypes {
 class Player : public Actor {
 public:
 	Player();
+
+	void handleKeyDown(Common::KeyCode key);
+	void handleKeyUp(Common::KeyCode key);
 };
 
 } // end of namespace Twin

@@ -46,9 +46,9 @@ Actor::Actor(Common::SeekableReadStream *stream) :
 
 Actor::Actor() : _entity(nullptr), _dest(nullptr), _dead(false), _facingActor(nullptr), _turning(false) {
 	_entity = g_resource->getEntity(0, 0, 0);
-	_x = 0;
-	_y = 0;
-	_z = 0;
+	_pos._x = 0;
+	_pos._y = 0;
+	_pos._z = 0;
 }
 
 
@@ -62,9 +62,9 @@ void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 	stream->readByte();
 	_anim = stream->readByte();
 	_sprite = stream->readUint16LE();
-	_x = stream->readUint16LE();
-	_y = stream->readUint16LE();
-	_z = stream->readUint16LE();
+	_pos._x = stream->readUint16LE();
+	_pos._y = stream->readUint16LE();
+	_pos._z = stream->readUint16LE();
 	if (_entityID != 0xffff) {
 		_entity = g_resource->getEntity(_entityID, 0, 0);
 	}
@@ -112,33 +112,35 @@ void Actor::update(uint32 delta) {
 	}
 
 	if (_dest) {
-		int xdiff = _dest->_x - _x;
-		int ydiff = _dest->_y - _y;
-		int zdiff = _dest->_z - _z;
+		int xdiff = _dest->_x - _pos._x;
+		int ydiff = _dest->_y - _pos._y;
+		int zdiff = _dest->_z - _pos._z;
 
-		int x = _x, y = _y, z = _z;
+		int x = _pos._x, y = _pos._y, z = _pos._z;
 		int d = delta;
 
 		if (xdiff < 0) {
-			x = MAX(_x - d, (int)_dest->_x);
+			x = MAX((int)_pos._x - d, (int)_dest->_x);
 		} else if (xdiff > 0) {
-			x = MIN(_x + d, (int)_dest->_x);
+			x = MIN((int)_pos._x + d, (int)_dest->_x);
 		}
 		if (ydiff < 0) {
-			y = MAX(_y - d, (int)_dest->_y);
+			y = MAX((int)_pos._y - d, (int)_dest->_y);
 		} else if (ydiff > 0) {
-			y = MIN(_y + d, (int)_dest->_y);
+			y = MIN((int)_pos._y + d, (int)_dest->_y);
 		}
 		if (zdiff < 0) {
-			z = MAX(_z - d, (int)_dest->_z);
+			z = MAX((int)_pos._z - d, (int)_dest->_z);
 		} else if (zdiff > 0) {
-			z = MIN(_z + d, (int)_dest->_z);
+			z = MIN((int)_pos._z + d, (int)_dest->_z);
 		}
-		_x = x;
-		_y = y;
-		_z = z;
+		_pos._x = x;
+		_pos._y = y;
+		_pos._z = z;
 
-		if (_x ==_dest->_x && _y == _dest->_y && _z == _dest->_z) {
+		turnToAngle(_pos.getAngleTo(_dest));
+
+		if (_pos._x ==_dest->_x && _pos._y == _dest->_y && _pos._z == _dest->_z) {
 			_dest = nullptr;
 			*_destDone = true;
 			_destDone = nullptr;
@@ -179,8 +181,14 @@ void Actor::draw() {
 	}
 }
 
+void  Actor::setPos(uint16 x, uint16 y, uint16 z) {
+	_pos._x = x;
+	_pos._y = y;
+	_pos._z = z;
+}
+
 void Actor::setAnimation(uint16 anim) {
-	if (_entity) {
+	if (_entity && !_entity->_anim->getId() == anim) {
 		delete _entity->_anim;
 		_entity->_anim = g_resource->getAnimation(anim, _entity->_model);
 	}
@@ -192,15 +200,7 @@ void Actor::gotoPoint(Point *p, bool *done) {
 }
 
 Math::Angle Actor::getAngleTo(Actor *a) {
-	Math::Vector3d veca(a->_x, a->_y, a->_z);
-	Math::Vector3d vecb(_x, _y, _z);
-
-	float xdiff = a->_x - _x;
-	float ydiff = a->_z - _z;
-
-	float rad = asin(ydiff / sqrt(xdiff * xdiff + ydiff * ydiff));
-
-	return Math::Angle::fromRadians(rad);
+	return _pos.getAngleTo(&a->_pos);
 }
 
 void Actor::turnToAngle(Math::Angle angle) {

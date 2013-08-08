@@ -23,6 +23,7 @@
 #ifndef TWIN_SCENE_H
 #define TWIN_SCENE_H
 
+#include "math/angle.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -61,6 +62,7 @@ public:
 
 class Point {
 public:
+	Math::Angle getAngleTo(Point *p);
 	uint32 _x;
 	uint32 _y;
 	uint32 _z;

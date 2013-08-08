@@ -134,7 +134,7 @@ void Resource::loadGridDefaults() {
 }
 
 Animation *Resource::getAnimation(uint16 id, Model *m) {
-	return new Animation(_anim->createReadStreamForIndex(id), m);
+	return new Animation(_anim->createReadStreamForIndex(id), m, id);
 }
 
 Entity *Resource::getEntity(uint16 entity, uint16 body, uint16 anim) {

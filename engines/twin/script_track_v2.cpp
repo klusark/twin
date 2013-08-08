@@ -72,7 +72,7 @@ STUB_SCRIPT(WAIT_ANIM);
 void ScriptTrackV2::ANGLE() {
 	int16 angle = getParamInt16();
 	_actor->faceActor(nullptr);
-	_actor->turnToAngle(((angle * 360) / 4096) + 90);
+	_actor->turnToAngle(((angle * 360) / 4096.0f) + 90);
 }
 
 void ScriptTrackV2::POS_POINT() {
