@@ -183,8 +183,7 @@ Math::Angle Point::getAngleTo(Point *p) {
 	float xdiff = (int)p->_x - (int)_x;
 	float ydiff = (int)p->_z - (int)_z;
 
-	float rad = asin(ydiff / sqrt(xdiff * xdiff + ydiff * ydiff));
-	return Math::Angle::fromRadians(rad);
+	return Math::Angle::fromRadians(atan2(ydiff, xdiff));
 }
 
 } // end of namespace Twin
