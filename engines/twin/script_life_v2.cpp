@@ -38,7 +38,7 @@ ScriptLifeV2::ScriptLifeV2(Common::SeekableReadStream *stream, ScriptTrackV2 *tr
 
 }
 
-bool ScriptLifeV2::testCond(uint16 a, uint16 b, byte oper) {
+bool ScriptLifeV2::testCond(uint16 b, uint16 a, byte oper) {
 	switch (oper) {
 	case 0:
 		return a == b;
