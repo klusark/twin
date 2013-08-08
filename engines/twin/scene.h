@@ -33,6 +33,7 @@ namespace Twin {
 class Actor;
 class Grid;
 class Script;
+class Player;
 
 enum ZoneType {
 	kCube		= 0, // Change to another scene
@@ -82,9 +83,6 @@ public:
 	uint32 _id;
 
 	Grid *_grid;
-
-	//Probably don't just want this per scene
-	Actor *_hero;
 
 	byte _textBank;
 	byte _gameOverScene;

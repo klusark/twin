@@ -25,6 +25,7 @@
 
 #include "engines/twin/script_track_v2.h"
 #include "engines/twin/actor.h"
+#include "engines/twin/player.h"
 #include "engines/twin/twin.h"
 #include "engines/twin/scene.h"
 
@@ -159,8 +160,8 @@ void ScriptTrackV2::SIMPLE_SAMPLE() {
 
 void ScriptTrackV2::FACE_HERO() {
 	uint16 param = getParamUint16();
-	Scene *s = g_twin->getCurrentScene();
-	_actor->faceActor(s->_hero);
+	Player *p = g_twin->getPlayer();
+	_actor->faceActor(p);
 
 }
 

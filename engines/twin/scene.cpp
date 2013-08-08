@@ -23,6 +23,7 @@
 #include "common/stream.h"
 
 #include "engines/twin/actor.h"
+#include "engines/twin/player.h"
 #include "engines/twin/scene.h"
 #include "engines/twin/twin.h"
 #include "engines/twin/script_track_v2.h"
@@ -80,8 +81,9 @@ void Scene::loadLBA2(Common::SeekableReadStream *stream) {
 	_heroY = stream->readUint16LE();
 	_heroZ = stream->readUint16LE();
 
-	_hero = new Actor();
-	_hero->setPos(_heroX, _heroY, _heroZ);
+	Player *_hero = g_twin->getPlayer();
+	//Not sure when this should actually be set...
+	//_hero->setPos(_heroX, _heroY, _heroZ);
 	_hero->_isHero = true;
 
 	_trackScript = new ScriptTrackV2(stream);

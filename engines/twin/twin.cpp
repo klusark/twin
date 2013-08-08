@@ -44,6 +44,7 @@
 #include "engines/twin/animation.h"
 #include "engines/twin/script.h"
 #include "engines/twin/actor.h"
+#include "engines/twin/player.h"
 
 
 namespace Twin {
@@ -140,13 +141,15 @@ void TwinEngine::createRenderer() {
 
 void TwinEngine::changeScene(uint16 id, uint16 heroX, uint16 heroY, uint16 heroZ) {
 	_scene = g_resource->getScene(id);
-	_scene->_hero->setPos(heroX, heroY, heroZ);
+	_player->setPos(heroX, heroY, heroZ);
 }
 
 Common::Error TwinEngine::run() {
 	g_resource = new Resource();
 	createRenderer();
 	_renderer->setupScreen(1024, 768, false);
+
+	_player = new Player();
 	//intro();
 
 	//Hqr body;
@@ -233,8 +236,8 @@ Common::Error TwinEngine::run() {
 				mouseDown = false;
 			} else if (type == Common::EVENT_MOUSEMOVE && mouseDown) {
 				//_renderer->moveCamera(event.relMouse.x, event.relMouse.y, 0);
-				_scene->_hero->_x += event.relMouse.x * 10;
-				_scene->_hero->_z += event.relMouse.y * 10;
+				_player->_x += event.relMouse.x * 10;
+				_player->_z += event.relMouse.y * 10;
 			} else if (type == Common::EVENT_MOUSEMOVE && wheelDown) {
 				_renderer->moveCamera(0, 0, event.relMouse.y);
 			} else if (type == Common::EVENT_MOUSEMOVE && rDown) {
@@ -267,7 +270,7 @@ Common::Error TwinEngine::run() {
 
 		_scene->draw();
 		_scene->update(deltaTime);
-		_renderer->moveCamera(_scene->_hero->_x, _scene->_hero->_y, _scene->_hero->_z);
+		_renderer->moveCamera(_player->_x, _player->_y, _player->_z);
 		//_renderer->drawModel(e->_model);
 		//_renderer->drawIsland(&idland);
 		_renderer->flipBuffer();

@@ -20,54 +20,12 @@
  *
  */
 
-#ifndef TWIN_H
-#define TWIN_H
-
-#include "engines/engine.h"
-
-#include "common/system.h"
-
-#include "engines/twin/gfx_base.h"
-
-namespace Graphics {
-struct Surface;
-}
+#include "engines/twin/player.h"
 
 namespace Twin {
 
-class Scene;
-class Player;
+Player::Player() {
 
-enum TwinGameType {
-	GType_LBA,
-	GType_LBA2
-};
-
-class TwinEngine : public Engine {
-	GfxBase *_renderer;
-	TwinGameType _type;
-	Scene *_scene;
-	bool _action;
-	Player *_player;
-protected:
-	// Engine APIs
-	virtual Common::Error run();
-	void createRenderer();
-	void playMovie(const Common::String &name);
-	void intro();
-public:
-	TwinEngine(OSystem *syst, TwinGameType type);
-	virtual ~TwinEngine();
-	Scene *getCurrentScene() { return _scene; }
-	TwinGameType getGameType() { return _type; }
-	bool isPressingAction() { return _action; }
-	void changeScene(uint16 id, uint16 heroX, uint16 heroY, uint16 heroZ);
-
-	Player *getPlayer() { return _player; }
-};
-
-extern TwinEngine *g_twin;
+}
 
 } // end of namespace Twin
-
-#endif

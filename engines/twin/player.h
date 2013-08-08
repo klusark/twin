@@ -20,53 +20,48 @@
  *
  */
 
-#ifndef TWIN_H
-#define TWIN_H
+#ifndef TWIN_PLAYER_H
+#define TWIN_PLAYER_H
 
-#include "engines/engine.h"
+#include "engines/twin/actor.h"
 
-#include "common/system.h"
-
-#include "engines/twin/gfx_base.h"
-
-namespace Graphics {
-struct Surface;
+namespace Common {
+class SeekableReadStream;
 }
 
 namespace Twin {
 
-class Scene;
-class Player;
-
-enum TwinGameType {
-	GType_LBA,
-	GType_LBA2
+enum AnimationTypes {
+	kStanding			= 0,
+	kForward			= 1,
+	kBackward			= 2,
+	kTurnLeft			= 3,
+	kTurnRight			= 4,
+	kHit				= 5,
+	kBigHit				= 6,
+	kFall				= 7,
+	kLanding			= 8,
+	kLandingHit			= 9,
+	kLandDeath			= 10,
+	kAction				= 11,
+	kClimbLadder		= 12,
+	kTopLadder			= 13,
+	kJump				= 14,
+	kThrowBall			= 15,
+	kHide				= 16,
+	kKick				= 17,
+	kRightPunch			= 18,
+	kLeftPunch			= 19,
+	kFoundItem			= 20,
+	kDrawn				= 21,
+	kHit2				= 22,
+	kSabreAttack		= 23
 };
 
-class TwinEngine : public Engine {
-	GfxBase *_renderer;
-	TwinGameType _type;
-	Scene *_scene;
-	bool _action;
-	Player *_player;
-protected:
-	// Engine APIs
-	virtual Common::Error run();
-	void createRenderer();
-	void playMovie(const Common::String &name);
-	void intro();
+class Player : public Actor {
 public:
-	TwinEngine(OSystem *syst, TwinGameType type);
-	virtual ~TwinEngine();
-	Scene *getCurrentScene() { return _scene; }
-	TwinGameType getGameType() { return _type; }
-	bool isPressingAction() { return _action; }
-	void changeScene(uint16 id, uint16 heroX, uint16 heroY, uint16 heroZ);
-
-	Player *getPlayer() { return _player; }
+	Player();
 };
-
-extern TwinEngine *g_twin;
 
 } // end of namespace Twin
 

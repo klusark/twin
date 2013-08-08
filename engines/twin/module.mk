@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	island.o \
 	lzss.o \
 	model.o \
+	player.o \
 	resource.o \
 	scene.o \
 	script.o \
