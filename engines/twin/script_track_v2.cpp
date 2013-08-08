@@ -31,8 +31,6 @@
 namespace Twin {
 
 
-#define OPCODE(op, func) case op: func(); break
-
 ScriptTrackV2::ScriptTrackV2(Common::SeekableReadStream *stream) : Script(stream), _label(0) {
 	stop();
 }
