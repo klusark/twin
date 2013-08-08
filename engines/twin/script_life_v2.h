@@ -169,9 +169,9 @@ public:
 class ScriptLifeV2 : public Script {
 public:
 	ScriptLifeV2(Common::SeekableReadStream *stream, ScriptTrackV2 *track);
-	
+
 private:
-	bool ScriptLifeV2::testCond(uint16 a, uint16 b, byte oper);
+	bool testCond(uint16 a, uint16 b, byte oper);
 
 	ScriptTrackV2 *_track;
 
