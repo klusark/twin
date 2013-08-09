@@ -75,6 +75,9 @@ void Script::run(uint32 delta) {
 
 void Script::start() {
 	_isExecuting = true;
+	_isWaitingForAction = false;
+	_isWaiting = false;
+	_isYielded = false;
 }
 
 void Script::stop() {

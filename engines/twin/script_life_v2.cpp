@@ -438,14 +438,13 @@ void ScriptLifeV2::END_LIFE() {
 
 void ScriptLifeV2::STOP_CURRENT_TRACK() {
 	_savedTrack = _track->getLabelAddress();
+	_actor->resetActions();
 }
 
 void ScriptLifeV2::RESTORE_LAST_TRACK() {
 	_track->jumpAddress(_savedTrack);
-	_track->_isWaitingForAction = false;
-	_track->_isExecuting = true;
+	_track->start();
 }
-
 
 void ScriptLifeV2::MESSAGE_OBJ() {
 	byte actor = getParamByte();

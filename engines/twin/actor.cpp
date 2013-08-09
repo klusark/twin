@@ -172,6 +172,12 @@ void Actor::update(uint32 delta) {
 	}
 }
 
+void Actor::resetActions() {
+	_turning = false;
+	_dest = nullptr;
+	_entity->_anim->_isWaiting = nullptr;
+}
+
 void Actor::draw() {
 	if (_dead) {
 		return;
