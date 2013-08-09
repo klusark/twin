@@ -38,13 +38,13 @@ namespace Twin {
 
 Actor::Actor(Common::SeekableReadStream *stream) :
 		_entity(nullptr), _dest(nullptr), _dead(false), _isHero(false), _angle(0),
-		_facingActor(nullptr), _turning(false) {
+		_facingActor(nullptr), _turning(false), _isMoving(false) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
 	}
 }
 
-Actor::Actor() : _entity(nullptr), _dest(nullptr), _dead(false), _facingActor(nullptr), _turning(false) {
+Actor::Actor() : _entity(nullptr), _dest(nullptr), _dead(false), _facingActor(nullptr), _turning(false), _isMoving(false) {
 	_entity = g_resource->getEntity(0, 0, 0);
 	_pos._x = 0;
 	_pos._y = 0;
@@ -73,7 +73,8 @@ void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 	stream->readUint16LE();
 	stream->readUint16LE();
 	stream->readUint16LE();
-	stream->readUint16LE();
+	_controlMode = stream->readByte();
+	stream->readByte();
 	stream->readUint16LE();
 	stream->readUint16LE();
 	stream->readUint16LE();
@@ -111,39 +112,22 @@ void Actor::update(uint32 delta) {
 		_entity->_anim->update(delta);
 	}
 
+	if (_isMoving && delta != 0) {
+		_pos._x += _angle.getCosine() * delta;
+		_pos._z += _angle.getSine() * delta;
+	}
+
 	if (_dest) {
-		int xdiff = _dest->_x - _pos._x;
-		int ydiff = _dest->_y - _pos._y;
-		int zdiff = _dest->_z - _pos._z;
-
-		int x = _pos._x, y = _pos._y, z = _pos._z;
-		int d = delta;
-
-		if (xdiff < 0) {
-			x = MAX((int)_pos._x - d, (int)_dest->_x);
-		} else if (xdiff > 0) {
-			x = MIN((int)_pos._x + d, (int)_dest->_x);
-		}
-		if (ydiff < 0) {
-			y = MAX((int)_pos._y - d, (int)_dest->_y);
-		} else if (ydiff > 0) {
-			y = MIN((int)_pos._y + d, (int)_dest->_y);
-		}
-		if (zdiff < 0) {
-			z = MAX((int)_pos._z - d, (int)_dest->_z);
-		} else if (zdiff > 0) {
-			z = MIN((int)_pos._z + d, (int)_dest->_z);
-		}
-		_pos._x = x;
-		_pos._y = y;
-		_pos._z = z;
-
+		_pos._y = _dest->_y;
 		turnToAngle(_pos.getAngleTo(_dest));
 
-		if (_pos._x ==_dest->_x && _pos._y == _dest->_y && _pos._z == _dest->_z) {
+		if (_pos.getDistanceTo(_dest) < 500) {
 			_dest = nullptr;
 			*_destDone = false;
 			_destDone = nullptr;
+			if (_controlMode != 0) {
+				_isMoving = false;
+			}
 		}
 	}
 
@@ -176,6 +160,7 @@ void Actor::resetActions() {
 	_turning = false;
 	_dest = nullptr;
 	_entity->_anim->_isWaiting = nullptr;
+	_isMoving = false;
 }
 
 void Actor::draw() {
@@ -203,6 +188,7 @@ void Actor::setAnimation(uint16 anim) {
 void Actor::gotoPoint(Point *p, bool *done) {
 	_dest = p;
 	_destDone = done;
+	_isMoving = true;
 }
 
 Math::Angle Actor::getAngleTo(Actor *a) {

@@ -63,6 +63,7 @@ public:
 class Point {
 public:
 	Math::Angle getAngleTo(Point *p);
+	uint16 getDistanceTo(Point *p);
 	uint32 _x;
 	uint32 _y;
 	uint32 _z;

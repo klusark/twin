@@ -211,7 +211,6 @@ Common::Error TwinEngine::run() {
 				return Common::kNoError;
 			}
 		}
-		warning("frame");
 
 		uint32 currentTime = g_system->getMillis();
 		uint32 deltaTime = currentTime - lastTime;

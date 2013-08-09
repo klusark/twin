@@ -63,6 +63,7 @@ public:
 	byte _anim;
 	uint16 _sprite;
 	Point _pos;
+	byte _controlMode;
 
 	Script *_trackScript;
 	Script *_lifeScript;
@@ -72,6 +73,7 @@ public:
 	Point *_dest;
 	bool *_destDone;
 
+	bool _isMoving;
 	bool _dead;
 	Math::Angle _angle;
 	Math::Angle _dstAngle;

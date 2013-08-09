@@ -63,7 +63,7 @@ void Script::run(uint32 delta) {
 			_isWaiting = false;
 		}
 	}
-	warning("start");
+	//warning("start");
 	while (_isExecuting && !_isYielded && !_isWaiting && !_isWaitingForAction) {
 		_opcodePtr = _ptr;
 		byte opcode = _ptr[0];
