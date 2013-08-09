@@ -190,8 +190,8 @@ void GfxOpenGL::loadModelTexture(Common::SeekableReadStream *stream) {
 void GfxOpenGL::drawActor(Actor *a) {
 	float orthoProjX = 320;
 	float orthoProjY = 240;
-	float projPosX = ((a->_pos._x - a->_pos._z) * 24.0f) / 512.0f + orthoProjX;
-	float projPosY = (((a->_pos._x + a->_pos._z) * 12.0f) - a->_pos._y * 30.0f) / 512.0f + orthoProjY;
+	float projPosX = ((a->_pos._x - (float)a->_pos._z) * 24.0f) / 512.0f + orthoProjX;
+	float projPosY = (((a->_pos._x + (float)a->_pos._z) * 12.0f) - a->_pos._y * 30.0f) / 512.0f + orthoProjY;
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
