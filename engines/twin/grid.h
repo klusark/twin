@@ -23,12 +23,15 @@
 #ifndef TWIN_GRID_H
 #define TWIN_GRID_H
 
+#include "engines/twin/block_library.h"
 
 namespace Common {
 class SeekableReadStream;
 }
 
 namespace Twin {
+
+class Actor;
 
 struct Square {
 	byte _layout;
@@ -42,14 +45,15 @@ public:
 	void setGridAt(byte x, byte y, byte z, Square s);
 	Square *getGridAt(byte x, byte y, byte z);
 	byte getLibrary() { return _layoutLib; }
-
+	BlockLibrary *getBlockLibrary() { return _blockLibrary; }
+	void applyBrickShape(Actor *a);
 private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
 	byte _layoutLib;
 	byte _gridFragment;
 
-
+	BlockLibrary *_blockLibrary;
 
 	Square _grid[64*64*25];
 };

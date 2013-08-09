@@ -32,6 +32,7 @@
 #include "engines/twin/script_track_v2.h"
 #include "engines/twin/script_life_v2.h"
 #include "engines/twin/scene.h"
+#include "engines/twin/grid.h"
 #include "common/textconsole.h"
 
 namespace Twin {
@@ -101,7 +102,6 @@ void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 	_lifeScript->setActor(this);
 }
 
-
 void Actor::update(uint32 delta) {
 	if (_dead) {
 		return;
@@ -118,7 +118,6 @@ void Actor::update(uint32 delta) {
 	}
 
 	if (_dest) {
-		_pos._y = _dest->_y;
 		turnToAngle(_pos.getAngleTo(_dest));
 
 		if (_pos.getDistanceTo(_dest) < 500) {
@@ -154,6 +153,9 @@ void Actor::update(uint32 delta) {
 
 		_angle = next;
 	}
+
+	Grid *grid =  g_twin->getCurrentScene()->getGrid();
+	grid->applyBrickShape(this);
 }
 
 void Actor::resetActions() {

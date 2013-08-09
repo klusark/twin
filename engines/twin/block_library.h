@@ -30,10 +30,29 @@ class SeekableReadStream;
 
 namespace Twin {
 
+enum ShapeType {
+	kNone = 0,
+	kSolid = 1,
+	kStairsTopLeft = 2,
+	kStairsTopRight = 3,
+	kStairsBottomLeft = 4,
+	kStairsBottomRight = 5,
+	kDoubleSideStairsTop1 = 6,
+	kDoubleSideStairsBottom1 = 7,
+	kDoubleSideStairsLeft1 = 8,
+	kDoubleSideStairsRight1 = 9,
+	kDoubleSideStairsTop2 = 10,
+	kDoubleSideStairsBottom2 = 11,
+	kDoubleSideStairsLeft2 = 12,
+	kDoubleSideStairsRight2 = 13,
+	kFlatBottom1 = 14,
+	kFlatBottom2 = 15
+};
+
 class SubBlock {
 public:
 	uint16 _index;
-	byte _shape;
+	ShapeType _shape;
 	byte _type;
 };
 

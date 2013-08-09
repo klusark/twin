@@ -64,9 +64,9 @@ class Point {
 public:
 	Math::Angle getAngleTo(Point *p);
 	uint16 getDistanceTo(Point *p);
-	uint32 _x;
-	uint32 _y;
-	uint32 _z;
+	int32 _x;
+	int32 _y;
+	int32 _z;
 };
 
 class Scene {
@@ -80,6 +80,7 @@ public:
 	Actor *getActor(byte id) { return _actors[id]; }
 	Zone *getZone(byte id) { return &_zones[id]; }
 	uint32 getId() { return _id; }
+	Grid *getGrid() { return _grid; }
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 

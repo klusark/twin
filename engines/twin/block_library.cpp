@@ -63,7 +63,7 @@ void BlockLibrary::loadLBA2(Common::SeekableReadStream *stream) {
 		b->_blocks = new SubBlock[b->_numBlocks];
 		for (uint32 j = 0; j < b->_numBlocks; ++j) {
 			SubBlock *s = &b->_blocks[j];
-			s->_shape = stream->readByte();
+			s->_shape = static_cast<ShapeType>(stream->readByte());
 			s->_type = stream->readByte();
 			s->_index = stream->readUint16LE();
 		}

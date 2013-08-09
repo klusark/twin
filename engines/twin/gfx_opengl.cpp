@@ -392,13 +392,13 @@ void GfxOpenGL::drawGrid(Grid *g) {
 	glEnable(GL_TEXTURE_2D);
 	glPushMatrix();
 	glTranslatef(_cameraX, _cameraY, 0.0f);
-	BlockLibrary *b = g_resource->getBlockLibrary(g->getLibrary());
+	BlockLibrary *b = g->getBlockLibrary();
 	for (int z = 0; z < 64; z++) {
 		for (int x = 0; x < 64; x++) {
 			for (int y = 0; y < 25; y++) {
 				Square *s = g->getGridAt(x, y, z);
 				if (s->_layout != 0) {
-					BlockInfo *info = b->getBlock(s->_layout-1);
+					BlockInfo *info = b->getBlock(s->_layout - 1);
 					uint32 brick = s->_brick;
 					if (info->_numBlocks > brick) {
 						int index = info->_blocks[brick]._index - 1;

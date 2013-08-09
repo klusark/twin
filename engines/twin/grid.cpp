@@ -22,8 +22,11 @@
 
 #include "common/stream.h"
 
+#include "engines/twin/block_library.h"
 #include "engines/twin/grid.h"
 #include "engines/twin/twin.h"
+#include "engines/twin/resource.h"
+#include "engines/twin/actor.h"
 
 namespace Twin {
 
@@ -37,6 +40,7 @@ Grid::Grid(Common::SeekableReadStream *stream) {
 // LBArchatect(GPL) by zink was used as the base for this function
 void Grid::loadLBA2(Common::SeekableReadStream *stream) {
 	_layoutLib = stream->readByte();
+	_blockLibrary = g_resource->getBlockLibrary(_layoutLib);
 	_gridFragment = stream->readByte();
 
 	int n = 0;
@@ -100,5 +104,56 @@ Square *Grid::getGridAt(byte x, byte y, byte z) {
 	return &_grid[x * 64 * 25 + z * 25 + y];
 }
 
+
+int32 getAverageValue(float var0, float var1, float var2, float var3) {
+	if (var3 <= 0) {
+		return var0;
+	}
+
+	if (var3 >= var2) {
+		return var1;
+	}
+
+	return ((((var1 - var0) * var3) / var2) + var0);
+}
+
+void Grid::applyBrickShape(Actor *a) {
+	int x = a->_pos._x;
+	int y = a->_pos._y;
+	int z = a->_pos._z;
+	x = (x + 0x100) >> 9;
+	y = (y >> 8);
+	z = (z + 0x100) >> 9;
+
+	Square *s = getGridAt(x, y, z);
+	if (s->_layout == 0) {
+		s = getGridAt(x, --y, z);
+		if (s->_layout == 0) {
+			return;
+		}
+	}
+	BlockInfo *b =_blockLibrary->getBlock(s->_layout - 1);
+	SubBlock *sb = &b->_blocks[s->_brick];
+
+	int brkX = (x << 9) - 0x100;
+	int brkY = y << 8;
+	int brkZ = (z << 9) - 0x100;
+	switch (sb->_shape) {
+	case kStairsTopLeft:
+		a->_pos._y = brkY + getAverageValue(0, 0x100, 0x200, a->_pos._x - brkX);
+		break;
+	case kStairsTopRight:
+		a->_pos._y = brkY + getAverageValue(0, 0x100, 0x200, a->_pos._z - brkZ);
+		break;
+	case kStairsBottomLeft:
+		a->_pos._y = brkY + getAverageValue(0x100, 0, 0x200, a->_pos._z - brkZ);
+		break;
+	case kStairsBottomRight:
+		a->_pos._y = brkY + getAverageValue(0x100, 0, 0x200, a->_pos._x - brkX);
+		break;
+	default:
+		break;
+	}
+}
 
 } // end of namespace Twin
