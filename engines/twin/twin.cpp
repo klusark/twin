@@ -202,6 +202,10 @@ Common::Error TwinEngine::run() {
 			} else if (type == Common::EVENT_MOUSEMOVE && mouseDown) {
 				_player->_pos._x += event.relMouse.x * 10;
 				_player->_pos._z += event.relMouse.y * 10;
+			} else if (type == Common::EVENT_LBUTTONDOWN) {
+				 mouseDown = true;
+			} else if (type == Common::EVENT_LBUTTONUP) {
+				 mouseDown = false;
 			}
 			if (type == Common::EVENT_QUIT) {
 				return Common::kNoError;

@@ -32,7 +32,7 @@ namespace Twin {
 uint16 Script::_gameVars[256];
 byte Script::_cubeVars[256][256];
 
-Script::Script(Common::SeekableReadStream *stream) : _actor(nullptr), _isWaiting(false) {
+Script::Script(Common::SeekableReadStream *stream) : _actor(nullptr), _isWaiting(false), _isWaitingForAction(false) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
 	}
@@ -64,7 +64,7 @@ void Script::run(uint32 delta) {
 		}
 	}
 	warning("start");
-	while (_isExecuting && !_isYielded && !_isWaiting) {
+	while (_isExecuting && !_isYielded && !_isWaiting && !_isWaitingForAction) {
 		_opcodePtr = _ptr;
 		byte opcode = _ptr[0];
 		++_ptr;
@@ -90,6 +90,10 @@ void Script::jump(uint16 size) {
 
 void Script::jumpAddress(uint16 size) {
 	_ptr = _data + size;;
+}
+
+uint16 Script::getAddress() {
+	return _ptr - _data;
 }
 
 uint16 Script::getGameVar(byte id) {

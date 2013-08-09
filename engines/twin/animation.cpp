@@ -28,7 +28,7 @@
 
 namespace Twin {
 
-Animation::Animation(Common::SeekableReadStream *stream, Model *m, uint16 id) : _id(id) {
+Animation::Animation(Common::SeekableReadStream *stream, Model *m, uint16 id) : _id(id), _isWaiting(nullptr) {
 	_model = m;
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
@@ -83,6 +83,10 @@ void Animation::update(uint32 time) {
 		++_currentFrame;
 		if (_currentFrame >= _numKeys) {
 			_currentFrame = _startFrame;
+			if (_isWaiting) {
+				*_isWaiting = false;
+				_isWaiting = nullptr;
+			}
 		}
 		k = &_keyframes[_currentFrame];
 	}

@@ -71,7 +71,8 @@ namespace Twin {
 	OPCODE(0x27, USE_ONE_LITTLE_KEY);	\
 	OPCODE(0x28, GIVE_GOLD_PIECES);		\
 	OPCODE(0x29, END_LIFE);				\
-										\
+	OPCODE(0x2A, STOP_CURRENT_TRACK );	\
+	OPCODE(0x2B, RESTORE_LAST_TRACK );	\
 	OPCODE(0x2C, MESSAGE_OBJ);			\
 										\
 	OPCODE(0x2F, SET_DOOR_LEFT);		\
@@ -186,6 +187,8 @@ private:
 
 	Common::Stack<State> _states;
 	State _currentState;
+
+	int16 _savedTrack;
 
 	//Condition
 	#define COND_OPCODE(op, func, param) bool func(byte oper)

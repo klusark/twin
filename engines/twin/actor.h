@@ -52,6 +52,7 @@ public:
 	void setAngle(Math::Angle angle) { _angle = angle; }
 	Math::Angle getAngleTo(Actor *a);
 	void faceActor(Actor *a) { _facingActor = a; }
+	bool collidesWith(Actor *a);
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 

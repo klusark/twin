@@ -77,10 +77,12 @@ class ScriptTrackV2 : public Script {
 public:
 	ScriptTrackV2(Common::SeekableReadStream *stream);
 	byte getLabel() { return _label; }
+	uint16 getLabelAddress() { return _labelAddress; }
 private:
 	void execute(byte opcode) override;
 
 	byte _label;
+	uint16 _labelAddress;
 
 	//Opcodes
 	#define OPCODE(op, func) void func()

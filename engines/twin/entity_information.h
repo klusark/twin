@@ -37,16 +37,17 @@ public:
 	byte _index;
 	bool _hasBox;
 	
-	uint16 _x1;
-	uint16 _x2;
-	uint16 _y1;
-	uint16 _y2;
-	uint16 _z1;
-	uint16 _z2;
+	int16 _x1;
+	int16 _x2;
+	int16 _y1;
+	int16 _y2;
+	int16 _z1;
+	int16 _z2;
 };
 
 class EntityAnim {
 public:
+	byte _index;
 	uint16 _animIndex;
 };
 

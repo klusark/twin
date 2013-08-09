@@ -34,7 +34,7 @@ namespace Twin {
 
 
 ScriptLifeV2::ScriptLifeV2(Common::SeekableReadStream *stream, ScriptTrackV2 *track) : 
-	Script(stream), _track(track), _comportementAddress(0) {
+	Script(stream), _track(track), _comportementAddress(0), _savedTrack(0) {
 
 }
 
@@ -104,7 +104,9 @@ bool ScriptLifeV2::checkCondition(byte cond) {
 
 bool ScriptLifeV2::COL(byte oper) {
 	byte actor = getParamByte();
-	return false;
+	Scene *s = g_twin->getCurrentScene();
+	Actor *a = s->getActor(actor);
+	return a->collidesWith(_actor);
 }
 
 bool ScriptLifeV2::COL_OBJ(byte oper) {
@@ -433,6 +435,17 @@ void ScriptLifeV2::GIVE_GOLD_PIECES() {
 void ScriptLifeV2::END_LIFE() {
 	stop();
 }
+
+void ScriptLifeV2::STOP_CURRENT_TRACK() {
+	_savedTrack = _track->getLabelAddress();
+}
+
+void ScriptLifeV2::RESTORE_LAST_TRACK() {
+	_track->jumpAddress(_savedTrack);
+	_track->_isWaitingForAction = false;
+	_track->_isExecuting = true;
+}
+
 
 void ScriptLifeV2::MESSAGE_OBJ() {
 	byte actor = getParamByte();

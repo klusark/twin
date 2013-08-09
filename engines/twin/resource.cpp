@@ -133,8 +133,17 @@ void Resource::loadGridDefaults() {
 	delete stream;
 }
 
-Animation *Resource::getAnimation(uint16 id, Model *m) {
-	return new Animation(_anim->createReadStreamForIndex(id), m, id);
+Animation *Resource::getAnimation(uint16 entity, uint16 id, Model *m) {
+	EntityEntry *e = &_ei->_entities[entity];
+	int index = 0;
+	for (uint32 i = 0; i < e->_anims.size(); ++i) {
+		EntityAnim *ea = &e->_anims[i];
+		if (ea->_index == id) {
+			index = ea->_animIndex;
+			break;
+		}
+	}
+	return new Animation(_anim->createReadStreamForIndex(index), m, id);
 }
 
 Entity *Resource::getEntity(uint16 entity, uint16 body, uint16 anim) {
@@ -148,10 +157,17 @@ Entity *Resource::getEntity(uint16 entity, uint16 body, uint16 anim) {
 	if (anim >= e->_anims.size()) {
 		anim = e->_anims.size() - 1;
 	}
-
-	Model *m = new Model(_body->createReadStreamForIndex(e->_bodies[body]._bodyIndex));
-	Animation *a = getAnimation(e->_anims[anim]._animIndex, m);
+	EntityBody *b = &e->_bodies[body];
+	Model *m = new Model(_body->createReadStreamForIndex(b->_bodyIndex));
+	Animation *a = getAnimation(entity, anim, m);
 	Entity *ent = new Entity(m, a);
+	ent->_hasBox = b->_hasBox;
+	ent->_x1 = b->_x1;
+	ent->_x2 = b->_x2;
+	ent->_y1 = b->_y1;
+	ent->_y2 = b->_y2;
+	ent->_z1 = b->_z1;
+	ent->_z2 = b->_z2;
 	return ent;
 }
 

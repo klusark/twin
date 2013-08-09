@@ -47,6 +47,7 @@ public:
 	void yield();
 	void jump(uint16 size);
 	void jumpAddress(uint16 address);
+	uint16 getAddress();
 	uint16 getGameVar(byte id);
 	void setGameVar(byte id, uint16 val);
 
@@ -65,6 +66,7 @@ public:
 
 	bool _isExecuting;
 	bool _isYielded;
+	bool _isWaitingForAction;
 
 	uint16 _length;
 	byte *_data;

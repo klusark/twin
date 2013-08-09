@@ -28,6 +28,8 @@
 #include "engines/twin/player.h"
 #include "engines/twin/twin.h"
 #include "engines/twin/scene.h"
+#include "engines/twin/resource.h"
+#include "engines/twin/animation.h"
 
 namespace Twin {
 
@@ -64,10 +66,14 @@ void ScriptTrackV2::ANIM() {
 void ScriptTrackV2::GOTO_POINT() {
 	byte id = getParamByte();
 	Scene *s = g_twin->getCurrentScene();
-	_isExecuting = false;
-	_actor->gotoPoint(s->getPoint(id), &_isExecuting);
+	_isWaitingForAction = true;
+	_actor->gotoPoint(s->getPoint(id), &_isWaitingForAction);
 }
-STUB_SCRIPT(WAIT_ANIM);
+
+void ScriptTrackV2::WAIT_ANIM() {
+	_isWaitingForAction = true;
+	_actor->_entity->_anim->_isWaiting = &_isWaitingForAction;
+}
 
 void ScriptTrackV2::ANGLE() {
 	int16 angle = getParamInt16();
@@ -85,6 +91,7 @@ void ScriptTrackV2::POS_POINT() {
 void ScriptTrackV2::LABEL() {
 	byte id = getParamByte();
 	_label = id;
+	_labelAddress = getAddress() - 2;
 }
 
 void ScriptTrackV2::GOTO() {

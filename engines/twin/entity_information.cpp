@@ -74,7 +74,7 @@ void EntityInformation::loadLBA2(Common::SeekableReadStream *stream) {
 			} else if (opcode == 3) {
 				EntityAnim a;
 				//TODO: figure out the anim data
-				stream->readByte();
+				a._index = stream->readByte();
 				stream->readByte();
 				byte size = stream->readByte();
 				a._animIndex = stream->readUint16LE();

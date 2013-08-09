@@ -142,7 +142,7 @@ void Actor::update(uint32 delta) {
 
 		if (_pos._x ==_dest->_x && _pos._y == _dest->_y && _pos._z == _dest->_z) {
 			_dest = nullptr;
-			*_destDone = true;
+			*_destDone = false;
 			_destDone = nullptr;
 		}
 	}
@@ -188,9 +188,9 @@ void  Actor::setPos(uint16 x, uint16 y, uint16 z) {
 }
 
 void Actor::setAnimation(uint16 anim) {
-	if (_entity && !_entity->_anim->getId() == anim) {
+	if (_entity && _entity->_anim->getId() != anim) {
 		delete _entity->_anim;
-		_entity->_anim = g_resource->getAnimation(anim, _entity->_model);
+		_entity->_anim = g_resource->getAnimation(_entityID, anim, _entity->_model);
 	}
 }
 
@@ -206,6 +206,29 @@ Math::Angle Actor::getAngleTo(Actor *a) {
 void Actor::turnToAngle(Math::Angle angle) {
 	_turning = true;
 	_dstAngle = angle;
+}
+
+bool Actor::collidesWith(Actor *a) {
+	int16 x1 = _entity->_x1 + _pos._x;
+	int16 x2 = _entity->_x2 + _pos._x;
+	int16 y1 = _entity->_y1 + _pos._y;
+	int16 y2 = _entity->_y2 + _pos._y;
+	int16 z1 = _entity->_z1 + _pos._z;
+	int16 z2 = _entity->_z2 + _pos._z;
+
+	int16 ox1 = a->_entity->_x1 + a->_pos._x;
+	int16 ox2 = a->_entity->_x2 + a->_pos._x;
+	int16 oy1 = a->_entity->_y1 + a->_pos._y;
+	int16 oy2 = a->_entity->_y2 + a->_pos._y;
+	int16 oz1 = a->_entity->_z1 + a->_pos._z;
+	int16 oz2 = a->_entity->_z2 + a->_pos._z;
+
+	if (x1 > ox2 || x2 < ox1 ||
+		y1 > oy2 || y2 < oy1 ||
+		z1 > oz2 || z2 < oz1) {
+		return false;
+	}
+	return true;
 }
 
 } // end of namespace Twin

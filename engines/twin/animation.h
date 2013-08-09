@@ -60,6 +60,7 @@ public:
 	void update(uint32 time);
 	void setModel(Model *m) { _model = m; }
 	uint16 getId() { return _id; }
+	bool *_isWaiting;
 private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
@@ -72,6 +73,7 @@ private:
 	uint32 _time;
 
 	uint16 _id;
+
 };
 
 } // end of namespace Twin
