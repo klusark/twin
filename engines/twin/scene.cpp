@@ -155,7 +155,6 @@ void Scene::update(uint32 delta) {
 				switch (z->_type) {
 				case kCube:
 					g_twin->changeScene(z->_snap, z->_info[0], z->_info[1], z->_info[2]);
-					warning("ASDF");
 				}
 			}
 		}
@@ -183,7 +182,15 @@ Math::Angle Point::getAngleTo(Point *p) {
 	float xdiff = (int)p->_x - (int)_x;
 	float ydiff = (int)p->_z - (int)_z;
 
-	return Math::Angle::fromRadians(atan2(ydiff, xdiff));
+	warning("%f %f", xdiff, ydiff);
+
+	double rads = atan2(ydiff, xdiff);
+
+	if (ydiff < 0) {
+		rads += 2 * M_PI;
+	}
+
+	return Math::Angle::fromRadians(rads);
 }
 
 } // end of namespace Twin
