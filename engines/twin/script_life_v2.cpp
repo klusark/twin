@@ -387,6 +387,11 @@ void ScriptLifeV2::SET_DIRMODE() {
 	byte dirmode = getParamByte();
 	if (dirmode == 2 || dirmode == 4) {
 		byte actor = getParamByte();
+		Scene *s = g_twin->getCurrentScene();
+		Actor *a = s->getActor(actor);
+		_actor->faceActor(a);
+	} else {
+		_actor->faceActor(nullptr);
 	}
 }
 
