@@ -182,8 +182,6 @@ Math::Angle Point::getAngleTo(Point *p) {
 	float xdiff = (int)p->_x - (int)_x;
 	float ydiff = (int)p->_z - (int)_z;
 
-	warning("%f %f", xdiff, ydiff);
-
 	double rads = atan2(ydiff, xdiff);
 
 	if (ydiff < 0) {
