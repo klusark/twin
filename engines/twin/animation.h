@@ -61,6 +61,7 @@ public:
 	void setModel(Model *m) { _model = m; }
 	uint16 getId() { return _id; }
 	bool *_isWaiting;
+	byte _waitLoops;
 private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 

@@ -46,6 +46,7 @@ namespace Twin {
 	OPCODE(0x0A, GOTO);					\
 	OPCODE(0x0B, STOP);					\
 										\
+	OPCODE(0x0D, WAIT_NUM_ANIM);		\
 	OPCODE(0x0E, SAMPLE);				\
 										\
 	OPCODE(0x10, SPEED);				\
@@ -71,6 +72,11 @@ namespace Twin {
 										\
 	OPCODE(0x26, SPRITE);				\
 	OPCODE(0x27, WAIT_NUM_SECOND_RND);	\
+										\
+	OPCODE(0x31, WAIT_NUM_DECIMAL_RND);	\
+										\
+	OPCODE(0x33, FREQUENCY);			\
+	OPCODE(0x34, VOLUME);				\
 
 
 class ScriptTrackV2 : public Script {

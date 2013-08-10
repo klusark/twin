@@ -116,7 +116,11 @@ bool ScriptLifeV2::COL_OBJ(byte oper) {
 
 bool ScriptLifeV2::DISTANCE(byte oper) {
 	uint16 distance = getParamUint16();
-	return false;
+	byte actor = _currentState._param;
+	Scene *s = g_twin->getCurrentScene();
+	Actor *a = s->getActor(actor);
+	uint16 actualDistance = a->_pos.getDistanceTo(&_actor->_pos);
+	return testCond(distance, actualDistance, oper);
 }
 
 bool ScriptLifeV2::ZONE(byte oper) {
@@ -186,26 +190,40 @@ bool ScriptLifeV2::LIFE_POINT_OBJ(byte oper) {
 	uint16 value = getParamUint16();
 	return false;
 }
+
 bool ScriptLifeV2::NUM_LITTLE_KEYS(byte oper) {
 	byte numKeys = getParamByte();
 	return true;
 }
+
 bool ScriptLifeV2::NUM_GOLD_PIECES(byte oper) {
 	uint16 numGold = getParamUint16();
 	return false;
 }
+
 bool ScriptLifeV2::BEHAVIOUR(byte oper) {
 	byte numKeys = getParamByte();
 	return false;
 }
+
 bool ScriptLifeV2::CHAPTER(byte oper) {
 	byte value = getParamByte();
 	return testCond(value, 0, oper);
 }
 
+bool ScriptLifeV2::DISTANCE_3D(byte oper) {
+	uint16 value = getParamUint16();
+	return false;
+}
+
 bool ScriptLifeV2::USE_INVERNTORY(byte oper) {
 	byte param1 = _currentState._param;
 	byte param2 = getParamByte();
+	return false;
+}
+
+bool ScriptLifeV2::CARRIED_BY(byte oper) {
+	byte param1 = getParamByte();
 	return false;
 }
 
@@ -550,13 +568,20 @@ void ScriptLifeV2::SWITCH() {
 	_currentState._isInSwitch = true;
 }
 void ScriptLifeV2::OR_CASE() {
-	error("not done");
-}
-void ScriptLifeV2::CASE() {
 	uint16 address = getParamUint16();
 	if (!checkCondition(_currentState._switchCond)) {
 		jumpAddress(address);
+	} else {
+		_currentState._orCase = true;
 	}
+}
+void ScriptLifeV2::CASE() {
+	uint16 address = getParamUint16();
+	bool cond = checkCondition(_currentState._switchCond);
+	if (!_currentState._orCase && !cond) {
+		jumpAddress(address);
+	}
+	_currentState._orCase = false;
 }
 void ScriptLifeV2::DEFAULT() {
 	// do nothing
@@ -604,6 +629,11 @@ void ScriptLifeV2::SUB_VAR_GAME() {
 void ScriptLifeV2::NO_BODY() {
 	//TODO: Probably shouldn't kill the actor, but that hides them for now
 	_actor->kill();
+}
+
+void ScriptLifeV2::FLOW_POINT() {
+	byte param1 = getParamByte();
+	byte param2 = getParamByte();
 }
 
 void ScriptLifeV2::SET_ANIM_DIAL() {

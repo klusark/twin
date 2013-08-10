@@ -84,8 +84,11 @@ void Animation::update(uint32 time) {
 		if (_currentFrame >= _numKeys) {
 			_currentFrame = _startFrame;
 			if (_isWaiting) {
-				*_isWaiting = false;
-				_isWaiting = nullptr;
+				--_waitLoops;
+				if (_waitLoops == 0) {
+					*_isWaiting = false;
+					_isWaiting = nullptr;
+				}
 			}
 		}
 		k = &_keyframes[_currentFrame];

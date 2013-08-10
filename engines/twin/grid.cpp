@@ -125,7 +125,7 @@ void Grid::applyBrickShape(Actor *a) {
 	y = (y >> 8);
 	z = (z + 0x100) >> 9;
 
-	if (x < 0 || y < 0 || z < 0) {
+	if (x < 0 || y < 0 || z < 0 || x > 64 || y > 25 || z > 64) {
 		return;
 	}
 

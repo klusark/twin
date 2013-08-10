@@ -119,6 +119,8 @@ namespace Twin {
 										\
 	OPCODE(0x87, NO_BODY);				\
 										\
+	OPCODE(0x91, FLOW_POINT);			\
+										\
 	OPCODE(0x93, SET_ANIM_DIAL);		\
 
 
@@ -141,9 +143,12 @@ namespace Twin {
 	COND_OPCODE(0x12, NUM_LITTLE_KEYS, 0);	\
 	COND_OPCODE(0x13, NUM_GOLD_PIECES, 0);	\
 	COND_OPCODE(0x14, BEHAVIOUR, 0);		\
-	COND_OPCODE(0x15, CHAPTER,0 );			\
+	COND_OPCODE(0x15, CHAPTER, 0);			\
+	COND_OPCODE(0x16, DISTANCE_3D, 1);		\
 											\
 	COND_OPCODE(0x19, USE_INVERNTORY, 1);	\
+											\
+	COND_OPCODE(0x1C, CARRIED_BY, 0);		\
 											\
 	COND_OPCODE(0x1F, RND, 1);				\
 	COND_OPCODE(0x20, RAIL, 1);				\
@@ -161,10 +166,11 @@ class ScriptTrackV2;
 
 class State {
 public:
-	State() : _isInSwitch(false) {}
+	State() : _isInSwitch(false), _orCase(false) {}
 	bool _isInSwitch;
 	byte _switchCond;
 	byte _param;
+	bool _orCase;
 };
 
 class ScriptLifeV2 : public Script {

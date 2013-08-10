@@ -72,7 +72,7 @@ void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 
 	stream->readByte();
 	stream->readUint16LE();
-	stream->readUint16LE();
+	_angle = (360+90) - ((stream->readUint16LE() * 360) / 4096);
 	stream->readUint16LE();
 	_controlMode = stream->readByte();
 	stream->readByte();

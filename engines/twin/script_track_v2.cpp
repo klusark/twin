@@ -73,6 +73,7 @@ void ScriptTrackV2::GOTO_POINT() {
 void ScriptTrackV2::WAIT_ANIM() {
 	_isWaitingForAction = true;
 	_actor->_entity->_anim->_isWaiting = &_isWaitingForAction;
+	_actor->_entity->_anim->_waitLoops = 1;
 }
 
 void ScriptTrackV2::ANGLE() {
@@ -101,6 +102,17 @@ void ScriptTrackV2::GOTO() {
 
 void ScriptTrackV2::STOP() {
 	stop();
+}
+
+void ScriptTrackV2::WAIT_NUM_ANIM() {
+	byte numLoops = getParamByte();
+
+	//skip a 0
+	jump(1);
+
+	_isWaitingForAction = true;
+	_actor->_entity->_anim->_isWaiting = &_isWaitingForAction;
+	_actor->_entity->_anim->_waitLoops = numLoops;
 }
 
 void ScriptTrackV2::SAMPLE() {
@@ -180,7 +192,11 @@ void ScriptTrackV2::ANGLE_RND() {
 STUB_SCRIPT(REPLACE);
 
 void ScriptTrackV2::WAIT_NUM_DECIMAL() {
-	byte id = getParamByte();
+	byte numSeconds = getParamByte();
+	jump(4);
+	_waitTime = numSeconds * 100;
+	_waitedTime = 0;
+	_isWaiting = true;
 }
 
 void ScriptTrackV2::SPRITE() {
@@ -188,8 +204,29 @@ void ScriptTrackV2::SPRITE() {
 }
 
 void ScriptTrackV2::WAIT_NUM_SECOND_RND() {
+	//TODO: Add the randomness
 	byte numSeconds = getParamByte();
 	jump(4);
+	_waitTime = numSeconds * 1000;
+	_waitedTime = 0;
+	_isWaiting = true;
+}
+
+void ScriptTrackV2::WAIT_NUM_DECIMAL_RND() {
+	//TODO: Add the randomness
+	byte numSeconds = getParamByte();
+	jump(4);
+	_waitTime = numSeconds * 100;
+	_waitedTime = 0;
+	_isWaiting = true;
+}
+
+void ScriptTrackV2::FREQUENCY() {
+	uint16 param = getParamUint16();
+}
+
+void ScriptTrackV2::VOLUME() {
+	byte param = getParamByte();
 }
 
 } // end of namespace Twin
