@@ -200,7 +200,7 @@ bool ScriptLifeV2::BEHAVIOUR(byte oper) {
 }
 bool ScriptLifeV2::CHAPTER(byte oper) {
 	byte value = getParamByte();
-	return value == 0;
+	return testCond(value, 0, oper);
 }
 
 bool ScriptLifeV2::USE_INVERNTORY(byte oper) {
