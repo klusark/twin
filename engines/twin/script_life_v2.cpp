@@ -503,7 +503,7 @@ void ScriptLifeV2::SET_HOLO_POS() {
 
 void ScriptLifeV2::BETA() {
 	uint16 angle = getParamUint16();
-	_actor->setAngle(((angle * 360) / 4096.f) - 90);
+	_actor->setAngle((360 + 90)-((angle * 360) / 4096.f));
 }
 
 void ScriptLifeV2::SET_FRAME() {

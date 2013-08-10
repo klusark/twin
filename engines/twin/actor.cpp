@@ -112,6 +112,8 @@ void Actor::update(uint32 delta) {
 		_entity->_anim->update(delta);
 	}
 
+	Point before = _pos;
+
 	if (_isMoving && delta != 0) {
 		_pos._x += _angle.getCosine() * delta;
 		_pos._z += _angle.getSine() * delta;
@@ -154,8 +156,10 @@ void Actor::update(uint32 delta) {
 		_angle = next;
 	}
 
-	Grid *grid =  g_twin->getCurrentScene()->getGrid();
-	grid->applyBrickShape(this);
+	Grid *grid = g_twin->getCurrentScene()->getGrid();
+	if (grid) {
+		grid->applyBrickShape(this);
+	}
 }
 
 void Actor::resetActions() {
@@ -203,6 +207,9 @@ void Actor::turnToAngle(Math::Angle angle) {
 }
 
 bool Actor::collidesWith(Actor *a) {
+	if (!_entity || !a->_entity) {
+		return false;
+	}
 	int16 x1 = _entity->_x1 + _pos._x;
 	int16 x2 = _entity->_x2 + _pos._x;
 	int16 y1 = _entity->_y1 + _pos._y;

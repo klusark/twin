@@ -49,7 +49,7 @@ public:
 	void kill() { _dead = true; }
 
 	void turnToAngle(Math::Angle angle);
-	void setAngle(Math::Angle angle) { _angle = angle; }
+	void setAngle(Math::Angle angle) { _angle = angle; _angle.normalize(0); }
 	Math::Angle getAngleTo(Actor *a);
 	void faceActor(Actor *a) { _facingActor = a; }
 	bool collidesWith(Actor *a);

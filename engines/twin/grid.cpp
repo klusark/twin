@@ -125,6 +125,10 @@ void Grid::applyBrickShape(Actor *a) {
 	y = (y >> 8);
 	z = (z + 0x100) >> 9;
 
+	if (x < 0 || y < 0 || z < 0) {
+		return;
+	}
+
 	Square *s = getGridAt(x, y, z);
 	if (s->_layout == 0) {
 		s = getGridAt(x, --y, z);
