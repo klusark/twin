@@ -123,8 +123,13 @@ void Actor::update(uint32 delta) {
 	if (_entity && delta != 0) {
 		Keyframe *k = _entity->_anim->getKeyframe();
 		float speed = (k->_z * (int)delta) / 250.0f;
+		float speed2 = (k->_x * (int)delta) / 250.0f;
+
 		_pos._x += _angle.getCosine() * speed;
 		_pos._z += _angle.getSine() * speed;
+
+		_pos._x += _angle.getSine() * speed2;
+		_pos._z += _angle.getCosine() * speed2;
 	}
 
 	if (_dest) {

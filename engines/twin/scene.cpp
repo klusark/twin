@@ -171,6 +171,16 @@ void Scene::draw() {
 	}
 }
 
+Zone *Scene::getZone(byte id) {
+	for (int i = 0; i < _numZones; ++i) {
+		Zone *z = &_zones[i];
+		if (z->_snap == id) {
+			return z;
+		}
+	}
+	return nullptr;
+}
+
 bool Zone::isActorInside(Actor *a) {
 	if (a->_pos._x >= _x1 && a->_pos._x <= _x2 && a->_pos._y >= _y1 && a->_pos._y <= _y2 && a->_pos._z >= _z1 && a->_pos._z <= _z2) {
 		return true;

@@ -126,7 +126,7 @@ bool ScriptLifeV2::DISTANCE(byte oper) {
 bool ScriptLifeV2::ZONE(byte oper) {
 	byte zone = getParamByte();
 	Scene *s = g_twin->getCurrentScene();
-	Zone *z = s->getZone(zone + 1);
+	Zone *z = s->getZone(zone);
 	return z->isActorInside(_actor);
 }
 
