@@ -27,6 +27,7 @@ namespace Twin {
 
 Player::Player() {
 	_entityID = 0;
+	_controlMode = kManual;
 }
 
 void Player::handleKeyDown(Common::KeyCode key) {

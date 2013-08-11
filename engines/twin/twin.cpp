@@ -56,6 +56,7 @@ TwinEngine::TwinEngine(OSystem *syst, TwinGameType type) :
 		Engine(syst), _type(type) {
 	g_twin = this;
 	_action = false;
+	memset(_keys, 0, 4);
 }
 
 TwinEngine::~TwinEngine() {
@@ -184,9 +185,9 @@ Common::Error TwinEngine::run() {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			Common::EventType type = event.type;
 			if (type == Common::EVENT_KEYUP) {
-				_player->handleKeyUp(event.kbd.keycode);
+				processKeyUp(event.kbd.keycode);
 			} else if (type == Common::EVENT_KEYDOWN) {
-				_player->handleKeyDown(event.kbd.keycode);
+				processKeyDown(event.kbd.keycode);
 			} else if (type == Common::EVENT_WHEELUP) {
 				++grid;
 				delete _scene;
@@ -230,6 +231,31 @@ Common::Error TwinEngine::run() {
 	delete _scene;
 
 	return Common::kNoError;
+}
+
+void TwinEngine::processKeyUp(Common::KeyCode key) {
+	//TODO: Make this code more better
+	if (key == Common::KEYCODE_UP) {
+		_keys[KeyUp] = false;
+	} else if (key == Common::KEYCODE_DOWN) {
+		_keys[KeyDown] = false;
+	} else if (key == Common::KEYCODE_LEFT) {
+		_keys[KeyLeft] = false;
+	} else if (key == Common::KEYCODE_RIGHT) {
+		_keys[KeyRight] = false;
+	} 
+}
+
+void TwinEngine::processKeyDown(Common::KeyCode key) {
+	if (key == Common::KEYCODE_UP) {
+		_keys[KeyUp] = true;
+	} else if (key == Common::KEYCODE_DOWN) {
+		_keys[KeyDown] = true;
+	} else if (key == Common::KEYCODE_LEFT) {
+		_keys[KeyLeft] = true;
+	} else if (key == Common::KEYCODE_RIGHT) {
+		_keys[KeyRight] = true;
+	} 
 }
 
 } // end of namespace Twin

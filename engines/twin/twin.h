@@ -26,6 +26,7 @@
 #include "engines/engine.h"
 
 #include "common/system.h"
+#include "common/events.h"
 
 #include "engines/twin/gfx_base.h"
 
@@ -43,6 +44,13 @@ enum TwinGameType {
 	GType_LBA2
 };
 
+enum Keys {
+	KeyUp = 0,
+	KeyDown,
+	KeyLeft,
+	KeyRight
+};
+
 class TwinEngine : public Engine {
 	GfxBase *_renderer;
 	TwinGameType _type;
@@ -55,6 +63,9 @@ protected:
 	void createRenderer();
 	void playMovie(const Common::String &name);
 	void intro();
+	void processKeyUp(Common::KeyCode key);
+	void processKeyDown(Common::KeyCode key);
+	bool _keys[4];
 public:
 	TwinEngine(OSystem *syst, TwinGameType type);
 	virtual ~TwinEngine();
@@ -64,6 +75,8 @@ public:
 	void changeScene(uint16 id, uint16 heroX, uint16 heroY, uint16 heroZ);
 
 	Player *getPlayer() { return _player; }
+
+	bool getKey(byte id) { return _keys[id]; }
 };
 
 extern TwinEngine *g_twin;

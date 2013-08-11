@@ -74,7 +74,7 @@ void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 	stream->readUint16LE();
 	_angle = (360+90) - ((stream->readUint16LE() * 360) / 4096);
 	stream->readUint16LE();
-	_controlMode = stream->readByte();
+	_controlMode = (ControlMode)stream->readByte();
 	stream->readByte();
 	stream->readUint16LE();
 	stream->readUint16LE();
@@ -112,11 +112,17 @@ void Actor::update(uint32 delta) {
 		_entity->_anim->update(delta);
 	}
 
+	//Probably wrong
+	if (!_dest) {
+		updateControl();
+	}
+
 	Point before = _pos;
 
-	if (_isMoving && delta != 0) {
-		_pos._x += _angle.getCosine() * delta;
-		_pos._z += _angle.getSine() * delta;
+	if (_entity && delta != 0) {
+		float speed = _entity->_anim->getSpeed() / ((float)delta * 2);
+		_pos._x += _angle.getCosine() * speed;
+		_pos._z += _angle.getSine() * speed;
 	}
 
 	if (_dest) {
@@ -126,9 +132,6 @@ void Actor::update(uint32 delta) {
 			_dest = nullptr;
 			*_destDone = false;
 			_destDone = nullptr;
-			if (_controlMode != 0) {
-				_isMoving = false;
-			}
 		}
 	}
 
@@ -230,6 +233,44 @@ bool Actor::collidesWith(Actor *a) {
 		return false;
 	}
 	return true;
+}
+
+void Actor::updateControl() {
+	switch (_controlMode) {
+	case kManual:
+		if (!g_twin->getKey(KeyUp) && !g_twin->getKey(KeyDown) && !g_twin->getKey(KeyLeft) && !g_twin->getKey(KeyRight)) {
+			setAnimation(kStanding);
+		}
+
+		if (g_twin->getKey(KeyUp)) {
+			setAnimation(kForward);
+		}
+
+		if (g_twin->getKey(KeyDown) && !g_twin->getKey(KeyUp)) { 
+			setAnimation(kBackward);
+		}
+
+		if (g_twin->getKey(KeyLeft)) {
+			if (_entity->_anim->getId() == 0) {
+				setAnimation(kTurnLeft);
+			} else {
+			/*	if (!actor->dynamicFlags.bIsRotationByAnim) {
+					actor->angle = getRealAngle(&actor->move);
+				}*/
+			}
+		}
+
+		if (g_twin->getKey(KeyRight)) {
+			if (_entity->_anim->getId() == 0) {
+				setAnimation(kTurnRight);
+			} else {
+				/*if (!actor->dynamicFlags.bIsRotationByAnim) {
+					actor->angle = getRealAngle(&actor->move);
+				}*/
+			}
+		}
+		break;
+	}
 }
 
 } // end of namespace Twin

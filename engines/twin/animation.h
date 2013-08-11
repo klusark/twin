@@ -60,6 +60,7 @@ public:
 	void update(uint32 time);
 	void setModel(Model *m) { _model = m; }
 	uint16 getId() { return _id; }
+	int16 getSpeed() { return _keyframes[_currentFrame]._z; }
 	bool *_isWaiting;
 	byte _waitLoops;
 private:

@@ -97,7 +97,7 @@ void ScriptTrackV2::LABEL() {
 
 void ScriptTrackV2::GOTO() {
 	uint16 id = getParamUint16();
-	jump(id);
+	jumpAddress(id);
 }
 
 void ScriptTrackV2::STOP() {

@@ -41,6 +41,14 @@
 
 #ifdef USE_OPENGL
 
+#if defined (SDL_BACKEND) && !defined(__amigaos4__)
+#include <SDL_opengl.h>
+#undef ARRAYSIZE
+#else
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
+
 #if defined (SDL_BACKEND) && defined(GL_ARB_fragment_program)
 
 // We need SDL.h for SDL_GL_GetProcAddress.
