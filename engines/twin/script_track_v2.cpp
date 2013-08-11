@@ -212,6 +212,10 @@ void ScriptTrackV2::WAIT_NUM_SECOND_RND() {
 	_isWaiting = true;
 }
 
+void ScriptTrackV2::STOP_ANIM_3DS() {
+	//unknown
+}
+
 void ScriptTrackV2::WAIT_NUM_DECIMAL_RND() {
 	//TODO: Add the randomness
 	byte numSeconds = getParamByte();

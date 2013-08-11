@@ -73,6 +73,8 @@ namespace Twin {
 	OPCODE(0x26, SPRITE);				\
 	OPCODE(0x27, WAIT_NUM_SECOND_RND);	\
 										\
+	OPCODE(0x2E, STOP_ANIM_3DS);		\
+										\
 	OPCODE(0x31, WAIT_NUM_DECIMAL_RND);	\
 										\
 	OPCODE(0x33, FREQUENCY);			\

@@ -81,12 +81,16 @@ namespace Twin {
 	OPCODE(0x32, SET_DOOR_DOWN);		\
 	OPCODE(0x33, GIVE_BONUS);			\
 										\
+	OPCODE(0x35, OBJ_COL);				\
+	OPCODE(0x36, BRICK_COL);			\
 	OPCODE(0x37, OR_IF);				\
 	OPCODE(0x38, INVISIBLE);			\
 										\
 	OPCODE(0x3A, POS_POINT);			\
 										\
 	OPCODE(0x48, SET_HOLO_POS);			\
+										\
+	OPCODE(0x4D, SET_CHANGE_CUBE);		\
 										\
 	OPCODE(0x50, BETA);					\
 										\
@@ -99,6 +103,10 @@ namespace Twin {
 	OPCODE(0x5D, SAVE_HERO);			\
 	OPCODE(0x5E, RESTORE_HERO);			\
 	OPCODE(0x5F, ANIM_SET);				\
+										\
+	OPCODE(0x65, TRACK_TO_VAR_GAME);	\
+	OPCODE(0x66, VAR_GAME_TO_TRACK);	\
+	OPCODE(0x67, ANIM_TEXTURE);			\
 										\
 	OPCODE(0x70, AND_IF);				\
 	OPCODE(0x71, SWITCH);				\
@@ -120,8 +128,9 @@ namespace Twin {
 	OPCODE(0x87, NO_BODY);				\
 										\
 	OPCODE(0x91, FLOW_POINT);			\
-										\
+	OPCODE(0x92, FLOW_OBJ);				\
 	OPCODE(0x93, SET_ANIM_DIAL);		\
+	OPCODE(0x98, NEW_SAMPLE);			\
 
 
 #define LIFE_COND_OPCODES					\

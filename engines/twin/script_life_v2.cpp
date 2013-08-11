@@ -494,6 +494,14 @@ void ScriptLifeV2::GIVE_BONUS() {
 	byte unknown = getParamByte();
 }
 
+void ScriptLifeV2::OBJ_COL() {
+	byte unknown = getParamByte();
+}
+
+void ScriptLifeV2::BRICK_COL() {
+	byte unknown = getParamByte();
+}
+
 void ScriptLifeV2::OR_IF() {
 	bool cond = checkCondition();
 
@@ -517,6 +525,10 @@ void ScriptLifeV2::POS_POINT() {
 
 void ScriptLifeV2::SET_HOLO_POS() {
 	byte id = getParamByte();
+}
+
+void ScriptLifeV2::SET_CHANGE_CUBE() {
+	uint16 param = getParamUint16();
 }
 
 void ScriptLifeV2::BETA() {
@@ -544,6 +556,20 @@ void ScriptLifeV2::RESTORE_HERO() {
 
 void ScriptLifeV2::ANIM_SET() {
 	uint16 anim = getParamUint16();
+}
+
+void ScriptLifeV2::TRACK_TO_VAR_GAME() {
+	byte var = getParamByte();
+	setGameVar(var, _track->getLabelAddress());
+}
+
+void ScriptLifeV2::VAR_GAME_TO_TRACK() {
+	byte var = getParamByte();
+	_track->jumpAddress(getGameVar(var));
+}
+
+void ScriptLifeV2::ANIM_TEXTURE() {
+	byte param = getParamByte();
 }
 
 void ScriptLifeV2::CINEMA_MODE() {
@@ -636,8 +662,20 @@ void ScriptLifeV2::FLOW_POINT() {
 	byte param2 = getParamByte();
 }
 
+void ScriptLifeV2::FLOW_OBJ() {
+	byte param1 = getParamByte();
+	byte param2 = getParamByte();
+}
+
 void ScriptLifeV2::SET_ANIM_DIAL() {
 	uint16 unknown = getParamUint16();
+}
+
+void ScriptLifeV2::NEW_SAMPLE() {
+	uint16 param1 = getParamUint16();
+	uint16 param2 = getParamUint16();
+	byte param3 = getParamByte();
+	uint16 param4 = getParamUint16();
 }
 
 } // end of namespace Twin
