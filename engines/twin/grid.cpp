@@ -133,7 +133,11 @@ void Grid::applyBrickShape(Actor *a) {
 	if (s->_layout == 0) {
 		s = getGridAt(x, --y, z);
 		if (s->_layout == 0) {
-			return;
+			++y;
+			s = getGridAt(x, ++y, z);
+			if (s->_layout == 0) {
+				return;
+			}
 		}
 	}
 	BlockInfo *b =_blockLibrary->getBlock(s->_layout - 1);
@@ -154,6 +158,9 @@ void Grid::applyBrickShape(Actor *a) {
 		break;
 	case kStairsBottomRight:
 		a->_pos._y = brkY + getAverageValue(0x100, 0, 0x200, a->_pos._x - brkX);
+		break;
+	case kSolid:
+		a->_pos._y = brkY + 512;
 		break;
 	default:
 		break;
