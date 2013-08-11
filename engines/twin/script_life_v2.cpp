@@ -513,6 +513,7 @@ void ScriptLifeV2::OR_IF() {
 
 void ScriptLifeV2::INVISIBLE() {
 	byte state = getParamByte();
+	_actor->setInvisible(state);
 }
 
 void ScriptLifeV2::POS_POINT() {

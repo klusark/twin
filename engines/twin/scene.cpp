@@ -83,7 +83,7 @@ void Scene::loadLBA2(Common::SeekableReadStream *stream) {
 
 	Player *_hero = g_twin->getPlayer();
 	//Not sure when this should actually be set...
-	//_hero->setPos(_heroX, _heroY, _heroZ);
+	_hero->setPos(_heroX, _heroY, _heroZ);
 	_hero->_isHero = true;
 
 	_trackScript = new ScriptTrackV2(stream);

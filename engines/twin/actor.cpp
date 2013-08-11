@@ -39,13 +39,14 @@ namespace Twin {
 
 Actor::Actor(Common::SeekableReadStream *stream) :
 		_entity(nullptr), _dest(nullptr), _dead(false), _isHero(false), _angle(0),
-		_facingActor(nullptr), _turning(false), _isMoving(false) {
+		_facingActor(nullptr), _turning(false), _isMoving(false), _isInvisible(false) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
 	}
 }
 
-Actor::Actor() : _entity(nullptr), _dest(nullptr), _dead(false), _facingActor(nullptr), _turning(false), _isMoving(false) {
+Actor::Actor() : _entity(nullptr), _dest(nullptr), _dead(false), _facingActor(nullptr), _turning(false), _isMoving(false),
+		_isInvisible(false) {
 	_entity = g_resource->getEntity(0, 0, 0);
 	_pos._x = 0;
 	_pos._y = 0;
@@ -174,7 +175,7 @@ void Actor::resetActions() {
 }
 
 void Actor::draw() {
-	if (_dead) {
+	if (_dead || _isInvisible) {
 		return;
 	}
 	if (_entity) {

@@ -85,6 +85,7 @@ public:
 	void setPos(uint16 x, uint16 y, uint16 z);
 	void gotoPoint(Point *p, bool *done);
 	void kill() { _dead = true; }
+	void setInvisible(bool state) { _isInvisible = state; }
 
 	void turnToAngle(Math::Angle angle);
 	void setAngle(Math::Angle angle) { _angle = angle; _angle.normalize(0); }
@@ -114,6 +115,7 @@ public:
 	bool *_destDone;
 
 	bool _isMoving;
+	bool _isInvisible;
 	bool _dead;
 	Math::Angle _angle;
 	Math::Angle _dstAngle;
