@@ -159,9 +159,6 @@ void Grid::applyBrickShape(Actor *a) {
 	case kStairsBottomRight:
 		a->_pos._y = brkY + getAverageValue(0x100, 0, 0x200, a->_pos._x - brkX);
 		break;
-	case kSolid:
-		a->_pos._y = brkY + 512;
-		break;
 	default:
 		break;
 	}
