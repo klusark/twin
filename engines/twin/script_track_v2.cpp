@@ -180,8 +180,8 @@ void ScriptTrackV2::SIMPLE_SAMPLE() {
 void ScriptTrackV2::FACE_HERO() {
 	uint16 param = getParamUint16();
 	Player *p = g_twin->getPlayer();
-	_actor->faceActor(p);
-
+	Math::Angle angle = _actor->getAngleTo(p);
+	_actor->turnToAngle(angle);
 }
 
 void ScriptTrackV2::ANGLE_RND() {

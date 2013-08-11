@@ -104,7 +104,7 @@ void Animation::update(uint32 time) {
 	if (numBones > _numBones) {
 		numBones = _numBones;
 	}
-	warning("%d %d %d", k->_x, k->_y, k->_z);
+
 	for (int i = 0; i < numBones; ++i) {
 		Boneframe *b = &k->_bones[i];
 		Boneframe *bn = &next->_bones[i];

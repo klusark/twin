@@ -120,7 +120,8 @@ void Actor::update(uint32 delta) {
 	Point before = _pos;
 
 	if (_entity && delta != 0) {
-		float speed = _entity->_anim->getSpeed() / ((float)delta * 2);
+		Keyframe *k = _entity->_anim->getKeyframe();
+		float speed = (k->_z * (int)delta) / 250.0f;
 		_pos._x += _angle.getCosine() * speed;
 		_pos._z += _angle.getSine() * speed;
 	}
