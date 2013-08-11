@@ -122,7 +122,7 @@ void Scene::loadLBA2(Common::SeekableReadStream *stream) {
 		z->_info[5] = stream->readUint32LE();
 		z->_info[6] = stream->readUint32LE();
 		z->_info[7] = stream->readUint32LE();
-		z->_type = stream->readUint16LE();
+		z->_type = (ZoneType)stream->readUint16LE();
 		z->_snap = stream->readUint16LE();
 	}
 
@@ -174,7 +174,7 @@ void Scene::draw() {
 Zone *Scene::getZone(byte id) {
 	for (int i = 0; i < _numZones; ++i) {
 		Zone *z = &_zones[i];
-		if (z->_snap == id) {
+		if (z->_type == kSceneric && z->_snap == id) {
 			return z;
 		}
 	}

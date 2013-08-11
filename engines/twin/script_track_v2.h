@@ -57,7 +57,7 @@ namespace Twin {
 	OPCODE(0x16, OPEN_RIGHT);			\
 	OPCODE(0x17, OPEN_UP);				\
 	OPCODE(0x18, OPEN_DOWN);			\
-										\
+	OPCODE(0x19, CLOSE);				\
 	OPCODE(0x1A, WAIT_DOOR);			\
 	OPCODE(0x1B, SAMPLE_RND);			\
 	OPCODE(0x1C, SAMPLE_ALWAYS);		\

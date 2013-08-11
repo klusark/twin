@@ -55,7 +55,7 @@ public:
 	uint32 _y2;
 	uint32 _z2;
 	uint32 _info[8];
-	uint16 _type;
+	ZoneType _type;
 	uint16 _snap;
 	bool isActorInside(Actor *a);
 };

@@ -151,6 +151,8 @@ void ScriptTrackV2::OPEN_DOWN() {
 	int16 distance = getParamInt16();
 }
 
+STUB_SCRIPT(CLOSE);
+
 STUB_SCRIPT(WAIT_DOOR);
 
 void ScriptTrackV2::SAMPLE_RND() {
