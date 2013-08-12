@@ -28,6 +28,8 @@
 #include "engines/twin/actor.h"
 #include "engines/twin/scene.h"
 #include "engines/twin/twin.h"
+#include "engines/twin/resource.h"
+#include "engines/twin/animation.h"
 
 namespace Twin {
 
@@ -150,6 +152,32 @@ bool ScriptLifeV2::ZONE_OBJ(byte oper) {
 		return false;
 	}
 	return z->isActorInside(a);
+}
+
+bool ScriptLifeV2::BODY(byte oper) {
+	byte body = getParamByte();
+	return testCond(body, _actor->_body, oper);
+}
+
+bool ScriptLifeV2::BODY_OBJ(byte oper) {
+	byte actor = _currentState._param;
+	Scene *s = g_twin->getCurrentScene();
+	Actor *a = s->getActor(actor);
+	byte body = getParamByte();
+	return testCond(body, a->_body, oper);
+}
+
+bool ScriptLifeV2::ANIM(byte oper) {
+	byte body = getParamByte();
+	return testCond(body, _actor->_entity->_anim->getId(), oper);
+}
+
+bool ScriptLifeV2::ANIM_OBJ(byte oper) {
+	byte actor = _currentState._param;
+	Scene *s = g_twin->getCurrentScene();
+	Actor *a = s->getActor(actor);
+	byte body = getParamByte();
+	return testCond(body, a->_entity->_anim->getId(), oper);
 }
 
 bool ScriptLifeV2::CURRENT_TRACK(byte oper) {
