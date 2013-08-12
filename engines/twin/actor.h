@@ -93,6 +93,9 @@ public:
 	void faceActor(Actor *a) { _facingActor = a; }
 	bool collidesWith(Actor *a);
 	void resetActions();
+	byte getNumKeys() { return _numKeys; }
+	uint16 getNumGold() { return _numGold; }
+	uint16 getLifePoints() { return _lifePoints; }
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
@@ -120,6 +123,11 @@ public:
 	Math::Angle _angle;
 	Math::Angle _dstAngle;
 	bool _turning;
+
+	byte _numKeys;
+	uint16 _numGold;
+
+	uint16 _lifePoints;
 
 	Actor *_facingActor;
 };

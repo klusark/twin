@@ -48,7 +48,8 @@ enum Keys {
 	KeyUp = 0,
 	KeyDown,
 	KeyLeft,
-	KeyRight
+	KeyRight,
+	KeyAction,
 };
 
 class TwinEngine : public Engine {

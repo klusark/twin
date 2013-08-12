@@ -54,6 +54,8 @@ public:
 	byte getCubeVar(byte id);
 	void setCubeVar(byte id, byte val);
 
+	byte getChapter() { return _chapter; }
+
 	void setOpcode(byte opcode);
 
 	Actor *_actor;
@@ -76,6 +78,7 @@ public:
 
 	static uint16 _gameVars[256];
 	static byte _cubeVars[256][256];
+	static byte _chapter;
 
 	virtual void execute(byte opcode) = 0; 
 };

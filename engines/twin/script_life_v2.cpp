@@ -111,7 +111,11 @@ bool ScriptLifeV2::COL(byte oper) {
 
 bool ScriptLifeV2::COL_OBJ(byte oper) {
 	byte actor2 = getParamByte();
-	return false;
+	byte actor1 = _currentState._param;
+	Scene *s = g_twin->getCurrentScene();
+	Actor *a1 = s->getActor(actor1);
+	Actor *a2 = s->getActor(actor2);
+	return a1->collidesWith(a2);
 }
 
 bool ScriptLifeV2::DISTANCE(byte oper) {
@@ -178,21 +182,25 @@ bool ScriptLifeV2::HIT_BY(byte oper) {
 	byte actor = getParamByte();
 	return false;
 }
+
 bool ScriptLifeV2::ACTION(byte oper) {
 	byte val = getParamByte();
-	byte actual = g_twin->isPressingAction();
+	byte actual = g_twin->getKey(KeyAction);
 	return testCond(val, actual, oper);
 }
+
 bool ScriptLifeV2::VAR_GAME(byte oper) {
 	byte varID = _currentState._param;
 	uint16 value = getParamUint16();
 	uint16 varVal = getGameVar(varID);
 	return testCond(value, varVal, oper);
 }
+
 bool ScriptLifeV2::LIFE_POINT(byte oper) {
 	uint16 value = getParamUint16();
-	return false;
+	return testCond(value, _actor->getLifePoints(), oper);
 }
+
 bool ScriptLifeV2::LIFE_POINT_OBJ(byte oper) {
 	byte actor = _currentState._param;
 	uint16 value = getParamUint16();
@@ -201,12 +209,12 @@ bool ScriptLifeV2::LIFE_POINT_OBJ(byte oper) {
 
 bool ScriptLifeV2::NUM_LITTLE_KEYS(byte oper) {
 	byte numKeys = getParamByte();
-	return true;
+	return testCond(numKeys, _actor->getNumKeys(), oper);
 }
 
 bool ScriptLifeV2::NUM_GOLD_PIECES(byte oper) {
 	uint16 numGold = getParamUint16();
-	return false;
+	return testCond(numGold, _actor->getNumGold(), oper);
 }
 
 bool ScriptLifeV2::BEHAVIOUR(byte oper) {
@@ -216,7 +224,7 @@ bool ScriptLifeV2::BEHAVIOUR(byte oper) {
 
 bool ScriptLifeV2::CHAPTER(byte oper) {
 	byte value = getParamByte();
-	return testCond(value, 0, oper);
+	return testCond(value, getChapter(), oper);
 }
 
 bool ScriptLifeV2::DISTANCE_3D(byte oper) {

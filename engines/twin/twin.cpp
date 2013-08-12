@@ -250,7 +250,9 @@ void TwinEngine::processKeyUp(Common::KeyCode key) {
 		_keys[KeyLeft] = false;
 	} else if (key == Common::KEYCODE_RIGHT) {
 		_keys[KeyRight] = false;
-	} 
+	} else if (key == Common::KEYCODE_SPACE) {
+		_keys[KeyAction] = false;
+	}
 }
 
 void TwinEngine::processKeyDown(Common::KeyCode key) {
@@ -262,7 +264,9 @@ void TwinEngine::processKeyDown(Common::KeyCode key) {
 		_keys[KeyLeft] = true;
 	} else if (key == Common::KEYCODE_RIGHT) {
 		_keys[KeyRight] = true;
-	} 
+	} else if (key == Common::KEYCODE_SPACE) {
+		_keys[KeyAction] = true;
+	}
 }
 
 } // end of namespace Twin

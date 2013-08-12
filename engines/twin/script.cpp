@@ -31,6 +31,7 @@ namespace Twin {
 
 uint16 Script::_gameVars[256];
 byte Script::_cubeVars[256][256];
+byte Script::_chapter;
 
 Script::Script(Common::SeekableReadStream *stream) : _actor(nullptr), _isWaiting(false), _isWaitingForAction(false) {
 	if (g_twin->getGameType() == GType_LBA2) {
