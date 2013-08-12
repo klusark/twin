@@ -52,7 +52,8 @@ namespace Twin {
 	OPCODE(0x10, SPEED);				\
 	OPCODE(0x11, BACKGROUND);			\
 	OPCODE(0x12, WAIT_NUM_SECOND);		\
-										\
+	OPCODE(0x13, NO_BODY);				\
+	OPCODE(0x14, BETA);					\
 	OPCODE(0x15, OPEN_LEFT);			\
 	OPCODE(0x16, OPEN_RIGHT);			\
 	OPCODE(0x17, OPEN_UP);				\

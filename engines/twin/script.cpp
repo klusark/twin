@@ -138,4 +138,12 @@ int16 Script::getParamInt16() {
 	return param;
 }
 
+const char *Script::getParamString() {
+	const char *val = (const char *)_ptr;
+
+	_ptr += strlen(val);
+
+	return val;
+}
+
 } // end of namespace Twin

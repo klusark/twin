@@ -135,6 +135,15 @@ void ScriptTrackV2::WAIT_NUM_SECOND() {
 	_isWaiting = true;
 }
 
+void ScriptTrackV2::NO_BODY() {
+	_actor->setInvisible(true);
+}
+
+void ScriptTrackV2::BETA() {
+	uint16 angle = getParamUint16();
+	_actor->setAngle((360 + 90)-((angle * 360) / 4096.f));
+}
+
 void ScriptTrackV2::OPEN_LEFT() {
 	int16 distance = getParamInt16();
 }

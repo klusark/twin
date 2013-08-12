@@ -74,7 +74,8 @@ namespace Twin {
 	OPCODE(0x2A, STOP_CURRENT_TRACK );	\
 	OPCODE(0x2B, RESTORE_LAST_TRACK );	\
 	OPCODE(0x2C, MESSAGE_OBJ);			\
-										\
+	OPCODE(0x2D, INC_CHAPTER);			\
+	OPCODE(0x2E, FOUND_OBJECT);			\
 	OPCODE(0x2F, SET_DOOR_LEFT);		\
 	OPCODE(0x30, SET_DOOR_RIGHT);		\
 	OPCODE(0x31, SET_DOOR_UP);			\
@@ -85,8 +86,11 @@ namespace Twin {
 	OPCODE(0x36, BRICK_COL);			\
 	OPCODE(0x37, OR_IF);				\
 	OPCODE(0x38, INVISIBLE);			\
-										\
+	OPCODE(0x39, SHADOW_OBJ);			\
 	OPCODE(0x3A, POS_POINT);			\
+										\
+	OPCODE(0x3F, HIT_OBJ);				\
+	OPCODE(0x40, PLAY_ACF);				\
 										\
 	OPCODE(0x48, SET_HOLO_POS);			\
 										\
@@ -174,6 +178,8 @@ namespace Twin {
 	COND_OPCODE(0x25, DISTANCE_MESSAGE, 1);	\
 	COND_OPCODE(0x26, HIT_OBJ_BY, 1);		\
 											\
+	COND_OPCODE(0x29, COL_DECORS, 0);		\
+	COND_OPCODE(0x2A, COL_DECORS_OBJ, 1);	\
 	COND_OPCODE(0x2B, PROCESSOR, 0);		\
 
 

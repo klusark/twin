@@ -96,6 +96,7 @@ public:
 	byte getNumKeys() { return _numKeys; }
 	uint16 getNumGold() { return _numGold; }
 	uint16 getLifePoints() { return _lifePoints; }
+	void hitBy(Actor *a, byte damage) { _lifePoints -= damage; }
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 

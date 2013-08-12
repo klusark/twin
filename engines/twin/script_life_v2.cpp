@@ -315,6 +315,16 @@ bool ScriptLifeV2::HIT_OBJ_BY(byte oper) {
 	return false;
 }
 
+bool ScriptLifeV2::COL_DECORS(byte oper) {
+	byte param1 = getParamByte();
+	return false;
+}
+
+bool ScriptLifeV2::COL_DECORS_OBJ(byte oper) {
+	byte param1 = getParamByte();
+	return false;
+}
+
 bool ScriptLifeV2::PROCESSOR(byte oper) {
 	byte param1 = getParamByte();
 	return true;
@@ -518,6 +528,14 @@ void ScriptLifeV2::MESSAGE_OBJ() {
 	uint16 textid = getParamUint16();
 }
 
+void ScriptLifeV2::INC_CHAPTER() {
+	++_chapter;
+}
+
+void ScriptLifeV2::FOUND_OBJECT() {
+	byte item = getParamByte();
+}
+
 void ScriptLifeV2::SET_DOOR_LEFT() {
 	int16 distance = getParamInt16();
 }
@@ -560,6 +578,11 @@ void ScriptLifeV2::INVISIBLE() {
 	_actor->setInvisible(state);
 }
 
+void ScriptLifeV2::SHADOW_OBJ() {
+	byte param1 = getParamByte();
+	byte param2 = getParamByte();
+}
+
 void ScriptLifeV2::POS_POINT() {
 	byte point = getParamByte();
 	Scene *s = g_twin->getCurrentScene();
@@ -567,6 +590,18 @@ void ScriptLifeV2::POS_POINT() {
 	_actor->setPos(p->_x, p->_y, p->_z);
 }
 
+void ScriptLifeV2::HIT_OBJ() {
+	byte actor = getParamByte();
+	byte damage = getParamByte();
+	Scene *s = g_twin->getCurrentScene();
+	Actor *a = s->getActor(actor);
+	a->hitBy(_actor, damage);
+}
+
+void ScriptLifeV2::PLAY_ACF() {
+	const char * s = getParamString();
+	warning("PLAY_ACF: %s", s);
+}
 
 void ScriptLifeV2::SET_HOLO_POS() {
 	byte id = getParamByte();

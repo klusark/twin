@@ -42,6 +42,7 @@ public:
 	byte getParamByte();
 	uint16 getParamUint16();
 	int16 getParamInt16();
+	const char *getParamString();
 	void stop();
 	void start();
 	void yield();
