@@ -71,6 +71,10 @@ void ScriptTrackV2::GOTO_POINT() {
 }
 
 void ScriptTrackV2::WAIT_ANIM() {
+	if (!_actor->_entity) {
+		warning("WAIT_ANIM no entity");
+		return;
+	}
 	_isWaitingForAction = true;
 	_actor->_entity->_anim->_isWaiting = &_isWaitingForAction;
 	_actor->_entity->_anim->_waitLoops = 1;
@@ -104,6 +108,10 @@ void ScriptTrackV2::STOP() {
 	stop();
 }
 
+void ScriptTrackV2::GOTO_SYM_POINT() {
+	byte id = getParamByte();
+}
+
 void ScriptTrackV2::WAIT_NUM_ANIM() {
 	byte numLoops = getParamByte();
 
@@ -117,6 +125,13 @@ void ScriptTrackV2::WAIT_NUM_ANIM() {
 
 void ScriptTrackV2::SAMPLE() {
 	uint16 id = getParamUint16();
+}
+
+void ScriptTrackV2::GOTO_POINT_3D() {
+	byte id = getParamByte();
+	Scene *s = g_twin->getCurrentScene();
+	Point *p = s->getPoint(id);
+	_actor->setPos(p->_x, p->_y, p->_z);
 }
 
 void ScriptTrackV2::SPEED() {
@@ -267,6 +282,10 @@ void ScriptTrackV2::WAIT_NUM_DECIMAL_RND() {
 	_waitTime = numSeconds * 100;
 	_waitedTime = 0;
 	_isWaiting = true;
+}
+
+void ScriptTrackV2::INTERVAL() {
+	uint16 param = getParamUint16();
 }
 
 void ScriptTrackV2::FREQUENCY() {

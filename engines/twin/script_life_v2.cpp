@@ -330,6 +330,16 @@ bool ScriptLifeV2::PROCESSOR(byte oper) {
 	return true;
 }
 
+bool ScriptLifeV2::OBJECT_DISPLAYED(byte oper) {
+	byte param1 = getParamByte();
+	return false;
+}
+
+bool ScriptLifeV2::ANGLE_OBJ(byte oper) {
+	byte param1 = getParamByte();
+	return false;
+}
+
 #define STUB_SCRIPT(func) void ScriptLifeV2::func() { }
 
 void ScriptLifeV2::END() {
@@ -622,7 +632,7 @@ void ScriptLifeV2::BETA() {
 }
 
 void ScriptLifeV2::SET_FRAME() {
-	uint16 sprite = getParamUint16();
+	byte sprite = getParamByte();
 }
 
 void ScriptLifeV2::SET_SPRITE() {
@@ -717,6 +727,22 @@ void ScriptLifeV2::RESTORE_COMPORTEMENT() {
 }
 
 void ScriptLifeV2::SAMPLE() {
+	uint16 id = getParamUint16();
+}
+
+void ScriptLifeV2::SAMPLE_RND() {
+	uint16 id = getParamUint16();
+}
+
+void ScriptLifeV2::SAMPLE_ALWAYS() {
+	uint16 id = getParamUint16();
+}
+
+void ScriptLifeV2::SAMPLE_STOP() {
+	uint16 id = getParamUint16();
+}
+
+void ScriptLifeV2::REPEAT_SAMPLE() {
 	uint16 id = getParamUint16();
 }
 

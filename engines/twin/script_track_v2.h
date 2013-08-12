@@ -45,10 +45,10 @@ namespace Twin {
 	OPCODE(0x09, LABEL);				\
 	OPCODE(0x0A, GOTO);					\
 	OPCODE(0x0B, STOP);					\
-										\
+	OPCODE(0x0C, GOTO_SYM_POINT);		\
 	OPCODE(0x0D, WAIT_NUM_ANIM);		\
 	OPCODE(0x0E, SAMPLE);				\
-										\
+	OPCODE(0x0F, GOTO_POINT_3D);		\
 	OPCODE(0x10, SPEED);				\
 	OPCODE(0x11, BACKGROUND);			\
 	OPCODE(0x12, WAIT_NUM_SECOND);		\
@@ -83,7 +83,7 @@ namespace Twin {
 	OPCODE(0x2F, WAIT_ANIM_3DS);		\
 	OPCODE(0x30, WAIT_FRAME_3DS);		\
 	OPCODE(0x31, WAIT_NUM_DECIMAL_RND);	\
-										\
+	OPCODE(0x32, INTERVAL);				\
 	OPCODE(0x33, FREQUENCY);			\
 	OPCODE(0x34, VOLUME);				\
 
