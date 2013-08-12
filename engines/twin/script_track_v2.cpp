@@ -214,7 +214,40 @@ void ScriptTrackV2::WAIT_NUM_SECOND_RND() {
 	_isWaiting = true;
 }
 
+void ScriptTrackV2::SET_FRAME() {
+	//unknown
+	byte param = getParamByte();
+}
+
+void ScriptTrackV2::SET_FRAME_3DS() {
+	//unknown
+	byte param = getParamByte();
+}
+
+void ScriptTrackV2::SET_START_3DS() {
+	//unknown
+	byte param = getParamByte();
+}
+
+void ScriptTrackV2::SET_END_3DS() {
+	//unknown
+	byte param = getParamByte();
+}
+
+void ScriptTrackV2::START_ANIM_3DS() {
+	//unknown
+	byte param = getParamByte();
+}
+
 void ScriptTrackV2::STOP_ANIM_3DS() {
+	//unknown
+}
+
+void ScriptTrackV2::WAIT_ANIM_3DS() {
+	//unknown
+}
+
+void ScriptTrackV2::WAIT_FRAME_3DS() {
 	//unknown
 }
 
