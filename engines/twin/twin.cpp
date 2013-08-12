@@ -141,7 +141,7 @@ void TwinEngine::createRenderer() {
 }
 
 void TwinEngine::changeScene(uint16 id, uint16 heroX, uint16 heroY, uint16 heroZ) {
-	_scene = g_resource->getScene(id);
+	_nextScene = g_resource->getScene(id);
 	_player->setPos(heroX, heroY, heroZ);
 }
 
@@ -177,6 +177,7 @@ Common::Error TwinEngine::run() {
 
 	int grid = 0;
 	_scene = g_resource->getScene(grid);
+	_nextScene = _scene;
 
 	bool mouseDown = false;
 	uint32 lastTime = g_system->getMillis();
@@ -192,6 +193,7 @@ Common::Error TwinEngine::run() {
 				++grid;
 				delete _scene;
 				_scene = g_resource->getScene(grid);
+				_nextScene = _scene;
 			} else if (type == Common::EVENT_WHEELDOWN) {
 				--grid;
 				if (grid < 0) {
@@ -199,6 +201,7 @@ Common::Error TwinEngine::run() {
 				} else {
 					delete _scene;
 					_scene = g_resource->getScene(grid);
+					_nextScene = _scene;
 				}
 			} else if (type == Common::EVENT_MOUSEMOVE && mouseDown) {
 				_player->_pos._x += event.relMouse.x * 10;
@@ -218,6 +221,10 @@ Common::Error TwinEngine::run() {
 		lastTime = currentTime;
 
 		_renderer->clearScreen();
+
+		if (_scene != _nextScene) {
+			_scene = _nextScene;
+		}
 
 		_scene->draw();
 		_scene->update(deltaTime);

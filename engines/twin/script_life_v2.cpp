@@ -127,6 +127,10 @@ bool ScriptLifeV2::ZONE(byte oper) {
 	byte zone = getParamByte();
 	Scene *s = g_twin->getCurrentScene();
 	Zone *z = s->getZone(zone);
+	if (z == nullptr) {
+		warning("Zone %d is null", zone);
+		return false;
+	}
 	return z->isActorInside(_actor);
 }
 
@@ -137,6 +141,10 @@ bool ScriptLifeV2::ZONE_OBJ(byte oper) {
 	Scene *s = g_twin->getCurrentScene();
 	Actor *a = s->getActor(actor);
 	Zone *z = s->getZone(zone);
+	if (z == nullptr) {
+		warning("Zone %d is null", zone);
+		return false;
+	}
 	return z->isActorInside(a);
 }
 
@@ -528,6 +536,11 @@ void ScriptLifeV2::SET_HOLO_POS() {
 	byte id = getParamByte();
 }
 
+void ScriptLifeV2::SET_GRM() {
+	byte param1 = getParamByte();
+	byte param2 = getParamByte();
+}
+
 void ScriptLifeV2::SET_CHANGE_CUBE() {
 	uint16 param = getParamUint16();
 }
@@ -651,6 +664,11 @@ void ScriptLifeV2::SUB_VAR_GAME() {
 	uint16 value = getParamUint16();
 	uint16 val = getGameVar(var);
 	setGameVar(var, val - value);
+}
+
+void ScriptLifeV2::SET_RAIL() {
+	byte param1 = getParamByte();
+	byte param2 = getParamByte();
 }
 
 void ScriptLifeV2::NO_BODY() {

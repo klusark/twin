@@ -90,6 +90,7 @@ namespace Twin {
 										\
 	OPCODE(0x48, SET_HOLO_POS);			\
 										\
+	OPCODE(0x4C, SET_GRM );				\
 	OPCODE(0x4D, SET_CHANGE_CUBE);		\
 										\
 	OPCODE(0x50, BETA);					\
@@ -124,6 +125,8 @@ namespace Twin {
 										\
 	OPCODE(0x80, ADD_VAR_GAME);			\
 	OPCODE(0x81, SUB_VAR_GAME);			\
+										\
+	OPCODE(0x85, SET_RAIL);				\
 										\
 	OPCODE(0x87, NO_BODY);				\
 										\

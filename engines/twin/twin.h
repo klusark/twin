@@ -55,6 +55,7 @@ class TwinEngine : public Engine {
 	GfxBase *_renderer;
 	TwinGameType _type;
 	Scene *_scene;
+	Scene *_nextScene;
 	bool _action;
 	Player *_player;
 protected:
