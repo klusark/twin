@@ -32,6 +32,7 @@
 #include "engines/twin/animation.h"
 #include "engines/twin/model.h"
 #include "engines/twin/scene.h"
+#include "engines/twin/sprite.h"
 
 namespace Twin {
 
@@ -62,6 +63,12 @@ Resource::Resource() {
 
 	_scene = new Hqr();
 	_scene->open("SCENE.HQR");
+
+	_sprites = new Hqr();
+	_sprites->open("SPRITES.HQR");
+
+
+	loadSpriteInfo(_ress->createReadStreamForIndex(5));
 }
 
 Resource::~Resource() {
@@ -81,6 +88,13 @@ Scene *Resource::getScene(uint16 id) {
 	s->setId(id);
 	return s;
 }
+
+Sprite *Resource::getSprite(uint16 id) {
+	Sprite *s = new Sprite(_sprites->createReadStreamForIndex(id ));
+	s->setSpriteInfo(&_spriteInfo[id]);
+	return s;
+}
+
 
 Grid *Resource::getGrid(int id) {
 	Grid *g = new Grid(_bkg->createReadStreamForIndex(_firstGrid + id));
@@ -169,6 +183,23 @@ Entity *Resource::getEntity(uint16 entity, uint16 body, uint16 anim) {
 	ent->_z1 = b->_z1;
 	ent->_z2 = b->_z2;
 	return ent;
+}
+
+void Resource::loadSpriteInfo(Common::SeekableReadStream *stream) {
+	int numSprites = _sprites->getNumIndices() - 1;
+	_spriteInfo = new SpriteInfo[numSprites];
+
+	for (int i = 0; i < numSprites; ++i) {
+		SpriteInfo *info = &_spriteInfo[i];
+		info->_x = stream->readSint16LE();
+		info->_y = stream->readSint16LE();
+		info->_x1 = stream->readSint16LE();
+		info->_x2 = stream->readSint16LE();
+		info->_y1 = stream->readSint16LE();
+		info->_y2 = stream->readSint16LE();
+		info->_z1 = stream->readSint16LE();
+		info->_z2 = stream->readSint16LE();
+	}
 }
 
 } // end of namespace Twin

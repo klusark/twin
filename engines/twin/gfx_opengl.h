@@ -42,6 +42,7 @@ class Block;
 class Texture;
 class Island;
 class Actor;
+class Sprite;
 
 class GfxOpenGL {
 	int _screenWidth;
@@ -75,6 +76,7 @@ public:
 	void drawModel(Model *m, bool fromIsland = false);
 	void freeModel(Model *m);
 	void drawBlock(Block *block, int32 x, int32 y, int32 z);
+	void drawSprite(Sprite *sprite);
 	void drawGrid(Grid *g);
 	void drawSphere(double radius, int slices, int stacks);
 	void drawIsland(Island *island);

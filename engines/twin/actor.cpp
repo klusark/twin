@@ -33,6 +33,7 @@
 #include "engines/twin/script_life_v2.h"
 #include "engines/twin/scene.h"
 #include "engines/twin/grid.h"
+#include "engines/twin/sprite.h"
 #include "common/textconsole.h"
 
 namespace Twin {
@@ -40,14 +41,14 @@ namespace Twin {
 Actor::Actor(Common::SeekableReadStream *stream) :
 		_entity(nullptr), _dest(nullptr), _dead(false), _isHero(false), _angle(0),
 		_facingActor(nullptr), _turning(false), _isMoving(false), _isInvisible(false),
-		_numKeys(0), _numGold(0), _lifePoints(0) {
+		_numKeys(0), _numGold(0), _lifePoints(0), _sprite(nullptr) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
 	}
 }
 
 Actor::Actor() : _entity(nullptr), _dest(nullptr), _dead(false), _facingActor(nullptr), _turning(false), _isMoving(false),
-		_isInvisible(false), _numKeys(0), _numGold(0), _lifePoints(100) {
+		_isInvisible(false), _numKeys(0), _numGold(0), _lifePoints(100), _sprite(nullptr) {
 	_entity = g_resource->getEntity(0, 0, 0);
 	_pos._x = 0;
 	_pos._y = 0;
@@ -64,12 +65,14 @@ void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 	_body = stream->readByte();
 	stream->readByte();
 	_anim = stream->readByte();
-	_sprite = stream->readUint16LE();
+	_spriteID = stream->readUint16LE();
 	_pos._x = stream->readUint16LE();
 	_pos._y = stream->readUint16LE();
 	_pos._z = stream->readUint16LE();
 	if (_entityID != 0xffff) {
 		_entity = g_resource->getEntity(_entityID, 0, 0);
+	} else {
+		_sprite = g_resource->getSprite(_spriteID);
 	}
 
 	stream->readByte();
@@ -184,9 +187,7 @@ void Actor::draw() {
 	if (_dead || _isInvisible) {
 		return;
 	}
-	if (_entity) {
-		g_renderer->drawActor(this);
-	}
+	g_renderer->drawActor(this);
 }
 
 void  Actor::setPos(uint16 x, uint16 y, uint16 z) {

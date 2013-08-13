@@ -36,6 +36,7 @@
 #include "engines/twin/resource.h"
 #include "engines/twin/block_library.h"
 #include "engines/twin/block.h"
+#include "engines/twin/sprite.h"
 #include "engines/twin/island.h"
 #include "engines/twin/actor.h"
 
@@ -198,8 +199,8 @@ void GfxOpenGL::loadModelTexture(Common::SeekableReadStream *stream) {
 void GfxOpenGL::drawActor(Actor *a) {
 	float orthoProjX = 320;
 	float orthoProjY = 240;
-	float projPosX = ((a->_pos._x - (float)a->_pos._z) * 24.0f) / 512.0f + orthoProjX;
-	float projPosY = (((a->_pos._x + (float)a->_pos._z) * 12.0f) - a->_pos._y * 30.0f) / 512.0f + orthoProjY;
+	int projPosX = ((a->_pos._x - (float)a->_pos._z) * 24.0f) / 512.0f + orthoProjX;
+	int projPosY = (((a->_pos._x + (float)a->_pos._z) * 12.0f) - a->_pos._y * 30.0f) / 512.0f + orthoProjY;
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -210,7 +211,7 @@ void GfxOpenGL::drawActor(Actor *a) {
 	gluLookAt( 0, 0, 1, 0, 0, 0, 0, 1, 0 );
 
 	glTranslatef((_cameraX/(float)_screenWidth), -(_cameraY/(float)_screenHeight), (_cameraZ/(float)_screenHeight));
-	glTranslatef(projPosX/(float)_screenWidth, -(projPosY/(float)_screenHeight ), 0);
+	glTranslatef(projPosX/(float)_screenWidth, -(projPosY/(float)_screenHeight), 0);
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
@@ -218,10 +219,18 @@ void GfxOpenGL::drawActor(Actor *a) {
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
-	glRotatef(45, 1, 0, 0);
-	glRotatef(45, 0, 1, 0);
-	glRotatef(-a->_angle.getDegrees(), 0, 1, 0);
-	drawModel(a->_entity->_model, true);
+
+	if (a->_entity) {
+		glRotatef(45, 1, 0, 0);
+		glRotatef(45, 0, 1, 0);
+		glRotatef(-a->_angle.getDegrees(), 0, 1, 0);
+		drawModel(a->_entity->_model, true);
+	} else {
+		glTranslatef(0, -a->_sprite->_height/(float)_screenHeight, 0);
+		glTranslatef(a->_sprite->_info->_x/(float)_screenWidth, -(a->_sprite->_info->_y/(float)_screenHeight), 0);
+		glTranslatef(-9/(float)_screenWidth, (10/(float)_screenHeight), 0);
+		drawSprite(a->_sprite);
+	}
 
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
@@ -347,11 +356,39 @@ void GfxOpenGL::drawModel(Model *m, bool fromIsland) {
 	}
 }
 
+void GfxOpenGL::drawSprite(Sprite *sprite) {
+	glColor4ub(255, 255, 255, 255);
+
+	glEnable(GL_TEXTURE_2D);
+	if (sprite->_renderData == NULL) {
+		sprite->_renderData = new GLuint;
+		loadTexture(sprite->_data, (uint32 *)sprite->_renderData, NULL, sprite->_width, sprite->_height);
+	}
+	GLuint texNum = *(GLuint *)sprite->_renderData;
+
+	float w = sprite->_width/(float)_screenWidth;
+	float h = sprite->_height/(float)_screenHeight;
+
+
+	glBindTexture(GL_TEXTURE_2D, texNum);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(0, 0);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(w, 0);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(w, h);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(0, h);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+}
+
 void GfxOpenGL::drawBlock(Block *block, int32 xb, int32 yb, int32 zb) {
-	const float TILE_DEPTH = 0.00001;
+	const float TILE_DEPTH = 0.00001f;
 	float x = (xb - zb) * 24 + 288;
 	float y = ((xb + zb) * 12) - (yb * 15) + 215;
-	float z = (xb * (TILE_DEPTH * 25)) + (yb * TILE_DEPTH * 64 * 25) + (zb * TILE_DEPTH * 4);;//(zb + ((yb * 24) | 0) + ((12 - xb * 12) | 0))/212.0f;
+	float z = (xb * (TILE_DEPTH * 25)) + (yb * TILE_DEPTH * 64 * 25) + (zb * TILE_DEPTH * 4);
 
 	if (block->_renderData == NULL) {
 		block->_renderData = new GLuint;
@@ -399,6 +436,7 @@ void GfxOpenGL::drawGrid(Grid *g) {
 
 	glEnable(GL_TEXTURE_2D);
 	glPushMatrix();
+
 	glTranslatef(_cameraX, _cameraY, 0.0f);
 	BlockLibrary *b = g->getBlockLibrary();
 	for (int z = 0; z < 64; z++) {

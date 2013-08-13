@@ -39,6 +39,8 @@ class EntityInformation;
 class Model;
 class Animation;
 class Scene;
+class Sprite;
+class SpriteInfo;
 
 class Entity {
 public:
@@ -74,8 +76,10 @@ public:
 	Animation *getAnimation(uint16 entity, uint16 id, Model *m);
 	Entity *getEntity(uint16 entity, uint16 body, uint16 anim);
 	Scene *getScene(uint16 id);
+	Sprite *getSprite(uint16 id);
 private:
 	void loadGridDefaults();
+	void loadSpriteInfo(Common::SeekableReadStream *stream);
 
 	uint16 _firstGrid;
 	uint16 _firstGridFragment;
@@ -89,8 +93,10 @@ private:
 	Hqr *_body;
 	Hqr *_anim;
 	Hqr *_scene;
+	Hqr *_sprites;
 
 	EntityInformation *_ei;
+	SpriteInfo *_spriteInfo;
 
 	SceneAssociation _scenes[256];
 

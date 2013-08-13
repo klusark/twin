@@ -36,6 +36,7 @@ namespace Twin {
 class Entity;
 class Script;
 class Point;
+class Sprite;
 
 enum ControlMode {
 	kNoMove			= 0,
@@ -106,14 +107,16 @@ public:
 	uint16 _entityID;
 	byte _body;
 	byte _anim;
-	uint16 _sprite;
 	Point _pos;
 	ControlMode _controlMode;
+
+	uint16 _spriteID;
 
 	Script *_trackScript;
 	Script *_lifeScript;
 
 	Entity *_entity;
+	Sprite *_sprite;
 
 	Point *_dest;
 	bool *_destDone;
