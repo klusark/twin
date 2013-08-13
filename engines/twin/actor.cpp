@@ -223,7 +223,16 @@ void  Actor::setPos(uint16 x, uint16 y, uint16 z) {
 void Actor::setAnimation(uint16 anim) {
 	if (_entity && _entity->_anim->getId() != anim) {
 		delete _entity->_anim;
-		_entity->_anim = g_resource->getAnimation(_entityID, anim, _entity->_model);
+		_anim = anim;
+		_entity->_anim = g_resource->getAnimation(_entityID, _anim, _entity->_model);
+	}
+}
+
+void Actor::setBody(byte body) {
+	if (_entity) {
+		delete _entity;
+		_body = body;
+		_entity = g_resource->getEntity(_entityID, _body, _anim);
 	}
 }
 

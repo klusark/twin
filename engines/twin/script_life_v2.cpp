@@ -388,7 +388,7 @@ void ScriptLifeV2::SWIF() {
 	if (!cond) {
 		jumpAddress(address);
 	} else {
-		setOpcode(0x02); // SNIF
+		//setOpcode(0x02); // SNIF
 	}
 }
 
@@ -409,12 +409,16 @@ void ScriptLifeV2::ELSE() {
 }
 
 void ScriptLifeV2::BODY() {
-	byte actor = getParamByte();
+	byte body = getParamByte();
+	_actor->setBody(body);
 }
 
 void ScriptLifeV2::BODY_OBJ() {
 	byte actor = getParamByte();
 	byte body = getParamByte();
+	Scene *s = g_twin->getCurrentScene();
+	Actor *a = s->getActor(actor);
+	a->setBody(body);
 }
 
 void ScriptLifeV2::ANIM() {
@@ -425,6 +429,9 @@ void ScriptLifeV2::ANIM() {
 void ScriptLifeV2::ANIM_OBJ() {
 	byte actor = getParamByte();
 	uint32 id = getParamUint16();
+	Scene *s = g_twin->getCurrentScene();
+	Actor *a = s->getActor(actor);
+	a->setAnimation(id);
 }
 
 void ScriptLifeV2::SET_CAMERA() {
@@ -496,9 +503,13 @@ void ScriptLifeV2::SET_COMPORTEMENT() {
 	uint16 address = getParamUint16();
 	_comportementAddress = address;
 }
+
 void ScriptLifeV2::SET_COMPORTEMENT_OBJ() {
 	byte actor = getParamByte();
 	uint16 address = getParamUint16();
+	Scene *s = g_twin->getCurrentScene();
+	Actor *a = s->getActor(actor);
+	static_cast<ScriptLifeV2 *>(a->_lifeScript)->_comportementAddress = address;
 }
 
 void ScriptLifeV2::END_COMPORTEMENT() {

@@ -246,6 +246,8 @@ void ScriptTrackV2::WAIT_NUM_DECIMAL() {
 
 void ScriptTrackV2::SPRITE() {
 	uint16 id = getParamUint16();
+	_actor->_spriteID = id;
+	_actor->_sprite = g_resource->getSprite(id);
 }
 
 void ScriptTrackV2::WAIT_NUM_SECOND_RND() {

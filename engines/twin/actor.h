@@ -83,6 +83,7 @@ public:
 	void draw();
 	void update(uint32 delta);
 	void setAnimation(uint16 anim);
+	void setBody(byte body);
 	void setPos(uint16 x, uint16 y, uint16 z);
 	void gotoPoint(Point *p, bool *done);
 	void kill() { _dead = true; }
