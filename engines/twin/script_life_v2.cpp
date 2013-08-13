@@ -209,7 +209,9 @@ bool ScriptLifeV2::CONE_VIEW(byte oper) {
 
 bool ScriptLifeV2::HIT_BY(byte oper) {
 	byte actor = getParamByte();
-	return false;
+	Scene *s = g_twin->getCurrentScene();
+	Actor *a = s->getActor(actor);
+	return a == _actor->_lastHitBy;
 }
 
 bool ScriptLifeV2::ACTION(byte oper) {
@@ -284,7 +286,7 @@ bool ScriptLifeV2::RAIL(byte oper) {
 
 bool ScriptLifeV2::BETA_COND(byte oper) {
 	uint16 value = getParamUint16();
-	return false;
+	return true;
 }
 
 bool ScriptLifeV2::BETA_OBJ(byte oper) {
@@ -441,7 +443,11 @@ void ScriptLifeV2::SET_TRACK() {
 
 void ScriptLifeV2::SET_TRACK_OBJ() {
 	byte actor = getParamByte();
-	uint16 id = getParamUint16();
+	uint16 address = getParamUint16();
+	Scene *s = g_twin->getCurrentScene();
+	Actor *a = s->getActor(actor);
+	a->_trackScript->jumpAddress(address);
+	a->_trackScript->start();
 }
 
 void ScriptLifeV2::MESSAGE() {

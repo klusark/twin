@@ -97,7 +97,7 @@ public:
 	byte getNumKeys() { return _numKeys; }
 	uint16 getNumGold() { return _numGold; }
 	uint16 getLifePoints() { return _lifePoints; }
-	void hitBy(Actor *a, byte damage) { _lifePoints -= damage; }
+	void hitBy(Actor *a, byte damage) { _lifePoints -= damage; _lastHitBy = a; }
 	bool isZonable() { return _isHero; }
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
@@ -132,11 +132,15 @@ public:
 
 	byte _numKeys;
 	uint16 _numGold;
-	uint16 _speed;
+
+	int16 _speed;
+	uint16 _speedDistance;
+	Point _speedStart;
 
 	uint16 _lifePoints;
 
 	Actor *_facingActor;
+	Actor *_lastHitBy;
 };
 
 } // end of namespace Twin

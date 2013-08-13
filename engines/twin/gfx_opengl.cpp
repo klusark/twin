@@ -229,6 +229,7 @@ void GfxOpenGL::drawActor(Actor *a) {
 		glTranslatef(0, -a->_sprite->_height/(float)_screenHeight, 0);
 		glTranslatef(a->_sprite->_info->_x/(float)_screenWidth, -(a->_sprite->_info->_y/(float)_screenHeight), 0);
 		glTranslatef(-9/(float)_screenWidth, (10/(float)_screenHeight), 0);
+		//glTranslatef(-a->_sprite->_offsetX/(float)_screenWidth, (a->_sprite->_offsetY/(float)_screenHeight), 0);
 		drawSprite(a->_sprite);
 	}
 

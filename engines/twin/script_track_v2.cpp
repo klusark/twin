@@ -161,23 +161,40 @@ void ScriptTrackV2::BETA() {
 
 void ScriptTrackV2::OPEN_LEFT() {
 	int16 distance = getParamInt16();
+	_actor->_speed = 1000;
+	_actor->_angle = 180;
+	_actor->_speedStart = _actor->_pos;
+	_actor->_speedDistance = distance;
 }
 
 void ScriptTrackV2::OPEN_RIGHT() {
 	int16 distance = getParamInt16();
+	_actor->_speed = 1000;
+	_actor->_angle = 0;
+	_actor->_speedStart = _actor->_pos;
+	_actor->_speedDistance = distance;
 }
 
 void ScriptTrackV2::OPEN_UP() {
 	int16 distance = getParamInt16();
+	_actor->_speed = 1000;
+	_actor->_angle = 270;
+	_actor->_speedStart = _actor->_pos;
+	_actor->_speedDistance = distance;
 }
 
 void ScriptTrackV2::OPEN_DOWN() {
 	int16 distance = getParamInt16();
 	_actor->_speed = 1000;
 	_actor->_angle = 90;
+	_actor->_speedStart = _actor->_pos;
+	_actor->_speedDistance = distance;
 }
 
-STUB_SCRIPT(CLOSE);
+void ScriptTrackV2::CLOSE() {
+	_actor->_speed = -1000;
+	_actor->_speedStart = _actor->_pos;
+}
 
 STUB_SCRIPT(WAIT_DOOR);
 

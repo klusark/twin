@@ -136,9 +136,28 @@ void Actor::update(uint32 delta) {
 		_pos._z += _angle.getCosine() * speed2;
 	}
 
-	if (_sprite) {
-		_pos._x += _angle.getCosine() * (_speed * delta) / 250.0f;
-		_pos._z += _angle.getSine() * (_speed * delta) / 250.0f;
+	if (_sprite && _speed) {
+		_pos._x += _angle.getCosine() * (_speed * (int)delta) / 250.0f;
+		_pos._z += _angle.getSine() * (_speed * (int)delta) / 250.0f;
+		if (_speedStart.getDistanceTo(&_pos) > _speedDistance) {
+			int direction = 1;
+			if (_speed < 0) {
+				direction = -1;
+			}
+			_speed = 0;
+			if (_angle == 0) {
+				_pos._x = _speedStart._x + (_speedDistance * direction);
+			}
+			if (_angle == 90) {
+				_pos._z = _speedStart._z + (_speedDistance * direction);
+			}
+			if (_angle == 180) {
+				_pos._x = _speedStart._x - (_speedDistance * direction);
+			}
+			if (_angle == 270) {
+				_pos._z = _speedStart._z - (_speedDistance * direction);
+			}
+		}
 	}
 
 	if (_dest) {
