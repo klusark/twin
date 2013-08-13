@@ -148,17 +148,7 @@ void Scene::loadLBA2(Common::SeekableReadStream *stream) {
 void Scene::update(uint32 delta) {
 	for (int i = 0; i < _numActors; ++i) {
 		Actor *a = _actors[i];
-		if (a->_isHero) {
-		for (int j = 0; j < _numZones; ++j) {
-			Zone *z = &_zones[j];
-			if (z->isActorInside(a)) {
-				switch (z->_type) {
-				case kCube:
-					g_twin->changeScene(z->_snap, z->_info[0], z->_info[1], z->_info[2]);
-				}
-			}
-		}
-		}
+		processActorZone(a);
 		a->update(delta);
 	}
 }
@@ -168,6 +158,30 @@ void Scene::draw() {
 	}
 	for (int i = 0; i < _numActors; ++i) {
 		_actors[i]->draw();
+	}
+}
+
+void Scene::processActorZone(Actor *a) {
+	if (!a->isZonable()) {
+		return;
+	}
+	for (int j = 0; j < _numZones; ++j) {
+		Zone *z = &_zones[j];
+		if (z->isActorInside(a)) {
+			switch (z->_type) {
+			case kCube:
+				if (a->_isHero) {
+					g_twin->changeScene(z->_snap, z->_info[0], z->_info[1], z->_info[2]);
+				}
+				break;
+			case kObject:
+				if (g_twin->getKey(KeyAction)) {
+					a->setAnimation(kAction);
+					a->_numKeys = 1;
+				}
+				break;
+			}
+		}
 	}
 }
 

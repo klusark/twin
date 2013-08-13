@@ -26,6 +26,7 @@
 #include "engines/twin/script_life_v2.h"
 #include "engines/twin/script_track_v2.h"
 #include "engines/twin/actor.h"
+#include "engines/twin/player.h"
 #include "engines/twin/scene.h"
 #include "engines/twin/twin.h"
 #include "engines/twin/resource.h"
@@ -237,7 +238,7 @@ bool ScriptLifeV2::LIFE_POINT_OBJ(byte oper) {
 
 bool ScriptLifeV2::NUM_LITTLE_KEYS(byte oper) {
 	byte numKeys = getParamByte();
-	return testCond(numKeys, _actor->getNumKeys(), oper);
+	return testCond(numKeys, g_twin->getPlayer()->getNumKeys(), oper);
 }
 
 bool ScriptLifeV2::NUM_GOLD_PIECES(byte oper) {

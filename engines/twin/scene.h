@@ -83,6 +83,7 @@ public:
 	Grid *getGrid() { return _grid; }
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
+	void processActorZone(Actor *a);
 
 	uint32 _id;
 

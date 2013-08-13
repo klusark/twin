@@ -98,12 +98,14 @@ public:
 	uint16 getNumGold() { return _numGold; }
 	uint16 getLifePoints() { return _lifePoints; }
 	void hitBy(Actor *a, byte damage) { _lifePoints -= damage; }
+	bool isZonable() { return _isHero; }
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
 	void updateControl();
 
 	bool _isHero;
+	bool _heroMoved;
 	uint16 _entityID;
 	byte _body;
 	byte _anim;
@@ -130,6 +132,7 @@ public:
 
 	byte _numKeys;
 	uint16 _numGold;
+	uint16 _speed;
 
 	uint16 _lifePoints;
 

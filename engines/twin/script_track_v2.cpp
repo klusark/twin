@@ -173,6 +173,8 @@ void ScriptTrackV2::OPEN_UP() {
 
 void ScriptTrackV2::OPEN_DOWN() {
 	int16 distance = getParamInt16();
+	_actor->_speed = 1000;
+	_actor->_angle = 90;
 }
 
 STUB_SCRIPT(CLOSE);

@@ -50,6 +50,7 @@ enum Keys {
 	KeyLeft,
 	KeyRight,
 	KeyAction,
+	NumKeys,
 };
 
 class TwinEngine : public Engine {
@@ -67,7 +68,7 @@ protected:
 	void intro();
 	void processKeyUp(Common::KeyCode key);
 	void processKeyDown(Common::KeyCode key);
-	bool _keys[4];
+	bool _keys[NumKeys];
 public:
 	TwinEngine(OSystem *syst, TwinGameType type);
 	virtual ~TwinEngine();

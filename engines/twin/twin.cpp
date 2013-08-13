@@ -56,7 +56,7 @@ TwinEngine::TwinEngine(OSystem *syst, TwinGameType type) :
 		Engine(syst), _type(type) {
 	g_twin = this;
 	_action = false;
-	memset(_keys, 0, 4);
+	memset(_keys, 0, NumKeys);
 }
 
 TwinEngine::~TwinEngine() {

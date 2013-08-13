@@ -41,14 +41,14 @@ namespace Twin {
 Actor::Actor(Common::SeekableReadStream *stream) :
 		_entity(nullptr), _dest(nullptr), _dead(false), _isHero(false), _angle(0),
 		_facingActor(nullptr), _turning(false), _isMoving(false), _isInvisible(false),
-		_numKeys(0), _numGold(0), _lifePoints(0), _sprite(nullptr) {
+		_numKeys(0), _numGold(0), _lifePoints(0), _sprite(nullptr), _heroMoved(false), _speed(0) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
 	}
 }
 
 Actor::Actor() : _entity(nullptr), _dest(nullptr), _dead(false), _facingActor(nullptr), _turning(false), _isMoving(false),
-		_isInvisible(false), _numKeys(0), _numGold(0), _lifePoints(100), _sprite(nullptr) {
+		_isInvisible(false), _numKeys(0), _numGold(0), _lifePoints(100), _sprite(nullptr), _heroMoved(false), _speed(0) {
 	_entity = g_resource->getEntity(0, 0, 0);
 	_pos._x = 0;
 	_pos._y = 0;
@@ -134,6 +134,11 @@ void Actor::update(uint32 delta) {
 
 		_pos._x += _angle.getSine() * speed2;
 		_pos._z += _angle.getCosine() * speed2;
+	}
+
+	if (_sprite) {
+		_pos._x += _angle.getCosine() * (_speed * delta) / 250.0f;
+		_pos._z += _angle.getSine() * (_speed * delta) / 250.0f;
 	}
 
 	if (_dest) {
@@ -248,15 +253,20 @@ void Actor::updateControl() {
 	switch (_controlMode) {
 	case kManual:
 		if (!g_twin->getKey(KeyUp) && !g_twin->getKey(KeyDown) && !g_twin->getKey(KeyLeft) && !g_twin->getKey(KeyRight)) {
-			setAnimation(kStanding);
+			if (_heroMoved) {
+				setAnimation(kStanding);
+				_heroMoved = false;
+			}
 		}
 
 		if (g_twin->getKey(KeyUp)) {
 			setAnimation(kForward);
+			_heroMoved = true;
 		}
 
 		if (g_twin->getKey(KeyDown) && !g_twin->getKey(KeyUp)) { 
 			setAnimation(kBackward);
+			_heroMoved = true;
 		}
 
 		if (g_twin->getKey(KeyLeft)) {
