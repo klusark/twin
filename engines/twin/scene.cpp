@@ -151,6 +151,10 @@ void Scene::update(uint32 delta) {
 		processActorZone(a);
 		a->update(delta);
 	}
+	for (int i = 0; i < _numActors; ++i) {
+		Actor *a = _actors[i];
+		a->_lastHitBy = nullptr;
+	}
 }
 void Scene::draw() {
 	if (_grid) {
