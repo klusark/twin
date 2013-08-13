@@ -347,12 +347,11 @@ void GfxOpenGL::drawModel(Model *m, bool fromIsland) {
 	}
 }
 
-void GfxOpenGL::drawBlock(Block *block, int32 x, int32 y, int32 z) {
-	int xb = x;
-	int yb = y;
-	int zb = z;
-	x = (xb - zb) * 24 + 288;
-	y = ((xb + zb) * 12) - (yb * 15) + 215;
+void GfxOpenGL::drawBlock(Block *block, int32 xb, int32 yb, int32 zb) {
+	const float TILE_DEPTH = 0.00001;
+	float x = (xb - zb) * 24 + 288;
+	float y = ((xb + zb) * 12) - (yb * 15) + 215;
+	float z = (xb * (TILE_DEPTH * 25)) + (yb * TILE_DEPTH * 64 * 25) + (zb * TILE_DEPTH * 4);;//(zb + ((yb * 24) | 0) + ((12 - xb * 12) | 0))/212.0f;
 
 	if (block->_renderData == NULL) {
 		block->_renderData = new GLuint;
@@ -374,13 +373,13 @@ void GfxOpenGL::drawBlock(Block *block, int32 x, int32 y, int32 z) {
 	glBindTexture(GL_TEXTURE_2D, texNum);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(x * _scaleW, y * _scaleH);
+	glVertex3f(x, y,z);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((x + w) * _scaleW, y * _scaleH);
+	glVertex3f((x + w),y,z);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f((x + w) * _scaleW, (y + h)  * _scaleH);
+	glVertex3f((x + w),(y + h),z );
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(x * _scaleW, (y + h) * _scaleH);
+	glVertex3f(x,(y + h),z);
 	glEnd();
 
 }
@@ -389,13 +388,14 @@ void GfxOpenGL::drawGrid(Grid *g) {
 	glColor4ub(255, 255, 255, 255);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
+	glOrtho(0, _screenWidth, _screenHeight, 0, -1, 1);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0.5);
 	glDisable(GL_LIGHTING);
+	glEnable(GL_DEPTH_TEST);
 
 	glEnable(GL_TEXTURE_2D);
 	glPushMatrix();
@@ -422,6 +422,7 @@ void GfxOpenGL::drawGrid(Grid *g) {
 	glPopMatrix();
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_ALPHA_TEST);
+	glDisable(GL_DEPTH_TEST);
 }
 
 void GfxOpenGL::drawSphere(double radius, int slices, int stacks) {
