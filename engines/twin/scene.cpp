@@ -169,6 +169,7 @@ void Scene::processActorZone(Actor *a) {
 	if (!a->isZonable()) {
 		return;
 	}
+	a->_currZone = nullptr;
 	for (int j = 0; j < _numZones; ++j) {
 		Zone *z = &_zones[j];
 		if (z->isActorInside(a)) {
@@ -184,19 +185,16 @@ void Scene::processActorZone(Actor *a) {
 					a->_numKeys = 1;
 				}
 				break;
+			case kSceneric:
+				a->_currZone = z;
+				break;
 			}
 		}
 	}
 }
 
-Zone *Scene::getZone(byte id) {
-	for (int i = 0; i < _numZones; ++i) {
-		Zone *z = &_zones[i];
-		if (z->_type == kSceneric && z->_snap == id) {
-			return z;
-		}
-	}
-	return nullptr;
+byte Zone::getId() {
+	return _snap;
 }
 
 bool Zone::isActorInside(Actor *a) {

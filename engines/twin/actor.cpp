@@ -41,18 +41,21 @@ namespace Twin {
 Actor::Actor(Common::SeekableReadStream *stream) :
 		_entity(nullptr), _dest(nullptr), _dead(false), _isHero(false), _angle(0),
 		_facingActor(nullptr), _turning(false), _isMoving(false), _isInvisible(false),
-		_numKeys(0), _numGold(0), _lifePoints(0), _sprite(nullptr), _heroMoved(false), _speed(0) {
+		_numKeys(0), _numGold(0), _lifePoints(0), _sprite(nullptr), _heroMoved(false), _speed(0),
+		_currZone(nullptr), _canDetectZones(false) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
 	}
 }
 
 Actor::Actor() : _entity(nullptr), _dest(nullptr), _dead(false), _facingActor(nullptr), _turning(false), _isMoving(false),
-		_isInvisible(false), _numKeys(0), _numGold(0), _lifePoints(100), _sprite(nullptr), _heroMoved(false), _speed(0) {
+		_isInvisible(false), _numKeys(0), _numGold(0), _lifePoints(100), _sprite(nullptr), _heroMoved(false), _speed(0),
+		_currZone(nullptr) {
 	_entity = g_resource->getEntity(0, 0, 0);
 	_pos._x = 0;
 	_pos._y = 0;
 	_pos._z = 0;
+	_canDetectZones = true;
 }
 
 
@@ -60,6 +63,10 @@ void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 	//These sizes are probably mostly wrong, but the overall actor size is right
 	uint16 flags = stream->readUint16LE();
 	uint16 flag2 = stream->readUint16LE();
+
+	if (flags & 0x4) {
+		_canDetectZones = true;
+	}
 
 	_entityID = stream->readUint16LE();
 	_body = stream->readByte();
@@ -127,6 +134,7 @@ void Actor::update(uint32 delta) {
 	if (_entity && delta != 0) {
 		Keyframe *k = _entity->_anim->getKeyframe();
 		float speed = (k->_z * (int)delta) / 250.0f;
+		speed += _speed;
 		float speed2 = (k->_x * (int)delta) / 250.0f;
 
 		_pos._x += _angle.getCosine() * speed;
@@ -317,6 +325,12 @@ void Actor::updateControl() {
 			}
 		}
 		break;
+	case kSameXZ:
+		{
+			Actor *a = g_twin->getCurrentScene()->getActor(7);
+			_pos._x = a->_pos._x;
+			_pos._z = a->_pos._z;
+		}
 	}
 }
 

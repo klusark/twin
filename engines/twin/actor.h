@@ -88,6 +88,7 @@ public:
 	void gotoPoint(Point *p, bool *done);
 	void kill() { _dead = true; }
 	void setInvisible(bool state) { _isInvisible = state; }
+	Zone *getCurrentZone() { return _currZone; }
 
 	void turnToAngle(Math::Angle angle);
 	void setAngle(Math::Angle angle) { _angle = angle; _angle.normalize(0); }
@@ -99,7 +100,7 @@ public:
 	uint16 getNumGold() { return _numGold; }
 	uint16 getLifePoints() { return _lifePoints; }
 	void hitBy(Actor *a, byte damage) { _lifePoints -= damage; _lastHitBy = a; }
-	bool isZonable() { return _isHero; }
+	bool isZonable() { return _canDetectZones; }
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
@@ -112,6 +113,7 @@ public:
 	byte _anim;
 	Point _pos;
 	ControlMode _controlMode;
+	Zone *_currZone;
 
 	uint16 _spriteID;
 
@@ -127,6 +129,7 @@ public:
 	bool _isMoving;
 	bool _isInvisible;
 	bool _dead;
+	bool _canDetectZones;
 	Math::Angle _angle;
 	Math::Angle _dstAngle;
 	bool _turning;

@@ -58,6 +58,7 @@ public:
 	ZoneType _type;
 	uint16 _snap;
 	bool isActorInside(Actor *a);
+	byte getId();
 };
 
 class Point {
@@ -78,7 +79,6 @@ public:
 	void setGrid(Grid *g) { _grid = g; }
 	Point *getPoint(byte id) { return &_points[id]; }
 	Actor *getActor(byte id) { return _actors[id]; }
-	Zone *getZone(byte id);
 	uint32 getId() { return _id; }
 	Grid *getGrid() { return _grid; }
 //private:

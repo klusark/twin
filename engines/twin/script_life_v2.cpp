@@ -133,12 +133,12 @@ bool ScriptLifeV2::DISTANCE(byte oper) {
 bool ScriptLifeV2::ZONE(byte oper) {
 	byte zone = getParamByte();
 	Scene *s = g_twin->getCurrentScene();
-	Zone *z = s->getZone(zone);
-	if (z == nullptr) {
-		warning("Zone %d is null", zone);
+
+	Zone *currZone = _actor->getCurrentZone();
+	if (!currZone) {
 		return false;
 	}
-	return z->isActorInside(_actor);
+	return testCond(zone, currZone->getId(), oper);
 }
 
 bool ScriptLifeV2::ZONE_OBJ(byte oper) {
@@ -147,12 +147,11 @@ bool ScriptLifeV2::ZONE_OBJ(byte oper) {
 
 	Scene *s = g_twin->getCurrentScene();
 	Actor *a = s->getActor(actor);
-	Zone *z = s->getZone(zone);
-	if (z == nullptr) {
-		warning("Zone %d is null", zone);
+	Zone *currZone = a->getCurrentZone();
+	if (!currZone) {
 		return false;
 	}
-	return z->isActorInside(a);
+	return testCond(zone, currZone->getId(), oper);
 }
 
 bool ScriptLifeV2::BODY(byte oper) {

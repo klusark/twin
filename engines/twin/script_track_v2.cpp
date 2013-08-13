@@ -136,6 +136,7 @@ void ScriptTrackV2::GOTO_POINT_3D() {
 
 void ScriptTrackV2::SPEED() {
 	int16 speed = getParamInt16();
+	_actor->_speed = speed;
 }
 
 void ScriptTrackV2::BACKGROUND() {
