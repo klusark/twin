@@ -95,7 +95,7 @@ void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 	stream->readByte();
 	stream->readByte();
 	stream->readUint16LE();
-	stream->readByte();
+	_lifePoints = stream->readByte();
 
 	if (flag2 & 0x004) {
 		stream->readByte();

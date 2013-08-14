@@ -234,7 +234,9 @@ bool ScriptLifeV2::LIFE_POINT(byte oper) {
 bool ScriptLifeV2::LIFE_POINT_OBJ(byte oper) {
 	byte actor = _currentState._param;
 	uint16 value = getParamUint16();
-	return false;
+	Scene *s = g_twin->getCurrentScene();
+	Actor *a = s->getActor(actor);
+	return testCond(value, a->getLifePoints(), oper);
 }
 
 bool ScriptLifeV2::NUM_LITTLE_KEYS(byte oper) {
@@ -524,13 +526,18 @@ void ScriptLifeV2::SET_VAR_GAME() {
 
 void ScriptLifeV2::KILL_OBJ() {
 	byte actor = getParamByte();
+	Scene *s = g_twin->getCurrentScene();
+	Actor *a = s->getActor(actor);
+	a->kill();
 }
 
 void ScriptLifeV2::SUICIDE() {
 	_actor->kill();
 }
 
-STUB_SCRIPT(USE_ONE_LITTLE_KEY);
+void ScriptLifeV2::USE_ONE_LITTLE_KEY() {
+	_actor->_numKeys -= 1;
+}
 
 void ScriptLifeV2::GIVE_GOLD_PIECES() {
 	int16 gold = getParamInt16();

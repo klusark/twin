@@ -86,7 +86,7 @@ public:
 	void setBody(byte body);
 	void setPos(uint16 x, uint16 y, uint16 z);
 	void gotoPoint(Point *p, bool *done);
-	void kill() { _dead = true; }
+	void kill() { _dead = true; _lifePoints = 0; }
 	void setInvisible(bool state) { _isInvisible = state; }
 	Zone *getCurrentZone() { return _currZone; }
 
