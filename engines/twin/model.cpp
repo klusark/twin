@@ -206,7 +206,7 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 
 	_heirs = new Hierarchy[_numBones];
 
-	for (int i = 0; i < _numBones; ++i) {
+	for (uint32 i = 0; i < _numBones; ++i) {
 		Bone *b = &_bones[i];
 		Hierarchy *h =  &_heirs[i];
 		h->_index = i;

@@ -76,7 +76,7 @@ public:
 	void drawModel(Model *m, bool fromIsland = false);
 	void freeModel(Model *m);
 	void drawBlock(Block *block, int32 x, int32 y, int32 z);
-	void drawSprite(Sprite *sprite);
+	void drawSprite(Actor *sprite);
 	void drawGrid(Grid *g);
 	void drawSphere(double radius, int slices, int stacks);
 	void drawIsland(Island *island);

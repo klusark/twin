@@ -169,11 +169,11 @@ Common::Error TwinEngine::run() {
 	//VideoPlayerSmacker *player = new VideoPlayerSmacker(_renderer, nullptr);
 	//player->play(16);
 
-	Hqr CITABAU;
+	/*Hqr CITABAU;
 	CITABAU.open("DESERT.ILE");
 	Hqr CITABAU2;
 	CITABAU2.open("DESERT.OBL");
-	Island idland(&CITABAU, &CITABAU2);
+	Island idland(&CITABAU, &CITABAU2);*/
 
 	int grid = 0;
 	_scene = g_resource->getScene(grid);

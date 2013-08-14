@@ -204,14 +204,16 @@ void GfxOpenGL::drawActor(Actor *a) {
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0, 1, -1, 0, 0.1, 10);
+	glOrtho(0, 1, -1, 0, -1, 1);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt( 0, 0, 1, 0, 0, 0, 0, 1, 0 );
 
 	glTranslatef((_cameraX/(float)_screenWidth), -(_cameraY/(float)_screenHeight), (_cameraZ/(float)_screenHeight));
 	glTranslatef(projPosX/(float)_screenWidth, -(projPosY/(float)_screenHeight), 0);
+	const float TILE_DEPTH = 0.00001f;
+	float v = 256;
+	float projz = ((a->_pos._x/v) * (TILE_DEPTH * 25)) + ((a->_pos._y/v) * TILE_DEPTH * 64 * 25) + ((a->_pos._z/v) * TILE_DEPTH * 4);
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
@@ -221,16 +223,17 @@ void GfxOpenGL::drawActor(Actor *a) {
 
 
 	if (a->_entity) {
+		glTranslatef(0, 0, projz);
 		glRotatef(45, 1, 0, 0);
 		glRotatef(45, 0, 1, 0);
 		glRotatef(-a->_angle.getDegrees(), 0, 1, 0);
 		drawModel(a->_entity->_model, true);
 	} else {
+
 		glTranslatef(0, -a->_sprite->_height/(float)_screenHeight, 0);
 		glTranslatef(a->_sprite->_info->_x/(float)_screenWidth, -(a->_sprite->_info->_y/(float)_screenHeight), 0);
 		glTranslatef(-9/(float)_screenWidth, (10/(float)_screenHeight), 0);
-		//glTranslatef(-a->_sprite->_offsetX/(float)_screenWidth, (a->_sprite->_offsetY/(float)_screenHeight), 0);
-		drawSprite(a->_sprite);
+		drawSprite(a);
 	}
 
 	glDisable(GL_CULL_FACE);
@@ -357,7 +360,8 @@ void GfxOpenGL::drawModel(Model *m, bool fromIsland) {
 	}
 }
 
-void GfxOpenGL::drawSprite(Sprite *sprite) {
+void GfxOpenGL::drawSprite(Actor *a) {
+	Sprite *sprite = a->_sprite;
 	glColor4ub(255, 255, 255, 255);
 
 	glEnable(GL_TEXTURE_2D);
@@ -366,6 +370,23 @@ void GfxOpenGL::drawSprite(Sprite *sprite) {
 		loadTexture(sprite->_data, (uint32 *)sprite->_renderData, NULL, sprite->_width, sprite->_height);
 	}
 	GLuint texNum = *(GLuint *)sprite->_renderData;
+	const float TILE_DEPTH = 0.00001f;
+
+	float va = 256;
+
+	float xb = a->_pos._x / va;
+	float yb = a->_pos._y / va;
+	float zb = a->_pos._z / va;
+
+	float x2 = sprite->_info->_x2 / va;
+	float y2 = sprite->_info->_y2 / va;
+	float zb2 = sprite->_info->_y2 / va;
+	//sprite->_info->
+
+	float z1 = (xb * (TILE_DEPTH * 25)) + (yb * TILE_DEPTH * 64 * 25) + (zb * TILE_DEPTH * 4);
+	float z2 = ((xb + x2) * (TILE_DEPTH * 25)) + (yb * TILE_DEPTH * 64 * 25) + (zb * TILE_DEPTH * 4);
+	float z3 = ((xb + x2) * (TILE_DEPTH * 25)) + ((yb + y2) * TILE_DEPTH * 64 * 25) + ((zb + zb2)  * TILE_DEPTH * 4);
+	float z4 = (xb * (TILE_DEPTH * 25)) + ((yb + y2) * TILE_DEPTH * 64 * 25) + ((zb + zb2) * TILE_DEPTH * 4);
 
 	float w = sprite->_width/(float)_screenWidth;
 	float h = sprite->_height/(float)_screenHeight;
@@ -374,13 +395,13 @@ void GfxOpenGL::drawSprite(Sprite *sprite) {
 	glBindTexture(GL_TEXTURE_2D, texNum);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(0, 0);
+	glVertex3f(0, 0, z1);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f(w, 0);
+	glVertex3f(w, 0, z2);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f(w, h);
+	glVertex3f(w, h, z3);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(0, h);
+	glVertex3f(0, h, z4);
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 }
@@ -389,7 +410,10 @@ void GfxOpenGL::drawBlock(Block *block, int32 xb, int32 yb, int32 zb) {
 	const float TILE_DEPTH = 0.00001f;
 	float x = (xb - zb) * 24 + 288;
 	float y = ((xb + zb) * 12) - (yb * 15) + 215;
-	float z = (xb * (TILE_DEPTH * 25)) + (yb * TILE_DEPTH * 64 * 25) + (zb * TILE_DEPTH * 4);
+	float z1 = (xb * (TILE_DEPTH * 25)) + (yb * TILE_DEPTH * 64 * 25) + (zb * TILE_DEPTH * 4);
+	float z2 = ((xb + 1) * (TILE_DEPTH * 25)) + (yb * TILE_DEPTH * 64 * 25) + (zb * TILE_DEPTH * 4);
+	float z3 = ((xb + 1) * (TILE_DEPTH * 25)) + ((yb) * TILE_DEPTH * 64 * 25) + ((zb + 1)  * TILE_DEPTH * 4);
+	float z4 = (xb * (TILE_DEPTH * 25)) + ((yb) * TILE_DEPTH * 64 * 25) + ((zb + 1) * TILE_DEPTH * 4);
 
 	if (block->_renderData == NULL) {
 		block->_renderData = new GLuint;
@@ -410,17 +434,20 @@ void GfxOpenGL::drawBlock(Block *block, int32 xb, int32 yb, int32 zb) {
 	x /= (float)_screenWidth;
 	y /= (float)_screenHeight;
 
+	//glTranslatef(x, y, 0);
+
 	glBindTexture(GL_TEXTURE_2D, texNum);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(x, y, z);
+	glVertex3f(x, y, z1);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f((x + w),y, z);
+	glVertex3f((x + w),y, z2);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f((x + w),(y + h), z);
+	glVertex3f((x + w),(y + h), z3);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(x,(y + h), z);
+	glVertex3f(x,(y + h), z4);
 	glEnd();
+
 
 }
 
@@ -429,6 +456,7 @@ void GfxOpenGL::drawGrid(Grid *g) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, 1, 1, 0, -1, 1);
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
