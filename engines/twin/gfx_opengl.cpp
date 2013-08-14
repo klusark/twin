@@ -397,8 +397,8 @@ void GfxOpenGL::drawBlock(Block *block, int32 xb, int32 yb, int32 zb) {
 	}
 	GLuint texNum = *(GLuint *)block->_renderData;
 
-	int w = block->_width;
-	int h = block->_height;
+	float w = block->_width / (float)_screenWidth;
+	float h = block->_height / (float)_screenHeight;
 
 	x += block->_offsetX;
 	y += block->_offsetY;
@@ -407,17 +407,19 @@ void GfxOpenGL::drawBlock(Block *block, int32 xb, int32 yb, int32 zb) {
 		return;
 	}
 
+	x /= (float)_screenWidth;
+	y /= (float)_screenHeight;
 
 	glBindTexture(GL_TEXTURE_2D, texNum);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(x, y,z);
+	glVertex3f(x, y, z);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f((x + w),y,z);
+	glVertex3f((x + w),y, z);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f((x + w),(y + h),z );
+	glVertex3f((x + w),(y + h), z);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(x,(y + h),z);
+	glVertex3f(x,(y + h), z);
 	glEnd();
 
 }
@@ -426,7 +428,7 @@ void GfxOpenGL::drawGrid(Grid *g) {
 	glColor4ub(255, 255, 255, 255);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0, _screenWidth, _screenHeight, 0, -1, 1);
+	glOrtho(0, 1, 1, 0, -1, 1);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
@@ -438,7 +440,7 @@ void GfxOpenGL::drawGrid(Grid *g) {
 	glEnable(GL_TEXTURE_2D);
 	glPushMatrix();
 
-	glTranslatef(_cameraX, _cameraY, 0.0f);
+	glTranslatef(_cameraX / (float)_screenWidth, _cameraY / (float)_screenHeight, 0.0f);
 	BlockLibrary *b = g->getBlockLibrary();
 	for (int z = 0; z < 64; z++) {
 		for (int x = 0; x < 64; x++) {
