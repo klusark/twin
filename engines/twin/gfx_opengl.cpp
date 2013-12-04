@@ -127,7 +127,7 @@ int GfxOpenGL::createBitmap(const Graphics::Surface *surf) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	glTexImage2D(GL_TEXTURE_2D, 0, format, surf->w, surf->h, 0, format, type, surf->pixels);
+	glTexImage2D(GL_TEXTURE_2D, 0, format, surf->w, surf->h, 0, format, type, surf->getPixels());
 
 	return texNum;
 }

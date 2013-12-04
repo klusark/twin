@@ -23,6 +23,8 @@
 #include "video_player_smk.h"
 #include "hqr.h"
 
+#include "common/events.h"
+
 
 namespace Twin {
 
@@ -41,7 +43,7 @@ void VideoPlayerSmacker::play(int index) {
 	resFile.open("VIDEO/VIDEO.HQR");
 	Common::SeekableReadStream *smkStream = resFile.createReadStreamForIndex(index);
 	play(smkStream);
-	delete smkStream;
+	//delete smkStream;
 }
 
 void VideoPlayerSmacker::play(Common::SeekableReadStream *stream) {
@@ -71,7 +73,7 @@ void VideoPlayerSmacker::play(Common::SeekableReadStream *stream) {
 			} 
 		}
 
-		if (_smkDecoder->needsUpdate()) {
+		if (!done && _smkDecoder->needsUpdate()) {
 			const Graphics::Surface *frame = _smkDecoder->decodeNextFrame();
 
 			if (!frame) {
@@ -79,22 +81,24 @@ void VideoPlayerSmacker::play(Common::SeekableReadStream *stream) {
 			}
 
 			if (_smkDecoder->hasDirtyPalette()) {
-				setupPalette();
+				palette = _smkDecoder->getPalette();
 			}
 
-			// TODO update frame to screen
-			//((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h)
+			Graphics::Surface *frame8 = frame->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), palette);
+			int32 texId = _renderer->createBitmap(frame8);
 
-			g_system->updateScreen();
+			_renderer->clearScreen();
+			_renderer->drawBitmap(texId, x, y, w, h);
+			_renderer->flipBuffer();
+
+			_renderer->destroyBitmap(texId);
+			frame8->free();
 		}
+
 		g_system->delayMillis(10);
 	}
 
 	_smkDecoder->close();
-}
-
-void VideoPlayerSmacker::setupPalette() {
-	// TODO setup _smkDecoder->getPalette()
 }
 
 } // end of namespace Twin

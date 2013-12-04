@@ -85,6 +85,9 @@ public:
 	void rotateObject(int x, int y, int z) { _rotX += x; _rotY += y; _rotZ += z; }
 	void loadModelTexture(Common::SeekableReadStream *stream);
 
+	int getScreenWidth();
+	int getScreenHeight();
+
 private:
 	void bindTexture(Texture *t);
 	void loadTexture(byte *buf, uint32 *texId, byte **tex, uint32 width, uint32 height);

@@ -32,6 +32,7 @@
 namespace Twin {
 
 class GfxOpenGL;
+
 class FlaDecoder : public Video::VideoDecoder {
 	Graphics::Surface *_surface;
 	uint32 _curFrame;

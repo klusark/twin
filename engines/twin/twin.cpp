@@ -168,7 +168,6 @@ Common::Error TwinEngine::run() {
 	}
 
 
-
 	//VideoPlayerSmacker *player = new VideoPlayerSmacker(_renderer, nullptr);
 	//player->play(16);
 
