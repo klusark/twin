@@ -103,6 +103,7 @@ public:
 	bool isZonable() { return _canDetectZones; }
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
+	void loadLBA(Common::SeekableReadStream *stream);
 
 	void updateControl();
 

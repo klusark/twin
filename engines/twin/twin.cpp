@@ -151,6 +151,7 @@ Common::Error TwinEngine::run() {
 	_renderer->setupScreen(1024, 768, false);
 
 	_player = new Player();
+
 	//intro();
 
 	//Hqr body;
@@ -162,7 +163,9 @@ Common::Error TwinEngine::run() {
 	ress.open("RESS.HQR");
 	ColourPalette cp(ress.createReadStreamForIndex(0));
 	_renderer->setColourPalette(&cp);
-	_renderer->loadModelTexture(ress.createReadStreamForIndex(6));
+	if (getGameType() == GType_LBA2) {
+		_renderer->loadModelTexture(ress.createReadStreamForIndex(6));
+	}
 
 
 
@@ -227,8 +230,10 @@ Common::Error TwinEngine::run() {
 		}
 
 		_scene->draw();
-		_scene->update(deltaTime);
-		_renderer->moveCamera(_player->_pos._x, _player->_pos._y, _player->_pos._z);
+		if (getGameType() == GType_LBA2) {
+			_scene->update(deltaTime);
+			_renderer->moveCamera(_player->_pos._x, _player->_pos._y, _player->_pos._z);
+		}
 
 		_renderer->flipBuffer();
 

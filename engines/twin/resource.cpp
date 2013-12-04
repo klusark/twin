@@ -46,29 +46,40 @@ void Entity::update(uint32 time) {
 
 Resource *g_resource = nullptr;
 
-Resource::Resource() {
-	_bkg = new Hqr();
-	_bkg->open("LBA_BKG.HQR");
-	loadGridDefaults();
-
-	_ress = new Hqr();
-	_ress->open("RESS.HQR");
-	_ei = new EntityInformation(_ress->createReadStreamForIndex(44));
-
-	_body = new Hqr();
-	_body->open("BODY.HQR");
-
-	_anim = new Hqr();
-	_anim->open("ANIM.HQR");
-
+Resource::Resource() : _firstGrid(0) {
 	_scene = new Hqr();
 	_scene->open("SCENE.HQR");
 
-	_sprites = new Hqr();
-	_sprites->open("SPRITES.HQR");
+	if (g_twin->getGameType() == GType_LBA2) {
+		_bkg = new Hqr();
+		_bkg->open("LBA_BKG.HQR");
+		loadGridDefaults();
+
+		_ress = new Hqr();
+		_ress->open("RESS.HQR");
+		_ei = new EntityInformation(_ress->createReadStreamForIndex(44));
+
+		_body = new Hqr();
+		_body->open("BODY.HQR");
+
+		_anim = new Hqr();
+		_anim->open("ANIM.HQR");
+
+		_sprites = new Hqr();
+		_sprites->open("SPRITES.HQR");
 
 
-	loadSpriteInfo(_ress->createReadStreamForIndex(5));
+		loadSpriteInfo(_ress->createReadStreamForIndex(5));
+	} else if (g_twin->getGameType() == GType_LBA) {
+		_gri = new Hqr();
+		_gri->open("LBA_GRI.HQR");
+
+		_brk = new Hqr();
+		_brk->open("LBA_BRK.HQR");
+
+		_bll = new Hqr();
+		_bll->open("LBA_BLL.HQR");
+	}
 }
 
 Resource::~Resource() {
@@ -82,7 +93,9 @@ Resource::~Resource() {
 
 Scene *Resource::getScene(uint16 id) {
 	Scene *s = new Scene(_scene->createReadStreamForIndex(id + 1));
-	if (!_scenes[id]._isIsland) {
+	if (g_twin->getGameType() == GType_LBA) {
+		s->setGrid(getGrid(id));
+	} else if (!_scenes[id]._isIsland) {
 		s->setGrid(getGrid(_scenes[id]._id));
 	}
 	s->setId(id);
@@ -97,7 +110,13 @@ Sprite *Resource::getSprite(uint16 id) {
 
 
 Grid *Resource::getGrid(int id) {
-	Grid *g = new Grid(_bkg->createReadStreamForIndex(_firstGrid + id));
+	Common::SeekableReadStream *stream;
+	if (g_twin->getGameType() == GType_LBA2) {
+		stream = _bkg->createReadStreamForIndex(_firstGrid + id);
+	} else {
+		stream = _gri->createReadStreamForIndex(id);
+	}
+	Grid *g = new Grid(stream);
 	return g;
 }
 
@@ -107,7 +126,13 @@ Block *Resource::getBlock(int block) {
 	if (_blocks.contains(block)) {
 		return _blocks[block];
 	}
-	Block *b = new Block(_bkg->createReadStreamForIndex(_firstBlock + block));
+	Common::SeekableReadStream *stream;
+	if (g_twin->getGameType() == GType_LBA2) {
+		stream = _bkg->createReadStreamForIndex(_firstBlock + block);
+	} else {
+		stream = _brk->createReadStreamForIndex(block);
+	}
+	Block *b = new Block(stream);
 	_blocks[block] = b;
 	return b;
 }
@@ -116,7 +141,13 @@ BlockLibrary *Resource::getBlockLibrary(int block) {
 	if (_blockLibraries.contains(block)) {
 		return _blockLibraries[block];
 	}
-	BlockLibrary *b = new BlockLibrary(_bkg->createReadStreamForIndex(_firstLibrary + block));
+	Common::SeekableReadStream *stream;
+	if (g_twin->getGameType() == GType_LBA2) {
+		stream = _bkg->createReadStreamForIndex(_firstLibrary + block);
+	} else {
+		stream = _bll->createReadStreamForIndex(block);
+	}
+	BlockLibrary *b = new BlockLibrary(stream);
 	_blockLibraries[block] = b;
 	return b;
 }
@@ -161,6 +192,9 @@ Animation *Resource::getAnimation(uint16 entity, uint16 id, Model *m) {
 }
 
 Entity *Resource::getEntity(uint16 entity, uint16 body, uint16 anim) {
+	if (g_twin->getGameType() == GType_LBA) {
+		return NULL;
+	}
 	if (entity >= _ei->_numEntities) {
 		entity = _ei->_numEntities - 1;
 	}

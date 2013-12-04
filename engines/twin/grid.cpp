@@ -32,19 +32,21 @@ namespace Twin {
 
 Grid::Grid(Common::SeekableReadStream *stream) {
 	memset(_grid, 0, 64*64*25*sizeof(Square));
-	if (g_twin->getGameType() == GType_LBA2) {
-		loadLBA2(stream);
-	}
+	loadLBA2(stream);
 }
 
 // LBArchatect(GPL) by zink was used as the base for this function
 void Grid::loadLBA2(Common::SeekableReadStream *stream) {
-	_layoutLib = stream->readByte();
-	_blockLibrary = g_resource->getBlockLibrary(_layoutLib);
-	_gridFragment = stream->readByte();
+	int off = 0;
+	if (g_twin->getGameType() == GType_LBA2) {
+		_layoutLib = stream->readByte();
+		_blockLibrary = g_resource->getBlockLibrary(_layoutLib);
+		_gridFragment = stream->readByte();
+		off = 34;
+	}
+	_blockLibrary = g_resource->getBlockLibrary(0);
 
 	int n = 0;
-	int off = 34;
 	int y = 0;
 	
 

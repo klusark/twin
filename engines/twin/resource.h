@@ -94,6 +94,9 @@ private:
 	Hqr *_anim;
 	Hqr *_scene;
 	Hqr *_sprites;
+	Hqr *_brk;
+	Hqr *_gri;
+	Hqr *_bll;
 
 	EntityInformation *_ei;
 	SpriteInfo *_spriteInfo;

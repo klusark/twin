@@ -32,7 +32,7 @@ class SeekableReadStream;
 namespace Twin {
 
 
-#define TRACK_OPCODES					\
+#define TRACK_OPCODES_V2				\
 	OPCODE(0x00, END);					\
 	OPCODE(0x01, NOP);					\
 	OPCODE(0x02, BODY);					\
@@ -101,7 +101,7 @@ private:
 
 	//Opcodes
 	#define OPCODE(op, func) void func()
-		TRACK_OPCODES
+		TRACK_OPCODES_V2
 	#undef OPCODE
 };
 

@@ -64,7 +64,7 @@ bool ScriptLifeV2::testCond(uint16 b, uint16 a, byte oper) {
 void ScriptLifeV2::execute(byte opcode) {
 	switch (opcode) {
 		#define OPCODE(op, func) case op: func(); break
-			LIFE_OPCODES
+			LIFE_OPCODES_V2
 		#undef OPCODE
 	default:
 		warning("asdf");
@@ -84,7 +84,7 @@ void ScriptLifeV2::loadConditionParam() {
 void ScriptLifeV2::loadConditionParam(byte cond) {
 	switch (cond) {
 		#define COND_OPCODE(op, func, param) case op: if (param != 0) { loadConditionParam(); } break
-			LIFE_COND_OPCODES
+			LIFE_COND_OPCODES_V2
 		#undef COND_OPCODE
 
 	default:
@@ -96,7 +96,7 @@ bool ScriptLifeV2::checkCondition(byte cond) {
 	byte oper = getParamByte();
 	switch (cond) {
 		#define COND_OPCODE(op, func, params) case op: return func(oper)
-			LIFE_COND_OPCODES
+			LIFE_COND_OPCODES_V2
 		#undef COND_OPCODE
 
 	default:

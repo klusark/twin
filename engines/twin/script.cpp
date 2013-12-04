@@ -36,6 +36,8 @@ byte Script::_chapter;
 Script::Script(Common::SeekableReadStream *stream) : _actor(nullptr), _isWaiting(false), _isWaitingForAction(false) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
+	}else if (g_twin->getGameType() == GType_LBA) {
+		loadLBA2(stream);
 	}
 	_isExecuting = true;
 	_isYielded = false;

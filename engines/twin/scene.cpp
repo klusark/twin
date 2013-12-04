@@ -26,6 +26,8 @@
 #include "engines/twin/player.h"
 #include "engines/twin/scene.h"
 #include "engines/twin/twin.h"
+#include "engines/twin/script_track_v1.h"
+#include "engines/twin/script_life_v1.h"
 #include "engines/twin/script_track_v2.h"
 #include "engines/twin/script_life_v2.h"
 
@@ -34,6 +36,8 @@ namespace Twin {
 Scene::Scene(Common::SeekableReadStream *stream) : _grid(nullptr) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
+	} else if (g_twin->getGameType() == GType_LBA) {
+		loadLBA(stream);
 	}
 }
 
@@ -143,6 +147,80 @@ void Scene::loadLBA2(Common::SeekableReadStream *stream) {
 	}
 
 	stream->readUint16LE();
+}
+
+void Scene::loadLBA(Common::SeekableReadStream *stream) {
+	stream->readByte();
+	_textBank = stream->readByte();
+	stream->readUint32LE();
+
+	stream->readUint16LE();
+	stream->readUint16LE();
+
+	_ambience[0] = stream->readUint16LE();
+	_repeat[0] = stream->readUint16LE();
+	_round[0] = stream->readUint16LE();
+
+	_ambience[1] = stream->readUint16LE();
+	_repeat[1] = stream->readUint16LE();
+	_round[1] = stream->readUint16LE();
+
+	_ambience[2] = stream->readUint16LE();
+	_repeat[2] = stream->readUint16LE();
+	_round[2] = stream->readUint16LE();
+
+	_ambience[3] = stream->readUint16LE();
+	_repeat[3] = stream->readUint16LE();
+	_round[3] = stream->readUint16LE();
+
+	stream->readUint16LE();
+	stream->readUint16LE();
+
+	stream->readByte();
+
+	_heroX = stream->readUint16LE();
+	_heroY = stream->readUint16LE();
+	_heroZ = stream->readUint16LE();
+
+	Player *_hero = g_twin->getPlayer();
+	//Not sure when this should actually be set...
+	_hero->setPos(_heroX, _heroY, _heroZ);
+	_hero->_isHero = true;
+
+	_trackScript = new ScriptTrackV1(stream);
+	_trackScript->setActor(_hero);
+
+	_lifeScript = new ScriptLifeV1(stream, (ScriptTrackV1 *)_trackScript);
+	_lifeScript->setActor(_hero);
+
+	_hero->_lifeScript = _lifeScript;
+	_hero->_trackScript = _trackScript;
+
+
+	_numActors = stream->readUint16LE();
+
+	_actors = new Actor *[_numActors];
+	_actors[0] = _hero;
+	for (int i = 1; i < _numActors; ++i) {
+		_actors[i] = new Actor(stream);
+	}
+
+	_numZones = stream->readUint16LE();
+	_zones = new Zone[_numZones];
+	for (int i = 0; i < _numZones; ++i) {
+		Zone *z = &_zones[i];
+		z->_x1 = stream->readUint16LE();
+		z->_y1 = stream->readUint16LE();
+		z->_z1 = stream->readUint16LE();
+		z->_x2 = stream->readUint16LE();
+		z->_y2 = stream->readUint16LE();
+		z->_z2 = stream->readUint16LE();
+		z->_type = (ZoneType)stream->readUint16LE();
+		z->_info[0] = stream->readUint16LE();
+		z->_info[1] = stream->readUint16LE();
+		z->_info[2] = stream->readUint16LE();
+		z->_snap = stream->readUint16LE();
+	}
 }
 
 void Scene::update(uint32 delta) {

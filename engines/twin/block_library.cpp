@@ -28,9 +28,9 @@
 namespace Twin {
 
 BlockLibrary::BlockLibrary(Common::SeekableReadStream *stream) {
-	if (g_twin->getGameType() == GType_LBA2) {
+	//if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
-	}
+	//}
 	delete stream;
 }
 

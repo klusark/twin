@@ -31,6 +31,8 @@
 #include "engines/twin/animation.h"
 #include "engines/twin/script_track_v2.h"
 #include "engines/twin/script_life_v2.h"
+#include "engines/twin/script_track_v1.h"
+#include "engines/twin/script_life_v1.h"
 #include "engines/twin/scene.h"
 #include "engines/twin/grid.h"
 #include "engines/twin/sprite.h"
@@ -45,6 +47,8 @@ Actor::Actor(Common::SeekableReadStream *stream) :
 		_currZone(nullptr), _canDetectZones(false) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
+	} else if (g_twin->getGameType() == GType_LBA) {
+		loadLBA(stream);
 	}
 }
 
@@ -111,6 +115,44 @@ void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 
 
 	_lifeScript = new ScriptLifeV2(stream, (ScriptTrackV2 *)_trackScript);
+	_lifeScript->setActor(this);
+}
+
+void Actor::loadLBA(Common::SeekableReadStream *stream) {
+
+	uint16 flags = stream->readUint16LE();
+	stream->readUint16LE();
+
+	_body = stream->readByte();
+	stream->readByte();
+	stream->readUint16LE();
+
+	_pos._x = stream->readUint16LE();
+	_pos._y = stream->readUint16LE();
+	_pos._z = stream->readUint16LE();
+	_entity = g_resource->getEntity(_entityID, 0, 0);
+
+
+	stream->readByte();
+	stream->readUint16LE();
+	stream->readUint16LE();
+	stream->readUint16LE();
+	stream->readUint16LE();
+	stream->readUint16LE();
+	stream->readUint16LE();
+	stream->readUint16LE();
+	stream->readUint16LE();
+	stream->readByte();
+	stream->readByte();
+	stream->readByte();
+	stream->readByte();
+
+
+	_trackScript = new ScriptTrackV1(stream);
+	_trackScript->setActor(this);
+
+
+	_lifeScript = new ScriptLifeV1(stream, (ScriptTrackV1 *)_trackScript);
 	_lifeScript->setActor(this);
 }
 

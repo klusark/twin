@@ -228,7 +228,7 @@ void GfxOpenGL::drawActor(Actor *a) {
 		glRotatef(45, 0, 1, 0);
 		glRotatef(-a->_angle.getDegrees(), 0, 1, 0);
 		drawModel(a->_entity->_model, true);
-	} else {
+	} else if (a->_sprite) {
 
 		glTranslatef(0, -a->_sprite->_height/(float)_screenHeight, 0);
 		glTranslatef(a->_sprite->_info->_x/(float)_screenWidth, -(a->_sprite->_info->_y/(float)_screenHeight), 0);

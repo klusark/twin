@@ -33,7 +33,7 @@ class SeekableReadStream;
 
 namespace Twin {
 
-#define LIFE_OPCODES					\
+#define LIFE_OPCODES_V2					\
 	OPCODE(0x00, END);					\
 										\
 	OPCODE(0x02, SNIF);					\
@@ -142,7 +142,7 @@ namespace Twin {
 	OPCODE(0x98, NEW_SAMPLE);			\
 
 
-#define LIFE_COND_OPCODES					\
+#define LIFE_COND_OPCODES_V2				\
 	COND_OPCODE(0x00, COL, 0);				\
 	COND_OPCODE(0x01, COL_OBJ, 1);			\
 	COND_OPCODE(0x02, DISTANCE, 1);			\
@@ -222,12 +222,12 @@ private:
 
 	//Condition
 	#define COND_OPCODE(op, func, param) bool func(byte oper)
-		LIFE_COND_OPCODES
+		LIFE_COND_OPCODES_V2
 	#undef COND_OPCODE
 
 	//Opcodes
 	#define OPCODE(op, func) void func()
-		LIFE_OPCODES
+		LIFE_OPCODES_V2
 	#undef OPCODE
 };
 
