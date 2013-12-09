@@ -50,6 +50,12 @@ Resource::Resource() : _firstGrid(0) {
 	_scene = new Hqr();
 	_scene->open("SCENE.HQR");
 
+	_body = new Hqr();
+	_body->open("BODY.HQR");
+
+	_anim = new Hqr();
+	_anim->open("ANIM.HQR");
+
 	if (g_twin->getGameType() == GType_LBA2) {
 		_bkg = new Hqr();
 		_bkg->open("LBA_BKG.HQR");
@@ -58,12 +64,6 @@ Resource::Resource() : _firstGrid(0) {
 		_ress = new Hqr();
 		_ress->open("RESS.HQR");
 		_ei = new EntityInformation(_ress->createReadStreamForIndex(44));
-
-		_body = new Hqr();
-		_body->open("BODY.HQR");
-
-		_anim = new Hqr();
-		_anim->open("ANIM.HQR");
 
 		_sprites = new Hqr();
 		_sprites->open("SPRITES.HQR");
@@ -79,6 +79,11 @@ Resource::Resource() : _firstGrid(0) {
 
 		_bll = new Hqr();
 		_bll->open("LBA_BLL.HQR");
+
+		_f3d = new Hqr();
+		_f3d->open("FILE3D.HQR");
+
+		_ei = new EntityInformation(_f3d);
 	}
 }
 

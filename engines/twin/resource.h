@@ -97,6 +97,7 @@ private:
 	Hqr *_brk;
 	Hqr *_gri;
 	Hqr *_bll;
+	Hqr *_f3d;
 
 	EntityInformation *_ei;
 	SpriteInfo *_spriteInfo;

@@ -25,21 +25,11 @@
 
 #include "engines/twin/entity_information.h"
 #include "engines/twin/twin.h"
+#include "engines/twin/hqr.h"
 
 namespace Twin {
 
 EntityInformation::EntityInformation(Common::SeekableReadStream *stream) {
-	if (g_twin->getGameType() == GType_LBA2) {
-		loadLBA2(stream);
-	}
-	delete stream;
-}
-
-EntityInformation::~EntityInformation() {
-
-}
-
-void EntityInformation::loadLBA2(Common::SeekableReadStream *stream) {
 	uint32 offset = stream->readUint32LE();
 
 	stream->seek(offset);
@@ -48,50 +38,70 @@ void EntityInformation::loadLBA2(Common::SeekableReadStream *stream) {
 	_entities = new EntityEntry[_numEntities];
 	for (uint32 i = 0; i < _numEntities; ++i) {
 		EntityEntry *e = &_entities[i];
-		for (;;) {
-			byte opcode = stream->readByte();
-			if (opcode == 1) {
-				EntityBody b;
-				b._index = stream->readByte();
-
-				// This is just the size of the body
-				stream->readByte();
-
-				b._bodyIndex = stream->readUint16LE();
-				
-				b._hasBox = stream->readByte();
-				if (b._hasBox) {
-					// this is always 0x0E
-					stream->readByte();
-					b._x1 = stream->readSint16LE();
-					b._y1 = stream->readSint16LE();
-					b._z1 = stream->readSint16LE();
-					b._x2 = stream->readSint16LE();
-					b._y2 = stream->readSint16LE();
-					b._z2 = stream->readSint16LE();
-				}
-				e->_bodies.push_back(b);
-			} else if (opcode == 3) {
-				EntityAnim a;
-				//TODO: figure out the anim data
-				a._index = stream->readByte();
-				stream->readByte();
-				byte size = stream->readByte();
-				a._animIndex = stream->readUint16LE();
-				for (byte j = 3; j < size; ++j) {
-					stream->readByte();
-				}
-				e->_anims.push_back(a);
-			} else if (opcode == 0xff) {
-				break;
-			} else {
-				error("Unknown Entity Opcode: %d", opcode);
-			}
-		}
+		loadEntity(stream, e);
 	}
+	delete stream;
+}
+
+EntityInformation::EntityInformation(Hqr *file) {
+	_numEntities = file->getNumIndices() - 1;
+	_entities = new EntityEntry[_numEntities];
+	for (uint32 i = 0; i < _numEntities; ++i) {
+		Common::SeekableReadStream *stream = file->createReadStreamForIndex(i);
+		EntityEntry *e = &_entities[i];
+		loadEntity(stream, e);
+		delete stream;
+	}
+}
+
+EntityInformation::~EntityInformation() {
 
 }
 
+void EntityInformation::loadEntity(Common::SeekableReadStream *stream, EntityEntry *e) {
+	for (;;) {
+		byte opcode = stream->readByte();
+		if (opcode == 1) {
+			EntityBody b;
+			b._index = stream->readByte();
+
+			// This is just the size of the body
+			stream->readByte();
+
+			b._bodyIndex = stream->readUint16LE();
+				
+			b._hasBox = stream->readByte();
+			if (b._hasBox) {
+				// this is always 0x0E
+				stream->readByte();
+				b._x1 = stream->readSint16LE();
+				b._y1 = stream->readSint16LE();
+				b._z1 = stream->readSint16LE();
+				b._x2 = stream->readSint16LE();
+				b._y2 = stream->readSint16LE();
+				b._z2 = stream->readSint16LE();
+			}
+			e->_bodies.push_back(b);
+		} else if (opcode == 3) {
+			EntityAnim a;
+			//TODO: figure out the anim data
+			a._index = stream->readByte();
+			if (g_twin->getGameType() == GType_LBA2) {
+				stream->readByte();
+			}
+			byte size = stream->readByte();
+			a._animIndex = stream->readUint16LE();
+			for (byte j = 3; j < size; ++j) {
+				stream->readByte();
+			}
+			e->_anims.push_back(a);
+		} else if (opcode == 0xff) {
+			break;
+		} else {
+			error("Unknown Entity Opcode: %d", opcode);
+		}
+	}
+}
 
 
 } // end of namespace Twin

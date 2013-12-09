@@ -31,6 +31,8 @@ class SeekableReadStream;
 
 namespace Twin {
 
+class Hqr;
+
 class EntityBody {
 public:
 	uint16 _bodyIndex;
@@ -60,9 +62,11 @@ public:
 class EntityInformation {
 public:
 	EntityInformation(Common::SeekableReadStream *stream);
+	EntityInformation(Hqr *file);
 	~EntityInformation();
 //private:
-	void loadLBA2(Common::SeekableReadStream *stream);
+
+	void loadEntity(Common::SeekableReadStream *stream, EntityEntry *e);
 
 	EntityEntry *_entities;
 	uint32 _numEntities;
