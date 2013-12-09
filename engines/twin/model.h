@@ -120,6 +120,7 @@ public:
 	void recalculateHierarchy();
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
+	void loadLBA(Common::SeekableReadStream *stream);
 
 	uint32 _numVerticies;
 	uint32 _numBones;

@@ -36,6 +36,8 @@ namespace Twin {
 Model::Model(Common::SeekableReadStream *stream) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
+	} else {
+		loadLBA(stream);
 	}
 	delete stream;
 }
@@ -220,6 +222,78 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 	}
 
 	recalculateHierarchy();
+}
+
+void Model::loadLBA(Common::SeekableReadStream *stream) {
+	stream->seek(0x1A);
+	uint32 numPoints = stream->readUint16LE();
+	for (uint32 i = 0; i < numPoints; ++i) {
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+	}
+
+	uint32 numElement = stream->readUint16LE();
+	for (uint32 i = 0; i < numElement; ++i) {
+		stream->seek(38, SEEK_CUR);
+
+	}
+
+	uint32 numShades = stream->readUint16LE();
+	for (uint32 i = 0; i < numShades; ++i) {
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+	}
+
+	_numPolygons = stream->readUint16LE();
+	_polygons = new Polygon[_numPolygons];
+	for (uint32 i = 0; i < _numPolygons; ++i) {
+		int rendertype = stream->readByte();
+		int numvert = stream->readByte();
+		int colorindex = stream->readUint16LE();
+
+		if (rendertype >= 9) {
+			for (int j = 0; j < numvert; ++j) {
+				uint16 shade = stream->readUint16LE();
+				uint16 data = stream->readUint16LE();
+			}
+		} else if (rendertype >= 7) {
+			uint16 shade = stream->readUint16LE();
+			for (int j = 0; j < numvert; ++j) {
+				uint16 data2 = stream->readUint16LE();
+			}
+		} else {
+			for (int j = 0; j < numvert; ++j) {
+				uint16 data2 = stream->readUint16LE();
+			}
+		}
+	}
+
+	_numLines = stream->readUint16LE();
+	_lines = new Line[_numLines];
+	for (uint32 i = 0; i < _numLines; ++i) {
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+	}
+
+	_numSpheres = stream->readUint16LE();
+	_spheres = new Sphere[_numSpheres];
+	for (uint32 i = 0; i < _numSpheres; ++i) {
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+		stream->readUint16LE();
+	}
+
+
+	//temp
+	_numPolygons = 0;
+	_numLines = 0;
+	_numSpheres = 0;
 }
 
 void Model::recalculateHierarchy() {

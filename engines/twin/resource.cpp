@@ -197,9 +197,6 @@ Animation *Resource::getAnimation(uint16 entity, uint16 id, Model *m) {
 }
 
 Entity *Resource::getEntity(uint16 entity, uint16 body, uint16 anim) {
-	if (g_twin->getGameType() == GType_LBA) {
-		return NULL;
-	}
 	if (entity >= _ei->_numEntities) {
 		entity = _ei->_numEntities - 1;
 	}
