@@ -36,30 +36,11 @@ namespace Twin {
 
 
 
-ScriptLifeV2::ScriptLifeV2(Common::SeekableReadStream *stream, ScriptTrackV2 *track) : 
-	Script(stream), _track(track), _comportementAddress(0), _savedTrack(0) {
+ScriptLifeV2::ScriptLifeV2(Common::SeekableReadStream *stream, ScriptTrack *track) : 
+	ScriptLife(stream, track) {
 
 }
 
-bool ScriptLifeV2::testCond(uint16 b, uint16 a, byte oper) {
-	switch (oper) {
-	case 0:
-		return a == b;
-	case 1:
-		return a > b;
-	case 2:
-		return a < b;
-	case 3:
-		return a >= b;
-	case 4:
-		return a <= b;
-	case 5:
-		return a != b;
-	default:
-		warning("Unknown operator");
-	}
-	return false;
-}
 
 void ScriptLifeV2::execute(byte opcode) {
 	switch (opcode) {
@@ -70,18 +51,9 @@ void ScriptLifeV2::execute(byte opcode) {
 		warning("asdf");
 	};
 }
-bool ScriptLifeV2::checkCondition() {
-	byte cond = getParamByte();
-	loadConditionParam(cond);
-	return checkCondition(cond);
-}
 
-void ScriptLifeV2::loadConditionParam() {
-	byte param = getParamByte();
-	_currentState._param = param;
-}
 
-void ScriptLifeV2::loadConditionParam(byte cond) {
+void ScriptLifeV2::loadFuncConditionParam(byte cond) {
 	switch (cond) {
 		#define COND_OPCODE(op, func, param) case op: if (param != 0) { loadConditionParam(); } break
 			LIFE_COND_OPCODES_V2
@@ -92,7 +64,7 @@ void ScriptLifeV2::loadConditionParam(byte cond) {
 	}
 }
 
-bool ScriptLifeV2::checkCondition(byte cond) {
+bool ScriptLifeV2::checkFuncCondition(byte cond) {
 	byte oper = getParamByte();
 	switch (cond) {
 		#define COND_OPCODE(op, func, params) case op: return func(oper)
@@ -708,13 +680,13 @@ void ScriptLifeV2::SWITCH() {
 	_states.push(_currentState);
 
 	_currentState._switchCond = getParamByte();
-	loadConditionParam(_currentState._switchCond);
+	loadFuncConditionParam(_currentState._switchCond);
 
 	_currentState._isInSwitch = true;
 }
 void ScriptLifeV2::OR_CASE() {
 	uint16 address = getParamUint16();
-	if (!checkCondition(_currentState._switchCond)) {
+	if (!checkFuncCondition(_currentState._switchCond)) {
 		jumpAddress(address);
 	} else {
 		_currentState._orCase = true;
@@ -722,7 +694,7 @@ void ScriptLifeV2::OR_CASE() {
 }
 void ScriptLifeV2::CASE() {
 	uint16 address = getParamUint16();
-	bool cond = checkCondition(_currentState._switchCond);
+	bool cond = checkFuncCondition(_currentState._switchCond);
 	if (!_currentState._orCase && !cond) {
 		jumpAddress(address);
 	}

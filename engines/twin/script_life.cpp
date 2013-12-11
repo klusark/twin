@@ -23,8 +23,8 @@
 #include "common/stream.h"
 #include "common/textconsole.h"
 
-#include "engines/twin/script_life_v1.h"
-#include "engines/twin/script_track_v1.h"
+#include "engines/twin/script_life.h"
+#include "engines/twin/script_track.h"
 #include "engines/twin/actor.h"
 #include "engines/twin/player.h"
 #include "engines/twin/scene.h"
@@ -36,44 +36,41 @@ namespace Twin {
 
 
 
-ScriptLifeV1::ScriptLifeV1(Common::SeekableReadStream *stream, ScriptTrack *track) : 
-	ScriptLife(stream, track) {
+ScriptLife::ScriptLife(Common::SeekableReadStream *stream, ScriptTrack *track) : 
+	Script(stream), _track(track), _comportementAddress(0), _savedTrack(0) {
 
 }
 
-
-void ScriptLifeV1::execute(byte opcode) {
-	switch (opcode) {
-		#define OPCODE(op, func) case op: func(); break
-			LIFE_OPCODES_V1
-		#undef OPCODE
+bool ScriptLife::testCond(uint16 b, uint16 a, byte oper) {
+	switch (oper) {
+	case 0:
+		return a == b;
+	case 1:
+		return a > b;
+	case 2:
+		return a < b;
+	case 3:
+		return a >= b;
+	case 4:
+		return a <= b;
+	case 5:
+		return a != b;
 	default:
-		warning("asdf");
-	};
-}
-
-void ScriptLifeV1::loadFuncConditionParam(byte cond) {
-	switch (cond) {
-		#define COND_OPCODE(op, func, param) case op: if (param != 0) { loadConditionParam(); } break
-			LIFE_COND_OPCODES_V1
-		#undef COND_OPCODE
-
-	default:
-		warning("asdf");
-	}
-}
-
-bool ScriptLifeV1::checkFuncCondition(byte cond) {
-	byte oper = getParamByte();
-	switch (cond) {
-		#define COND_OPCODE(op, func, params) case op: return func(oper)
-			LIFE_COND_OPCODES_V1
-		#undef COND_OPCODE
-
-	default:
-		warning("asdf");
+		warning("Unknown operator");
 	}
 	return false;
 }
+
+bool ScriptLife::checkCondition() {
+	byte cond = getParamByte();
+	loadFuncConditionParam(cond);
+	return checkFuncCondition(cond);
+}
+
+void ScriptLife::loadConditionParam() {
+	byte param = getParamByte();
+	_currentState._param = param;
+}
+
 
 } // end of namespace Twin

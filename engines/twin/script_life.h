@@ -20,13 +20,12 @@
  *
  */
 
-#ifndef TWIN_SCRIPT_LIFE_V1_H
-#define TWIN_SCRIPT_LIFE_V1_H
+#ifndef TWIN_SCRIPT_LIFE_H
+#define TWIN_SCRIPT_LIFE_H
 
 #include "common/stack.h"
 
 #include "engines/twin/script.h"
-#include "engines/twin/script_life.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -34,35 +33,39 @@ class SeekableReadStream;
 
 namespace Twin {
 
-#define LIFE_OPCODES_V1
 
+class ScriptTrack;
 
-
-#define LIFE_COND_OPCODES_V1
-
-
-class ScriptLifeV1 : public ScriptLife {
+class State {
 public:
-	ScriptLifeV1(Common::SeekableReadStream *stream, ScriptTrack *track);
+	State() : _isInSwitch(false), _orCase(false) {}
+	bool _isInSwitch;
+	byte _switchCond;
+	byte _param;
+	bool _orCase;
+};
 
-private:
+class ScriptLife : public Script {
+public:
+	ScriptLife(Common::SeekableReadStream *stream, ScriptTrack *track);
+
+protected:
 	bool testCond(uint16 a, uint16 b, byte oper);
 
-	void execute(byte opcode) override;
+	ScriptTrack *_track;
 
-	bool checkFuncCondition(byte cond) override;
-	void loadFuncConditionParam(byte cond) override;
+	uint16 _comportementAddress;
 
+	bool checkCondition();
+	void loadConditionParam();
+	virtual bool checkFuncCondition(byte cond) = 0;
+	virtual void loadFuncConditionParam(byte cond) = 0;
 
-	//Condition
-	#define COND_OPCODE(op, func, param) bool func(byte oper)
-		LIFE_COND_OPCODES_V1
-	#undef COND_OPCODE
+	int16 _savedTrack;
 
-	//Opcodes
-	#define OPCODE(op, func) void func()
-		LIFE_OPCODES_V1
-	#undef OPCODE
+	Common::Stack<State> _states;
+	State _currentState;
+
 };
 
 } // end of namespace Twin

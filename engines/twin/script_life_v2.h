@@ -26,6 +26,7 @@
 #include "common/stack.h"
 
 #include "engines/twin/script.h"
+#include "engines/twin/script_life.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -186,39 +187,20 @@ namespace Twin {
 	COND_OPCODE(0x2C, OBJECT_DISPLAYED, 0);	\
 	COND_OPCODE(0x2D, ANGLE_OBJ, 1);		\
 
-class ScriptTrackV2;
 
-class State {
-public:
-	State() : _isInSwitch(false), _orCase(false) {}
-	bool _isInSwitch;
-	byte _switchCond;
-	byte _param;
-	bool _orCase;
-};
 
-class ScriptLifeV2 : public Script {
+class ScriptLifeV2 : public ScriptLife {
 public:
-	ScriptLifeV2(Common::SeekableReadStream *stream, ScriptTrackV2 *track);
+	ScriptLifeV2(Common::SeekableReadStream *stream, ScriptTrack *track);
 
 private:
-	bool testCond(uint16 a, uint16 b, byte oper);
-
-	ScriptTrackV2 *_track;
-
-	uint16 _comportementAddress;
 
 	void execute(byte opcode) override;
 
-	bool checkCondition();
-	bool checkCondition(byte cond);
-	void loadConditionParam();
-	void loadConditionParam(byte cond);
+	bool checkFuncCondition(byte cond) override;
+	void loadFuncConditionParam(byte cond) override;
 
-	Common::Stack<State> _states;
-	State _currentState;
 
-	int16 _savedTrack;
 
 	//Condition
 	#define COND_OPCODE(op, func, param) bool func(byte oper)
