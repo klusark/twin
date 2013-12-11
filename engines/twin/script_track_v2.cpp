@@ -34,8 +34,7 @@
 namespace Twin {
 
 
-ScriptTrackV2::ScriptTrackV2(Common::SeekableReadStream *stream) : Script(stream), _label(0) {
-	stop();
+ScriptTrackV2::ScriptTrackV2(Common::SeekableReadStream *stream) : ScriptTrack(stream) {
 }
 
 void ScriptTrackV2::execute(byte opcode) {

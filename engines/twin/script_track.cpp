@@ -20,35 +20,24 @@
  *
  */
 
-#ifndef TWIN_SCRIPT_TRACK_V1_H
-#define TWIN_SCRIPT_TRACK_V1_H
+#include "common/stream.h"
+#include "common/textconsole.h"
 
-#include "engines/twin/script.h"
 #include "engines/twin/script_track.h"
-
-namespace Common {
-class SeekableReadStream;
-}
+#include "engines/twin/actor.h"
+#include "engines/twin/player.h"
+#include "engines/twin/twin.h"
+#include "engines/twin/scene.h"
+#include "engines/twin/resource.h"
+#include "engines/twin/animation.h"
 
 namespace Twin {
 
 
-#define TRACK_OPCODES					\
+ScriptTrack::ScriptTrack(Common::SeekableReadStream *stream) : Script(stream), _label(0) {
+	stop();
+}
 
 
-
-class ScriptTrackV1 : public ScriptTrack {
-public:
-	ScriptTrackV1(Common::SeekableReadStream *stream);
-private:
-	void execute(byte opcode) override;
-
-	//Opcodes
-	#define OPCODE(op, func) void func()
-		TRACK_OPCODES
-	#undef OPCODE
-};
 
 } // end of namespace Twin
-
-#endif

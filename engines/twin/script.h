@@ -30,6 +30,17 @@ class SeekableReadStream;
 
 namespace Twin {
 
+#define EXECUTE_OPCODE(op, func) case op: func(); break
+
+#define SCRIPT_EXECUTE(c, opcodes) \
+void c::execute(byte opcode) { \
+	switch (opcode) { \
+		opcodes \
+	default: \
+		warning("asdf"); \
+	}; \
+}
+
 class Actor;
 
 class Script {

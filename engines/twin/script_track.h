@@ -20,11 +20,10 @@
  *
  */
 
-#ifndef TWIN_SCRIPT_TRACK_V1_H
-#define TWIN_SCRIPT_TRACK_V1_H
+#ifndef TWIN_SCRIPT_TRACK_H
+#define TWIN_SCRIPT_TRACK_H
 
 #include "engines/twin/script.h"
-#include "engines/twin/script_track.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -33,20 +32,19 @@ class SeekableReadStream;
 namespace Twin {
 
 
-#define TRACK_OPCODES					\
 
 
-
-class ScriptTrackV1 : public ScriptTrack {
+class ScriptTrack : public Script {
 public:
-	ScriptTrackV1(Common::SeekableReadStream *stream);
-private:
-	void execute(byte opcode) override;
+	ScriptTrack(Common::SeekableReadStream *stream);
+	byte getLabel() { return _label; }
+	uint16 getLabelAddress() { return _labelAddress; }
+protected:
 
-	//Opcodes
-	#define OPCODE(op, func) void func()
-		TRACK_OPCODES
-	#undef OPCODE
+	byte _label;
+	uint16 _labelAddress;
+
+
 };
 
 } // end of namespace Twin

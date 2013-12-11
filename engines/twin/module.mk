@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	script.o \
 	script_life_v1.o \
 	script_life_v2.o \
+	script_track.o \
 	script_track_v1.o \
 	script_track_v2.o \
 	sprite.o \

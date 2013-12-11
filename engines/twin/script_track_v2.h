@@ -24,6 +24,7 @@
 #define TWIN_SCRIPT_TRACK_V2_H
 
 #include "engines/twin/script.h"
+#include "engines/twin/script_track.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -88,16 +89,11 @@ namespace Twin {
 	OPCODE(0x34, VOLUME);				\
 
 
-class ScriptTrackV2 : public Script {
+class ScriptTrackV2 : public ScriptTrack {
 public:
 	ScriptTrackV2(Common::SeekableReadStream *stream);
-	byte getLabel() { return _label; }
-	uint16 getLabelAddress() { return _labelAddress; }
 private:
 	void execute(byte opcode) override;
-
-	byte _label;
-	uint16 _labelAddress;
 
 	//Opcodes
 	#define OPCODE(op, func) void func()
