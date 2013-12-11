@@ -229,10 +229,10 @@ Common::Error TwinEngine::run() {
 		}
 
 		_scene->draw();
-		if (getGameType() == GType_LBA2) {
-			_scene->update(deltaTime);
-			_renderer->moveCamera(_player->_pos._x, _player->_pos._y, _player->_pos._z);
-		}
+
+		_scene->update(deltaTime);
+		_renderer->moveCamera(_player->_pos._x, _player->_pos._y, _player->_pos._z);
+
 
 		_renderer->flipBuffer();
 

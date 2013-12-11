@@ -34,11 +34,49 @@ class SeekableReadStream;
 
 namespace Twin {
 
-#define LIFE_OPCODES_V1
+#define LIFE_OPCODES_V1					\
+	OPCODEI(0x00, END);					\
+										\
+	OPCODEI(0x02, SNIF);				\
+										\
+	OPCODEI(0x04, NEVERIF);				\
+										\
+	OPCODEI(0x0B, RETURN);				\
+	OPCODEI(0x0C, IF);					\
+	OPCODEI(0x0D, SWIF);				\
+	OPCODEI(0x0E, ONEIF);				\
+	OPCODEI(0x0F, ELSE);				\
 
 
 
-#define LIFE_COND_OPCODES_V1
+#define LIFE_COND_OPCODES_V1				\
+	COND_OPCODE(0x00, COL, 0);				\
+	COND_OPCODE(0x01, COL_OBJ, 1);			\
+	COND_OPCODE(0x02, DISTANCE, 1);			\
+	COND_OPCODE(0x03, ZONE, 0);				\
+	COND_OPCODE(0x04, ZONE_OBJ, 1);			\
+	COND_OPCODE(0x05, BODY_COND, 0);		\
+	COND_OPCODE(0x06, BODY_OBJ_COND, 1);	\
+	COND_OPCODE(0x07, ANIM_COND, 0);		\
+	COND_OPCODE(0x08, ANIM_OBJ_COND, 1);	\
+	COND_OPCODE(0x09, CURRENT_TRACK, 0);	\
+	COND_OPCODE(0x0A, CURRENT_TRACK_OBJ, 1);\
+	COND_OPCODE(0x0B, VAR_CUBE, 1);			\
+	COND_OPCODE(0x0C, CONE_VIEW, 1);		\
+	COND_OPCODE(0x0D, HIT_BY, 0);			\
+	COND_OPCODE(0x0E, ACTION, 0);			\
+	COND_OPCODE(0x0F, VAR_GAME, 1);			\
+	COND_OPCODE(0x10, LIFE_POINT, 0);		\
+	COND_OPCODE(0x11, LIFE_POINT_OBJ, 1);	\
+	COND_OPCODE(0x12, NUM_LITTLE_KEYS, 0);	\
+	COND_OPCODE(0x13, NUM_GOLD_PIECES, 0);	\
+	COND_OPCODE(0x14, BEHAVIOUR, 0);		\
+	COND_OPCODE(0x15, CHAPTER, 0);			\
+	COND_OPCODE(0x16, DISTANCE_3D, 1);		\
+											\
+	COND_OPCODE(0x19, USE_INVERNTORY, 1);	\
+											\
+	COND_OPCODE(0x1C, CARRIED_BY, 0);		\
 
 
 class ScriptLifeV1 : public ScriptLife {
@@ -54,15 +92,12 @@ private:
 	void loadFuncConditionParam(byte cond) override;
 
 
-	//Condition
-	#define COND_OPCODE(op, func, param) bool func(byte oper)
-		LIFE_COND_OPCODES_V1
-	#undef COND_OPCODE
-
 	//Opcodes
 	#define OPCODE(op, func) void func()
+	#define OPCODEI(op, func)
 		LIFE_OPCODES_V1
 	#undef OPCODE
+	#undef OPCODEI
 };
 
 } // end of namespace Twin

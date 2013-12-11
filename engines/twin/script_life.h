@@ -66,6 +66,47 @@ protected:
 	Common::Stack<State> _states;
 	State _currentState;
 
+	bool COL(byte);
+	bool COL_OBJ(byte);
+	bool DISTANCE(byte);
+	bool ZONE(byte);
+	bool ZONE_OBJ(byte);
+	bool BODY_COND(byte);
+	bool BODY_OBJ_COND(byte);
+	bool ANIM_COND(byte);
+	bool ANIM_OBJ_COND(byte);
+	bool CURRENT_TRACK(byte);
+	bool CURRENT_TRACK_OBJ(byte);
+	bool VAR_CUBE(byte);
+	bool CONE_VIEW(byte);
+	bool HIT_BY(byte);
+	bool ACTION(byte);
+	bool VAR_GAME(byte);
+	bool LIFE_POINT(byte);
+	bool LIFE_POINT_OBJ(byte);
+	bool NUM_LITTLE_KEYS(byte);
+	bool NUM_GOLD_PIECES(byte);
+	bool BEHAVIOUR(byte);
+	bool CHAPTER(byte);
+	bool DISTANCE_3D(byte);
+
+	bool USE_INVERNTORY(byte);
+
+	bool CARRIED_BY(byte);
+
+	// Shared OPCODES
+	void END();
+
+	void SNIF();
+
+	void NEVERIF();
+
+	void RETURN();
+	void IF();
+	void SWIF();
+	void ONEIF();
+	void ELSE();
+
 };
 
 } // end of namespace Twin

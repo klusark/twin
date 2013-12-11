@@ -154,6 +154,9 @@ void Actor::loadLBA(Common::SeekableReadStream *stream) {
 
 	_lifeScript = new ScriptLifeV1(stream, (ScriptTrackV1 *)_trackScript);
 	_lifeScript->setActor(this);
+
+
+	_entity = nullptr;
 }
 
 void Actor::update(uint32 delta) {

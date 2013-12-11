@@ -186,6 +186,7 @@ void Scene::loadLBA(Common::SeekableReadStream *stream) {
 	//Not sure when this should actually be set...
 	_hero->setPos(_heroX, _heroY, _heroZ);
 	_hero->_isHero = true;
+	_hero->_entity = 0;
 
 	_trackScript = new ScriptTrackV1(stream);
 	_trackScript->setActor(_hero);

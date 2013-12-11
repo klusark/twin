@@ -45,8 +45,10 @@ ScriptLifeV2::ScriptLifeV2(Common::SeekableReadStream *stream, ScriptTrack *trac
 void ScriptLifeV2::execute(byte opcode) {
 	switch (opcode) {
 		#define OPCODE(op, func) case op: func(); break
+		#define OPCODEI(op, func) OPCODE(op, func)
 			LIFE_OPCODES_V2
 		#undef OPCODE
+		#undef OPCODEI
 	default:
 		warning("asdf");
 	};
@@ -56,8 +58,10 @@ void ScriptLifeV2::execute(byte opcode) {
 void ScriptLifeV2::loadFuncConditionParam(byte cond) {
 	switch (cond) {
 		#define COND_OPCODE(op, func, param) case op: if (param != 0) { loadConditionParam(); } break
+		#define COND_OPCODEI(op, func, param) COND_OPCODE(op, func, param)
 			LIFE_COND_OPCODES_V2
 		#undef COND_OPCODE
+		#undef COND_OPCODEI
 
 	default:
 		warning("asdf");
@@ -68,8 +72,10 @@ bool ScriptLifeV2::checkFuncCondition(byte cond) {
 	byte oper = getParamByte();
 	switch (cond) {
 		#define COND_OPCODE(op, func, params) case op: return func(oper)
+		#define COND_OPCODEI(op, func, param) COND_OPCODE(op, func, param)
 			LIFE_COND_OPCODES_V2
 		#undef COND_OPCODE
+		#undef COND_OPCODEI
 
 	default:
 		warning("asdf");
@@ -77,175 +83,7 @@ bool ScriptLifeV2::checkFuncCondition(byte cond) {
 	return false;
 }
 
-bool ScriptLifeV2::COL(byte oper) {
-	byte actor = getParamByte();
-	Scene *s = g_twin->getCurrentScene();
-	Actor *a = s->getActor(actor);
-	return a->collidesWith(_actor);
-}
 
-bool ScriptLifeV2::COL_OBJ(byte oper) {
-	byte actor2 = getParamByte();
-	byte actor1 = _currentState._param;
-	Scene *s = g_twin->getCurrentScene();
-	Actor *a1 = s->getActor(actor1);
-	Actor *a2 = s->getActor(actor2);
-	return a1->collidesWith(a2);
-}
-
-bool ScriptLifeV2::DISTANCE(byte oper) {
-	uint16 distance = getParamUint16();
-	byte actor = _currentState._param;
-	Scene *s = g_twin->getCurrentScene();
-	Actor *a = s->getActor(actor);
-	uint16 actualDistance = a->_pos.getDistanceTo(&_actor->_pos);
-	return testCond(distance, actualDistance, oper);
-}
-
-bool ScriptLifeV2::ZONE(byte oper) {
-	byte zone = getParamByte();
-	Scene *s = g_twin->getCurrentScene();
-
-	Zone *currZone = _actor->getCurrentZone();
-	if (!currZone) {
-		return false;
-	}
-	return testCond(zone, currZone->getId(), oper);
-}
-
-bool ScriptLifeV2::ZONE_OBJ(byte oper) {
-	byte actor = _currentState._param;
-	byte zone = getParamByte();
-
-	Scene *s = g_twin->getCurrentScene();
-	Actor *a = s->getActor(actor);
-	Zone *currZone = a->getCurrentZone();
-	if (!currZone) {
-		return false;
-	}
-	return testCond(zone, currZone->getId(), oper);
-}
-
-bool ScriptLifeV2::BODY(byte oper) {
-	byte body = getParamByte();
-	return testCond(body, _actor->_body, oper);
-}
-
-bool ScriptLifeV2::BODY_OBJ(byte oper) {
-	byte actor = _currentState._param;
-	Scene *s = g_twin->getCurrentScene();
-	Actor *a = s->getActor(actor);
-	byte body = getParamByte();
-	return testCond(body, a->_body, oper);
-}
-
-bool ScriptLifeV2::ANIM(byte oper) {
-	byte body = getParamByte();
-	return testCond(body, _actor->_entity->_anim->getId(), oper);
-}
-
-bool ScriptLifeV2::ANIM_OBJ(byte oper) {
-	byte actor = _currentState._param;
-	Scene *s = g_twin->getCurrentScene();
-	Actor *a = s->getActor(actor);
-	byte body = getParamByte();
-	return testCond(body, a->_entity->_anim->getId(), oper);
-}
-
-bool ScriptLifeV2::CURRENT_TRACK(byte oper) {
-	byte track = getParamByte();
-	return testCond(track, _track->getLabel(), oper);
-}
-
-bool ScriptLifeV2::CURRENT_TRACK_OBJ(byte oper) {
-	byte actor = _currentState._param;
-	Scene *s = g_twin->getCurrentScene();
-	Actor *a = s->getActor(actor);
-	byte track = getParamByte();
-	return testCond(track, ((ScriptTrackV2 *)a->_trackScript)->getLabel(), oper);
-}
-
-bool ScriptLifeV2::VAR_CUBE(byte oper) {
-	byte varID = _currentState._param;
-	byte value = getParamByte();
-	byte varVal = getCubeVar(varID);
-	return testCond(value, varVal, oper);
-}
-
-bool ScriptLifeV2::CONE_VIEW(byte oper) {
-	byte actor = _currentState._param;
-	uint16 value = getParamUint16();
-	return false;
-}
-
-bool ScriptLifeV2::HIT_BY(byte oper) {
-	byte actor = getParamByte();
-	Scene *s = g_twin->getCurrentScene();
-	Actor *a = s->getActor(actor);
-	return a == _actor->_lastHitBy;
-}
-
-bool ScriptLifeV2::ACTION(byte oper) {
-	byte val = getParamByte();
-	byte actual = g_twin->getKey(KeyAction);
-	return testCond(val, actual, oper);
-}
-
-bool ScriptLifeV2::VAR_GAME(byte oper) {
-	byte varID = _currentState._param;
-	uint16 value = getParamUint16();
-	uint16 varVal = getGameVar(varID);
-	return testCond(value, varVal, oper);
-}
-
-bool ScriptLifeV2::LIFE_POINT(byte oper) {
-	uint16 value = getParamUint16();
-	return testCond(value, _actor->getLifePoints(), oper);
-}
-
-bool ScriptLifeV2::LIFE_POINT_OBJ(byte oper) {
-	byte actor = _currentState._param;
-	uint16 value = getParamUint16();
-	Scene *s = g_twin->getCurrentScene();
-	Actor *a = s->getActor(actor);
-	return testCond(value, a->getLifePoints(), oper);
-}
-
-bool ScriptLifeV2::NUM_LITTLE_KEYS(byte oper) {
-	byte numKeys = getParamByte();
-	return testCond(numKeys, g_twin->getPlayer()->getNumKeys(), oper);
-}
-
-bool ScriptLifeV2::NUM_GOLD_PIECES(byte oper) {
-	uint16 numGold = getParamUint16();
-	return testCond(numGold, _actor->getNumGold(), oper);
-}
-
-bool ScriptLifeV2::BEHAVIOUR(byte oper) {
-	byte numKeys = getParamByte();
-	return false;
-}
-
-bool ScriptLifeV2::CHAPTER(byte oper) {
-	byte value = getParamByte();
-	return testCond(value, getChapter(), oper);
-}
-
-bool ScriptLifeV2::DISTANCE_3D(byte oper) {
-	uint16 value = getParamUint16();
-	return false;
-}
-
-bool ScriptLifeV2::USE_INVERNTORY(byte oper) {
-	byte param1 = _currentState._param;
-	byte param2 = getParamByte();
-	return false;
-}
-
-bool ScriptLifeV2::CARRIED_BY(byte oper) {
-	byte param1 = getParamByte();
-	return false;
-}
 
 bool ScriptLifeV2::RND(byte oper) {
 	byte value = getParamByte();
@@ -318,68 +156,7 @@ bool ScriptLifeV2::ANGLE_OBJ(byte oper) {
 
 #define STUB_SCRIPT(func) void ScriptLifeV2::func() { }
 
-void ScriptLifeV2::END() {
-	stop();
-}
 
-void ScriptLifeV2::SNIF() {
-	bool cond = checkCondition();
-
-	uint16 address = getParamUint16();
-	if (cond) {
-		jumpAddress(address);
-	} else {
-		setOpcode(0x0D); // SWIF
-	}
-}
-
-void ScriptLifeV2::NEVERIF() {
-	bool cond = checkCondition();
-	uint16 address = getParamUint16();
-	jumpAddress(address);
-}
-
-void ScriptLifeV2::RETURN() {
-	jumpAddress(_comportementAddress);
-}
-
-void ScriptLifeV2::IF() {
-	_states.push(_currentState);
-	_currentState._isInSwitch = false;
-	bool cond = checkCondition();
-
-	uint16 address = getParamUint16();
-	if (!cond) {
-		jumpAddress(address);
-	}
-	_currentState = _states.pop();
-}
-void ScriptLifeV2::SWIF() {
-	bool cond = checkCondition();
-
-	uint16 address = getParamUint16();
-	if (!cond) {
-		jumpAddress(address);
-	} else {
-		//setOpcode(0x02); // SNIF
-	}
-}
-
-void ScriptLifeV2::ONEIF() {
-	bool cond = checkCondition();
-
-	uint16 address = getParamUint16();
-	if (!cond) {
-		jumpAddress(address);
-	} else {
-		setOpcode(0x04); // NEVERIF
-	}
-}
-
-void ScriptLifeV2::ELSE() {
-	uint16 address = getParamUint16();
-	jumpAddress(address);
-}
 
 void ScriptLifeV2::BODY() {
 	byte body = getParamByte();

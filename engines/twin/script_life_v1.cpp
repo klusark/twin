@@ -45,8 +45,10 @@ ScriptLifeV1::ScriptLifeV1(Common::SeekableReadStream *stream, ScriptTrack *trac
 void ScriptLifeV1::execute(byte opcode) {
 	switch (opcode) {
 		#define OPCODE(op, func) case op: func(); break
+		#define OPCODEI(op, func) OPCODE(op, func)
 			LIFE_OPCODES_V1
 		#undef OPCODE
+		#undef OPCODEI
 	default:
 		warning("asdf");
 	};
