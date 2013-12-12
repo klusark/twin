@@ -125,6 +125,22 @@ protected:
 	void SET_COMPORTEMENT();
 	void SET_COMPORTEMENT_OBJ();
 	void END_COMPORTEMENT();
+	void SET_VAR_GAME();
+	void KILL_OBJ();
+	void SUICIDE();
+	void USE_ONE_LITTLE_KEY();
+	void GIVE_GOLD_PIECES();
+	void END_LIFE();
+	void STOP_CURRENT_TRACK ();
+	void RESTORE_LAST_TRACK ();
+	void MESSAGE_OBJ();
+	void INC_CHAPTER();
+	void FOUND_OBJECT();
+	void SET_DOOR_LEFT();
+	void SET_DOOR_RIGHT();
+	void SET_DOOR_UP();
+	void SET_DOOR_DOWN();
+	void GIVE_BONUS();
 
 };
 

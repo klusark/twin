@@ -408,5 +408,76 @@ void ScriptLife::END_COMPORTEMENT() {
 	yield();
 }
 
+void ScriptLife::SET_VAR_GAME() {
+	byte var = getParamByte();
+	uint16 value = getParamUint16();
+	setGameVar(var, value);
+}
+
+void ScriptLife::KILL_OBJ() {
+	byte actor = getParamByte();
+	Scene *s = g_twin->getCurrentScene();
+	Actor *a = s->getActor(actor);
+	a->kill();
+}
+
+void ScriptLife::SUICIDE() {
+	_actor->kill();
+}
+
+void ScriptLife::USE_ONE_LITTLE_KEY() {
+	_actor->_numKeys -= 1;
+}
+
+void ScriptLife::GIVE_GOLD_PIECES() {
+	int16 gold = getParamInt16();
+}
+
+void ScriptLife::END_LIFE() {
+	stop();
+}
+
+void ScriptLife::STOP_CURRENT_TRACK() {
+	_savedTrack = _track->getLabelAddress();
+	_actor->resetActions();
+}
+
+void ScriptLife::RESTORE_LAST_TRACK() {
+	_track->jumpAddress(_savedTrack);
+	_track->start();
+}
+
+void ScriptLife::MESSAGE_OBJ() {
+	byte actor = getParamByte();
+	uint16 textid = getParamUint16();
+}
+
+void ScriptLife::INC_CHAPTER() {
+	++_chapter;
+}
+
+void ScriptLife::FOUND_OBJECT() {
+	byte item = getParamByte();
+}
+
+void ScriptLife::SET_DOOR_LEFT() {
+	int16 distance = getParamInt16();
+}
+
+void ScriptLife::SET_DOOR_RIGHT() {
+	int16 distance = getParamInt16();
+}
+
+void ScriptLife::SET_DOOR_UP() {
+	int16 distance = getParamInt16();
+}
+
+void ScriptLife::SET_DOOR_DOWN() {
+	int16 distance = getParamInt16();
+}
+
+void ScriptLife::GIVE_BONUS() {
+	byte unknown = getParamByte();
+}
 
 } // end of namespace Twin
