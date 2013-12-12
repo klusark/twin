@@ -38,7 +38,6 @@ ScriptTrackV1::ScriptTrackV1(Common::SeekableReadStream *stream) : ScriptTrack(s
 }
 
 void ScriptTrackV1::execute(byte opcode) {
-	warning("%x", opcode);
 	switch (opcode) {
 		#define OPCODE(op, func) case op: func(); break
 		#define OPCODEI(op, func) OPCODE(op, func)

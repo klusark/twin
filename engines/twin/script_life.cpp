@@ -326,13 +326,23 @@ void ScriptLife::BODY_OBJ() {
 }
 
 void ScriptLife::ANIM() {
-	uint32 id = getParamUint16();
+	uint32 id;
+	if (g_twin->getGameType() == GType_LBA2) {
+		id = getParamUint16();
+	} else {
+		id = getParamByte();
+	}
 	_actor->setAnimation(id);
 }
 
 void ScriptLife::ANIM_OBJ() {
 	byte actor = getParamByte();
-	uint32 id = getParamUint16();
+	uint32 id;
+	if (g_twin->getGameType() == GType_LBA2) {
+		id = getParamUint16();
+	} else {
+		id = getParamByte();
+	}
 	Scene *s = g_twin->getCurrentScene();
 	Actor *a = s->getActor(actor);
 	a->setAnimation(id);
@@ -494,9 +504,20 @@ void ScriptLife::OR_IF() {
 	}
 }
 
+void ScriptLife::POS_POINT() {
+	byte point = getParamByte();
+	Scene *s = g_twin->getCurrentScene();
+	Point *p = s->getPoint(point);
+	_actor->setPos(p->_x, p->_y, p->_z);
+}
+
 void ScriptLife::SET_LIFE_POINT_OBJ() {
 	byte actor = getParamByte();
 	byte life = getParamByte();
+}
+
+void ScriptLife::SET_HOLO_POS() {
+	byte id = getParamByte();
 }
 
 } // end of namespace Twin

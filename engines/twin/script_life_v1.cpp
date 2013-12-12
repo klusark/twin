@@ -78,6 +78,9 @@ bool ScriptLifeV1::checkFuncCondition(byte cond) {
 	return false;
 }
 
+void ScriptLifeV1::ZOOM() {
+	byte param = getParamByte();
+}
 
 void ScriptLifeV1::INIT_PINGOUIN() {
 	byte param = getParamByte();

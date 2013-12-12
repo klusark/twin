@@ -144,7 +144,11 @@ protected:
 
 	void OR_IF();
 
+	void POS_POINT();
+
 	void SET_LIFE_POINT_OBJ();
+
+	void SET_HOLO_POS();
 
 };
 

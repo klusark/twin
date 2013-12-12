@@ -88,13 +88,13 @@ namespace Twin {
 	OPCODEI(0x37, OR_IF);				\
 	OPCODE(0x38, INVISIBLE);			\
 	OPCODE(0x39, SHADOW_OBJ);			\
-	OPCODE(0x3A, POS_POINT);			\
+	OPCODEI(0x3A, POS_POINT);			\
 										\
 	OPCODEI(0x3D, SET_LIFE_POINT_OBJ);	\
 	OPCODE(0x3F, HIT_OBJ);				\
 	OPCODE(0x40, PLAY_ACF);				\
 										\
-	OPCODE(0x48, SET_HOLO_POS);			\
+	OPCODEI(0x48, SET_HOLO_POS);		\
 										\
 	OPCODE(0x4C, SET_GRM );				\
 	OPCODE(0x4D, SET_CHANGE_CUBE);		\

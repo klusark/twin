@@ -183,13 +183,6 @@ void ScriptLifeV2::SHADOW_OBJ() {
 	byte param2 = getParamByte();
 }
 
-void ScriptLifeV2::POS_POINT() {
-	byte point = getParamByte();
-	Scene *s = g_twin->getCurrentScene();
-	Point *p = s->getPoint(point);
-	_actor->setPos(p->_x, p->_y, p->_z);
-}
-
 void ScriptLifeV2::HIT_OBJ() {
 	byte actor = getParamByte();
 	byte damage = getParamByte();
@@ -201,10 +194,6 @@ void ScriptLifeV2::HIT_OBJ() {
 void ScriptLifeV2::PLAY_ACF() {
 	const char * s = getParamString();
 	warning("PLAY_ACF: %s", s);
-}
-
-void ScriptLifeV2::SET_HOLO_POS() {
-	byte id = getParamByte();
 }
 
 void ScriptLifeV2::SET_GRM() {
