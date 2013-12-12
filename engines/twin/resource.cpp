@@ -99,7 +99,11 @@ Resource::~Resource() {
 }
 
 Scene *Resource::getScene(uint16 id) {
-	Scene *s = new Scene(_scene->createReadStreamForIndex(id + 1));
+	int streamid = id;
+	if (g_twin->getGameType() == GType_LBA2) {
+		++streamid;
+	}
+	Scene *s = new Scene(_scene->createReadStreamForIndex(streamid));
 	if (g_twin->getGameType() == GType_LBA) {
 		s->setGrid(getGrid(id));
 	} else if (!_scenes[id]._isIsland) {
