@@ -188,7 +188,12 @@ bool ScriptLife::ACTION(byte oper) {
 
 bool ScriptLife::VAR_GAME(byte oper) {
 	byte varID = _currentState._param;
-	uint16 value = getParamUint16();
+	uint16 value;
+	if (g_twin->getGameType() == GType_LBA2) {
+		value = getParamUint16();
+	} else {
+		value = getParamByte();
+	}
 	uint16 varVal = getGameVar(varID);
 	return testCond(value, varVal, oper);
 }
@@ -478,6 +483,15 @@ void ScriptLife::SET_DOOR_DOWN() {
 
 void ScriptLife::GIVE_BONUS() {
 	byte unknown = getParamByte();
+}
+
+void ScriptLife::OR_IF() {
+	bool cond = checkCondition();
+
+	uint16 address = getParamUint16();
+	if (cond) {
+		jumpAddress(address);
+	}
 }
 
 void ScriptLife::SET_LIFE_POINT_OBJ() {

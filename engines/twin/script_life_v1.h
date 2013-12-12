@@ -82,7 +82,11 @@ namespace Twin {
 	OPCODEI(0x32, SET_DOOR_DOWN);		\
 	OPCODEI(0x33, GIVE_BONUS);			\
 										\
+	OPCODEI(0x37, OR_IF);				\
+										\
 	OPCODEI(0x3D, SET_LIFE_POINT_OBJ);	\
+										\
+	OPCODE(0x47, INIT_PINGOUIN);		\
 
 
 

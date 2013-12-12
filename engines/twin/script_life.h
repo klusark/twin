@@ -142,6 +142,8 @@ protected:
 	void SET_DOOR_DOWN();
 	void GIVE_BONUS();
 
+	void OR_IF();
+
 	void SET_LIFE_POINT_OBJ();
 
 };

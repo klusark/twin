@@ -173,15 +173,6 @@ void ScriptLifeV2::BRICK_COL() {
 	byte unknown = getParamByte();
 }
 
-void ScriptLifeV2::OR_IF() {
-	bool cond = checkCondition();
-
-	uint16 address = getParamUint16();
-	if (cond) {
-		jumpAddress(address);
-	}
-}
-
 void ScriptLifeV2::INVISIBLE() {
 	byte state = getParamByte();
 	_actor->setInvisible(state);
