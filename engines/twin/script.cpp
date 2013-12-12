@@ -34,25 +34,18 @@ byte Script::_cubeVars[256][256];
 byte Script::_chapter;
 
 Script::Script(Common::SeekableReadStream *stream) : _actor(nullptr), _isWaiting(false), _isWaitingForAction(false) {
-	if (g_twin->getGameType() == GType_LBA2) {
-		loadLBA2(stream);
-	}else if (g_twin->getGameType() == GType_LBA) {
-		loadLBA2(stream);
-	}
+	_length = stream->readUint16LE();
+	_data = new uint8[_length];
+	stream->read(_data, _length);
+
+	_ptr = _data;
+
 	_isExecuting = true;
 	_isYielded = false;
 }
 
 Script::~Script() {
 	delete[] _data;
-}
-
-void Script::loadLBA2(Common::SeekableReadStream *stream) {
-	_length = stream->readUint16LE();
-	_data = new uint8[_length];
-	stream->read(_data, _length);
-
-	_ptr = _data;
 }
 
 void Script::setOpcode(byte opcode) {
