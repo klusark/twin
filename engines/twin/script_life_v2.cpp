@@ -157,114 +157,12 @@ bool ScriptLifeV2::ANGLE_OBJ(byte oper) {
 #define STUB_SCRIPT(func) void ScriptLifeV2::func() { }
 
 
-
-void ScriptLifeV2::BODY() {
-	byte body = getParamByte();
-	_actor->setBody(body);
-}
-
-void ScriptLifeV2::BODY_OBJ() {
-	byte actor = getParamByte();
-	byte body = getParamByte();
-	Scene *s = g_twin->getCurrentScene();
-	Actor *a = s->getActor(actor);
-	a->setBody(body);
-}
-
-void ScriptLifeV2::ANIM() {
-	uint32 id = getParamUint16();
-	_actor->setAnimation(id);
-}
-
-void ScriptLifeV2::ANIM_OBJ() {
-	byte actor = getParamByte();
-	uint32 id = getParamUint16();
-	Scene *s = g_twin->getCurrentScene();
-	Actor *a = s->getActor(actor);
-	a->setAnimation(id);
-}
-
 void ScriptLifeV2::SET_CAMERA() {
 	uint16 unknown = getParamUint16();
 }
 
 void ScriptLifeV2::CAMERA_CENTER() {
 	byte unknown = getParamByte();
-}
-
-void ScriptLifeV2::SET_TRACK() {
-	uint16 address = getParamUint16();
-	_track->jumpAddress(address);
-	_track->start();
-}
-
-void ScriptLifeV2::SET_TRACK_OBJ() {
-	byte actor = getParamByte();
-	uint16 address = getParamUint16();
-	Scene *s = g_twin->getCurrentScene();
-	Actor *a = s->getActor(actor);
-	a->_trackScript->jumpAddress(address);
-	a->_trackScript->start();
-}
-
-void ScriptLifeV2::MESSAGE() {
-	uint16 id = getParamUint16();
-}
-
-void ScriptLifeV2::CAN_FALL() {
-	byte canfall = getParamByte();
-}
-
-void ScriptLifeV2::CAM_FOLLOW() {
-	byte actor = getParamByte();
-}
-
-void ScriptLifeV2::SET_BEHAVIOUR() {
-	byte param = getParamByte();
-}
-
-void ScriptLifeV2::SET_VAR_CUBE() {
-	byte id = getParamByte();
-	byte value = getParamByte();
-	setCubeVar(id, value);
-}
-
-void ScriptLifeV2::SET_DIRMODE() {
-	byte dirmode = getParamByte();
-	if (dirmode == 2 || dirmode == 4) {
-		byte actor = getParamByte();
-		Scene *s = g_twin->getCurrentScene();
-		Actor *a = s->getActor(actor);
-		_actor->faceActor(a);
-	} else {
-		_actor->faceActor(nullptr);
-	}
-}
-
-void ScriptLifeV2::SET_DIRMODE_OBJ() {
-	byte actor = getParamByte();
-	byte dirmode = getParamByte();
-	if (dirmode == 2 || dirmode == 4) {
-		byte actor = getParamByte();
-	}
-}
-
-void ScriptLifeV2::SET_COMPORTEMENT() {
-	uint16 address = getParamUint16();
-	_comportementAddress = address;
-}
-
-void ScriptLifeV2::SET_COMPORTEMENT_OBJ() {
-	byte actor = getParamByte();
-	uint16 address = getParamUint16();
-	Scene *s = g_twin->getCurrentScene();
-	Actor *a = s->getActor(actor);
-	static_cast<ScriptLifeV2 *>(a->_lifeScript)->_comportementAddress = address;
-}
-
-void ScriptLifeV2::END_COMPORTEMENT() {
-	jumpAddress(_comportementAddress);
-	yield();
 }
 
 void ScriptLifeV2::SET_VAR_GAME() {

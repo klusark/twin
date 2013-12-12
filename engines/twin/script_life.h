@@ -107,6 +107,25 @@ protected:
 	void ONEIF();
 	void ELSE();
 
+	void BODY();
+	void BODY_OBJ();
+	void ANIM();
+	void ANIM_OBJ();
+
+	void SET_TRACK();
+	void SET_TRACK_OBJ();
+	void MESSAGE();
+	void CAN_FALL();
+	void SET_DIRMODE();
+	void SET_DIRMODE_OBJ();
+	void CAM_FOLLOW();
+	void SET_BEHAVIOUR();
+	void SET_VAR_CUBE();
+
+	void SET_COMPORTEMENT();
+	void SET_COMPORTEMENT_OBJ();
+	void END_COMPORTEMENT();
+
 };
 
 } // end of namespace Twin

@@ -306,4 +306,107 @@ void ScriptLife::ELSE() {
 	jumpAddress(address);
 }
 
+
+void ScriptLife::BODY() {
+	byte body = getParamByte();
+	_actor->setBody(body);
+}
+
+void ScriptLife::BODY_OBJ() {
+	byte actor = getParamByte();
+	byte body = getParamByte();
+	Scene *s = g_twin->getCurrentScene();
+	Actor *a = s->getActor(actor);
+	a->setBody(body);
+}
+
+void ScriptLife::ANIM() {
+	uint32 id = getParamUint16();
+	_actor->setAnimation(id);
+}
+
+void ScriptLife::ANIM_OBJ() {
+	byte actor = getParamByte();
+	uint32 id = getParamUint16();
+	Scene *s = g_twin->getCurrentScene();
+	Actor *a = s->getActor(actor);
+	a->setAnimation(id);
+}
+
+void ScriptLife::SET_TRACK() {
+	uint16 address = getParamUint16();
+	_track->jumpAddress(address);
+	_track->start();
+}
+
+void ScriptLife::SET_TRACK_OBJ() {
+	byte actor = getParamByte();
+	uint16 address = getParamUint16();
+	Scene *s = g_twin->getCurrentScene();
+	Actor *a = s->getActor(actor);
+	a->_trackScript->jumpAddress(address);
+	a->_trackScript->start();
+}
+
+void ScriptLife::MESSAGE() {
+	uint16 id = getParamUint16();
+}
+
+void ScriptLife::CAN_FALL() {
+	byte canfall = getParamByte();
+}
+
+void ScriptLife::CAM_FOLLOW() {
+	byte actor = getParamByte();
+}
+
+void ScriptLife::SET_BEHAVIOUR() {
+	byte param = getParamByte();
+}
+
+void ScriptLife::SET_VAR_CUBE() {
+	byte id = getParamByte();
+	byte value = getParamByte();
+	setCubeVar(id, value);
+}
+
+void ScriptLife::SET_DIRMODE() {
+	byte dirmode = getParamByte();
+	if (dirmode == 2 || dirmode == 4) {
+		byte actor = getParamByte();
+		Scene *s = g_twin->getCurrentScene();
+		Actor *a = s->getActor(actor);
+		_actor->faceActor(a);
+	} else {
+		_actor->faceActor(nullptr);
+	}
+}
+
+void ScriptLife::SET_DIRMODE_OBJ() {
+	byte actor = getParamByte();
+	byte dirmode = getParamByte();
+	if (dirmode == 2 || dirmode == 4) {
+		byte actor = getParamByte();
+	}
+}
+
+void ScriptLife::SET_COMPORTEMENT() {
+	uint16 address = getParamUint16();
+	_comportementAddress = address;
+}
+
+void ScriptLife::SET_COMPORTEMENT_OBJ() {
+	byte actor = getParamByte();
+	uint16 address = getParamUint16();
+	Scene *s = g_twin->getCurrentScene();
+	Actor *a = s->getActor(actor);
+	static_cast<ScriptLife *>(a->_lifeScript)->_comportementAddress = address;
+}
+
+void ScriptLife::END_COMPORTEMENT() {
+	jumpAddress(_comportementAddress);
+	yield();
+}
+
+
 } // end of namespace Twin
