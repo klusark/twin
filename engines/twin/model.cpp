@@ -275,7 +275,7 @@ void Model::loadLBA(Common::SeekableReadStream *stream) {
 		p->_numVerticies = numvert;
 		p->_colour = colorindex;
 
-		assert(numvert < 5);
+		assert(numvert < 9);
 
 		if (rendertype >= 9) {
 			for (int j = 0; j < numvert; ++j) {

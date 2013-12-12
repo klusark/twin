@@ -316,7 +316,7 @@ void GfxOpenGL::drawModel(Model *m, bool fromIsland) {
 
 		glBegin(GL_POLYGON);
 
-		for (int i = 0; i < 4; ++i) {
+		for (int i = 0; i < p->_numVerticies; ++i) {
 			uint32 vert = p->_data[i];
 			if (vert > m->_numVerticies || vert == 0) {
 				continue;

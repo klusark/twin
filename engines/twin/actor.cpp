@@ -121,16 +121,21 @@ void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 void Actor::loadLBA(Common::SeekableReadStream *stream) {
 
 	uint16 flags = stream->readUint16LE();
-	stream->readUint16LE();
+	_entityID = stream->readUint16LE();
 
 	_body = stream->readByte();
 	stream->readByte();
-	stream->readUint16LE();
+	_spriteID = stream->readUint16LE();
 
 	_pos._x = stream->readUint16LE();
 	_pos._y = stream->readUint16LE();
 	_pos._z = stream->readUint16LE();
-	_entity = g_resource->getEntity(_entityID, 0, 0);
+
+	if (_entityID != 0xffff) {
+		_entity = g_resource->getEntity(_entityID, 0, 0);
+	} else {
+		//_sprite = g_resource->getSprite(_spriteID);
+	}
 
 
 	stream->readByte();
@@ -155,8 +160,6 @@ void Actor::loadLBA(Common::SeekableReadStream *stream) {
 	_lifeScript = new ScriptLifeV1(stream, (ScriptTrackV1 *)_trackScript);
 	_lifeScript->setActor(this);
 
-
-	_entity = nullptr;
 }
 
 void Actor::update(uint32 delta) {
