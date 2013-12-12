@@ -42,6 +42,7 @@ public:
 	uint16 _data[4];
 	uint16 _num;
 	uint16 _tex;
+	uint16 _numVerticies;
 	byte _texX[4];
 	byte _texY[4];
 	byte _colour;
@@ -121,6 +122,7 @@ public:
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 	void loadLBA(Common::SeekableReadStream *stream);
+	void createHierarchy();
 
 	uint32 _numVerticies;
 	uint32 _numBones;

@@ -132,6 +132,7 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 			p->_colour = 0;
 			p->_hasTex = flag & 0x8 && val > 16;
 			p->_hasTransparency = flag & 0x2;
+			p->_numVerticies = 0;
 			int texc = 0;
 			for (int i = 0; i < (val / 2); ++i) {
 				if (i == 14 && p->_hasTex) {
@@ -167,6 +168,7 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 						uint16 data = stream->readUint16LE();
 						if (i < 4 && flag & 0x8000 || i < 3) {
 							p->_data[i] = data;
+							++p->_numVerticies;
 						}
 					}
 				}
@@ -204,24 +206,8 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 		t->_h = stream->readByte();
 	}
 
-	Common::sort(_polygons, &_polygons[_numPolygons]);
+	createHierarchy();
 
-	_heirs = new Hierarchy[_numBones];
-
-	for (uint32 i = 0; i < _numBones; ++i) {
-		Bone *b = &_bones[i];
-		Hierarchy *h =  &_heirs[i];
-		h->_index = i;
-		h->_vertex = &_verticies[b->_vertex];
-		if (b->_parent == 0xffff) {
-			_heir = h;
-			continue;
-		}
-		Hierarchy *ph =  &_heirs[b->_parent];
-		ph->_children.push_back(h);
-	}
-
-	recalculateHierarchy();
 }
 
 void Model::loadLBA(Common::SeekableReadStream *stream) {
@@ -240,10 +226,34 @@ void Model::loadLBA(Common::SeekableReadStream *stream) {
 		v->_bone = 0;
 	}
 
-	uint32 numElement = stream->readUint16LE();
-	for (uint32 i = 0; i < numElement; ++i) {
-		stream->seek(38, SEEK_CUR);
-
+	_numBones = stream->readUint16LE();
+	_bones = new Bone[_numBones];
+	for (uint32 i = 0; i < _numBones; ++i) {
+		int16 firstPoint = stream->readSint16LE() / 6;
+		int16 numOfPoints = stream->readSint16LE();
+		int16 basePoint = stream->readSint16LE() / 6;
+		int16 baseElement = stream->readSint16LE();
+		int16 flag = stream->readSint16LE();
+		int16 rotateZ = stream->readSint16LE();
+		int16 rotateY = stream->readSint16LE();
+		int16 rotateX = stream->readSint16LE();
+		int32 numOfShades = stream->readSint32LE();
+		int32 field_14 = stream->readSint32LE();
+		int32 field_18 = stream->readSint32LE();
+		int32 Y = stream->readSint32LE();
+		int32 field_20 = stream->readSint32LE();
+		int16 field_24 = stream->readSint16LE();
+		Bone *b = &_bones[i];
+		if (baseElement == -1) {
+			b->_parent = 0xffff;
+		} else {
+			assert(baseElement % 38 == 0);
+			b->_parent = baseElement / 38;
+		}
+		b->_vertex = basePoint;
+		for (int j = 0; j < numOfPoints; ++j) {
+			_verticies[firstPoint + j]._bone = i;
+		}
 	}
 
 	uint32 numShades = stream->readUint16LE();
@@ -256,24 +266,30 @@ void Model::loadLBA(Common::SeekableReadStream *stream) {
 
 	_numPolygons = stream->readUint16LE();
 	_polygons = new Polygon[_numPolygons];
+	memset(_polygons, 0, _numPolygons * sizeof(Polygon));
 	for (uint32 i = 0; i < _numPolygons; ++i) {
+		Polygon *p = &_polygons[i];
 		int rendertype = stream->readByte();
 		int numvert = stream->readByte();
 		int colorindex = stream->readUint16LE();
+		p->_numVerticies = numvert;
+		p->_colour = colorindex;
+
+		assert(numvert < 5);
 
 		if (rendertype >= 9) {
 			for (int j = 0; j < numvert; ++j) {
 				uint16 shade = stream->readUint16LE();
-				uint16 data = stream->readUint16LE();
+				p->_data[j] = stream->readUint16LE() / 6;
 			}
 		} else if (rendertype >= 7) {
 			uint16 shade = stream->readUint16LE();
 			for (int j = 0; j < numvert; ++j) {
-				uint16 data2 = stream->readUint16LE();
+				p->_data[j] = stream->readUint16LE() / 6;
 			}
 		} else {
 			for (int j = 0; j < numvert; ++j) {
-				uint16 data2 = stream->readUint16LE();
+				p->_data[j] = stream->readUint16LE() / 6;
 			}
 		}
 	}
@@ -299,8 +315,28 @@ void Model::loadLBA(Common::SeekableReadStream *stream) {
 	}
 
 
-	//temp
-	_numPolygons = 0;
+	createHierarchy();
+}
+
+void Model::createHierarchy() {
+	Common::sort(_polygons, &_polygons[_numPolygons]);
+
+	_heirs = new Hierarchy[_numBones];
+
+	for (uint32 i = 0; i < _numBones; ++i) {
+		Bone *b = &_bones[i];
+		Hierarchy *h =  &_heirs[i];
+		h->_index = i;
+		h->_vertex = &_verticies[b->_vertex];
+		if (b->_parent == 0xffff) {
+			_heir = h;
+			continue;
+		}
+		Hierarchy *ph =  &_heirs[b->_parent];
+		ph->_children.push_back(h);
+	}
+
+	recalculateHierarchy();
 }
 
 void Model::recalculateHierarchy() {
