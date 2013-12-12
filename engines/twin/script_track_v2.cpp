@@ -40,115 +40,16 @@ ScriptTrackV2::ScriptTrackV2(Common::SeekableReadStream *stream) : ScriptTrack(s
 void ScriptTrackV2::execute(byte opcode) {
 	switch (opcode) {
 		#define OPCODE(op, func) case op: func(); break
+		#define OPCODEI(op, func) OPCODE(op, func)
 			TRACK_OPCODES_V2
 		#undef OPCODE
+		#undef OPCODEI
 	default:
 		warning("asdf");
 	};
 }
 
 #define STUB_SCRIPT(func) void ScriptTrackV2::func() { }
-
-void ScriptTrackV2::END() {
-	stop();
-}
-STUB_SCRIPT(NOP);
-void ScriptTrackV2::BODY() {
-	byte id = getParamByte();
-}
-void ScriptTrackV2::ANIM() {
-	uint16 id = getParamUint16();
-	if (_actor) {
-		_actor->setAnimation(id);
-	}
-}
-void ScriptTrackV2::GOTO_POINT() {
-	byte id = getParamByte();
-	Scene *s = g_twin->getCurrentScene();
-	_isWaitingForAction = true;
-	_actor->gotoPoint(s->getPoint(id), &_isWaitingForAction);
-}
-
-void ScriptTrackV2::WAIT_ANIM() {
-	if (!_actor->_entity) {
-		warning("WAIT_ANIM no entity");
-		return;
-	}
-	_isWaitingForAction = true;
-	_actor->_entity->_anim->_isWaiting = &_isWaitingForAction;
-	_actor->_entity->_anim->_waitLoops = 1;
-}
-
-void ScriptTrackV2::ANGLE() {
-	int16 angle = getParamInt16();
-	_actor->faceActor(nullptr);
-	_actor->turnToAngle(((angle * 360) / 4096.0f) + 90);
-}
-
-void ScriptTrackV2::POS_POINT() {
-	byte id = getParamByte();
-	Scene *s = g_twin->getCurrentScene();
-	Point *p = s->getPoint(id);
-	_actor->setPos(p->_x, p->_y, p->_z);
-}
-
-void ScriptTrackV2::LABEL() {
-	byte id = getParamByte();
-	_label = id;
-	_labelAddress = getAddress() - 2;
-}
-
-void ScriptTrackV2::GOTO() {
-	uint16 id = getParamUint16();
-	jumpAddress(id);
-}
-
-void ScriptTrackV2::STOP() {
-	stop();
-}
-
-void ScriptTrackV2::GOTO_SYM_POINT() {
-	byte id = getParamByte();
-}
-
-void ScriptTrackV2::WAIT_NUM_ANIM() {
-	byte numLoops = getParamByte();
-
-	//skip a 0
-	jump(1);
-
-	_isWaitingForAction = true;
-	_actor->_entity->_anim->_isWaiting = &_isWaitingForAction;
-	_actor->_entity->_anim->_waitLoops = numLoops;
-}
-
-void ScriptTrackV2::SAMPLE() {
-	uint16 id = getParamUint16();
-}
-
-void ScriptTrackV2::GOTO_POINT_3D() {
-	byte id = getParamByte();
-	Scene *s = g_twin->getCurrentScene();
-	Point *p = s->getPoint(id);
-	_actor->setPos(p->_x, p->_y, p->_z);
-}
-
-void ScriptTrackV2::SPEED() {
-	int16 speed = getParamInt16();
-	_actor->_speed = speed;
-}
-
-void ScriptTrackV2::BACKGROUND() {
-	byte id = getParamByte();
-}
-
-void ScriptTrackV2::WAIT_NUM_SECOND() {
-	byte numSeconds = getParamByte();
-	jump(4);
-	_waitTime = numSeconds * 1000;
-	_waitedTime = 0;
-	_isWaiting = true;
-}
 
 void ScriptTrackV2::NO_BODY() {
 	_actor->setInvisible(true);

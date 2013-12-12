@@ -45,6 +45,26 @@ protected:
 	uint16 _labelAddress;
 
 
+
+	void END();
+	void NOP();
+	void BODY();
+	void ANIM();
+	void GOTO_POINT();
+	void WAIT_ANIM();
+
+	void ANGLE();
+	void POS_POINT();
+	void LABEL();
+	void GOTO();
+	void STOP();
+	void GOTO_SYM_POINT();
+	void WAIT_NUM_ANIM();
+	void SAMPLE();
+	void GOTO_POINT_3D();
+	void SPEED();
+	void BACKGROUND();
+	void WAIT_NUM_SECOND();
 };
 
 } // end of namespace Twin

@@ -38,6 +38,120 @@ ScriptTrack::ScriptTrack(Common::SeekableReadStream *stream) : Script(stream), _
 	stop();
 }
 
+void ScriptTrack::END() {
+	stop();
+}
 
+void ScriptTrack::NOP() {
+}
+
+void ScriptTrack::BODY() {
+	byte id = getParamByte();
+}
+
+void ScriptTrack::ANIM() {
+	uint16 id;
+	if (g_twin->getGameType() == GType_LBA2) {
+		id = getParamUint16();
+	} else {
+		id = getParamByte();
+	}
+	if (_actor) {
+		_actor->setAnimation(id);
+	}
+}
+
+void ScriptTrack::GOTO_POINT() {
+	byte id = getParamByte();
+	Scene *s = g_twin->getCurrentScene();
+	_isWaitingForAction = true;
+	_actor->gotoPoint(s->getPoint(id), &_isWaitingForAction);
+}
+
+void ScriptTrack::WAIT_ANIM() {
+	if (!_actor->_entity) {
+		warning("WAIT_ANIM no entity");
+		return;
+	}
+	_isWaitingForAction = true;
+	_actor->_entity->_anim->_isWaiting = &_isWaitingForAction;
+	_actor->_entity->_anim->_waitLoops = 1;
+}
+
+void ScriptTrack::ANGLE() {
+	int16 angle = getParamInt16();
+	_actor->faceActor(nullptr);
+	_actor->turnToAngle(((angle * 360) / 4096.0f) + 90);
+}
+
+void ScriptTrack::POS_POINT() {
+	byte id = getParamByte();
+	Scene *s = g_twin->getCurrentScene();
+	Point *p = s->getPoint(id);
+	_actor->setPos(p->_x, p->_y, p->_z);
+}
+
+void ScriptTrack::LABEL() {
+	byte id = getParamByte();
+	_label = id;
+	_labelAddress = getAddress() - 2;
+}
+
+void ScriptTrack::GOTO() {
+	uint16 id = getParamUint16();
+	jumpAddress(id);
+}
+
+void ScriptTrack::STOP() {
+	stop();
+}
+
+void ScriptTrack::GOTO_SYM_POINT() {
+	byte id = getParamByte();
+}
+
+void ScriptTrack::WAIT_NUM_ANIM() {
+	byte numLoops = getParamByte();
+
+	//skip a 0
+	jump(1);
+
+	if (!_actor->_entity) {
+		warning("WAIT_NUM_ANIM no entity");
+		return;
+	}
+
+	_isWaitingForAction = true;
+	_actor->_entity->_anim->_isWaiting = &_isWaitingForAction;
+	_actor->_entity->_anim->_waitLoops = numLoops;
+}
+
+void ScriptTrack::SAMPLE() {
+	uint16 id = getParamUint16();
+}
+
+void ScriptTrack::GOTO_POINT_3D() {
+	byte id = getParamByte();
+	Scene *s = g_twin->getCurrentScene();
+	Point *p = s->getPoint(id);
+	_actor->setPos(p->_x, p->_y, p->_z);
+}
+
+void ScriptTrack::SPEED() {
+	int16 speed = getParamInt16();
+	_actor->_speed = speed;
+}
+
+void ScriptTrack::BACKGROUND() {
+	byte id = getParamByte();
+}
+
+void ScriptTrack::WAIT_NUM_SECOND() {
+	byte numSeconds = getParamByte();
+	jump(4);
+	_waitTime = numSeconds * 1000;
+	_waitedTime = 0;
+	_isWaiting = true;
+}
 
 } // end of namespace Twin

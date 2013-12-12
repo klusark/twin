@@ -33,7 +33,26 @@ class SeekableReadStream;
 namespace Twin {
 
 
-#define TRACK_OPCODES					\
+#define TRACK_OPCODES_V1				\
+	OPCODEI(0x00, END);					\
+	OPCODEI(0x01, NOP);					\
+	OPCODEI(0x02, BODY);				\
+	OPCODEI(0x03, ANIM);				\
+	OPCODEI(0x04, GOTO_POINT);			\
+	OPCODEI(0x05, WAIT_ANIM);			\
+										\
+	OPCODEI(0x07, ANGLE);				\
+	OPCODEI(0x08, POS_POINT);			\
+	OPCODEI(0x09, LABEL);				\
+	OPCODEI(0x0A, GOTO);				\
+	OPCODEI(0x0B, STOP);				\
+	OPCODEI(0x0C, GOTO_SYM_POINT);		\
+	OPCODEI(0x0D, WAIT_NUM_ANIM);		\
+	OPCODEI(0x0E, SAMPLE);				\
+	OPCODEI(0x0F, GOTO_POINT_3D);		\
+	OPCODEI(0x10, SPEED);				\
+	OPCODEI(0x11, BACKGROUND);			\
+	OPCODEI(0x12, WAIT_NUM_SECOND);		\
 
 
 
@@ -45,8 +64,10 @@ private:
 
 	//Opcodes
 	#define OPCODE(op, func) void func()
-		TRACK_OPCODES
+	#define OPCODEI(op, func)
+		TRACK_OPCODES_V1
 	#undef OPCODE
+	#undef OPCODEI
 };
 
 } // end of namespace Twin

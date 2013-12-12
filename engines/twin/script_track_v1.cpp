@@ -40,8 +40,10 @@ ScriptTrackV1::ScriptTrackV1(Common::SeekableReadStream *stream) : ScriptTrack(s
 void ScriptTrackV1::execute(byte opcode) {
 	switch (opcode) {
 		#define OPCODE(op, func) case op: func(); break
-			TRACK_OPCODES
+		#define OPCODEI(op, func) OPCODE(op, func)
+			TRACK_OPCODES_V1
 		#undef OPCODE
+		#undef OPCODEI
 	default:
 		warning("asdf");
 	};
