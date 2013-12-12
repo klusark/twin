@@ -73,7 +73,7 @@ public:
 	uint16 _length;
 	byte *_data;
 	
-	byte *_ptr;
+	uint16 _pos;
 	byte *_opcodePtr;
 
 	static uint16 _gameVars[256];

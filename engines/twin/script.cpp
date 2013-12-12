@@ -38,7 +38,7 @@ Script::Script(Common::SeekableReadStream *stream) : _actor(nullptr), _isWaiting
 	_data = new uint8[_length];
 	stream->read(_data, _length);
 
-	_ptr = _data;
+	_pos = 0;
 
 	_isExecuting = true;
 	_isYielded = false;
@@ -61,9 +61,9 @@ void Script::run(uint32 delta) {
 	}
 	//warning("start");
 	while (_isExecuting && !_isYielded && !_isWaiting && !_isWaitingForAction) {
-		_opcodePtr = _ptr;
-		byte opcode = _ptr[0];
-		++_ptr;
+		_opcodePtr = _data + _pos;
+		byte opcode = _data[_pos];
+		++_pos;
 		execute(opcode);
 	}
 	_isYielded = false;
@@ -84,15 +84,21 @@ void Script::yield() {
 }
 
 void Script::jump(uint16 size) {
-	_ptr += size;
+	_pos += size;
+	if (_pos > _length) {
+		error("Jumping past the end of the script");
+	}
 }
 
 void Script::jumpAddress(uint16 size) {
-	_ptr = _data + size;;
+	_pos = size;
+	if (_pos > _length) {
+		error("Jumping past the end of the script");
+	}
 }
 
 uint16 Script::getAddress() {
-	return _ptr - _data;
+	return _pos;
 }
 
 uint16 Script::getGameVar(byte id) {
@@ -114,29 +120,27 @@ void Script::setCubeVar(byte id, byte val) {
 }
 
 byte Script::getParamByte() {
-	byte param = _ptr[0];
-	++_ptr;
+	byte param = _data[_pos];
+	++_pos;
 	return param;
 }
 
 uint16 Script::getParamUint16() {
-	uint16 param = ((uint16 *)_ptr)[0];
-	++_ptr;
-	++_ptr;
+	uint16 param = ((uint16 *)(_data + _pos))[0];
+	_pos += 2;
 	return param;
 }
 
 int16 Script::getParamInt16() {
-	int16 param = ((int16 *)_ptr)[0];
-	++_ptr;
-	++_ptr;
+	int16 param = ((int16 *)(_data + _pos))[0];
+	_pos += 2;
 	return param;
 }
 
 const char *Script::getParamString() {
-	const char *val = (const char *)_ptr;
+	const char *val = (const char *)_data + _pos;
 
-	_ptr += strlen(val);
+	_pos += strlen(val);
 
 	return val;
 }
