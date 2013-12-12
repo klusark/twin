@@ -29,9 +29,9 @@ namespace Twin {
 
 Sprite::Sprite(Common::SeekableReadStream *stream) : _info(nullptr), _renderData(nullptr) {
 
-	if (g_twin->getGameType() == GType_LBA2) {
+	//if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
-	}
+	//}
 	delete stream;
 }
 

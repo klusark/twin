@@ -56,18 +56,18 @@ Resource::Resource() : _firstGrid(0) {
 	_anim = new Hqr();
 	_anim->open("ANIM.HQR");
 
+	_ress = new Hqr();
+	_ress->open("RESS.HQR");
+
+	_sprites = new Hqr();
+	_sprites->open("SPRITES.HQR");
+
 	if (g_twin->getGameType() == GType_LBA2) {
 		_bkg = new Hqr();
 		_bkg->open("LBA_BKG.HQR");
 		loadGridDefaults();
 
-		_ress = new Hqr();
-		_ress->open("RESS.HQR");
 		_ei = new EntityInformation(_ress->createReadStreamForIndex(44));
-
-		_sprites = new Hqr();
-		_sprites->open("SPRITES.HQR");
-
 
 		loadSpriteInfo(_ress->createReadStreamForIndex(5));
 	} else if (g_twin->getGameType() == GType_LBA) {
@@ -84,6 +84,8 @@ Resource::Resource() : _firstGrid(0) {
 		_f3d->open("FILE3D.HQR");
 
 		_ei = new EntityInformation(_f3d);
+
+		loadSpriteInfo(_ress->createReadStreamForIndex(3));
 	}
 }
 
