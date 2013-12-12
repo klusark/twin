@@ -39,7 +39,7 @@ class Model;
 
 class Polygon {
 public:
-	uint16 _data[8];
+	uint16 _data[16];
 	uint16 _num;
 	uint16 _tex;
 	uint16 _numVerticies;

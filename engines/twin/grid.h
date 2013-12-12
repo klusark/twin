@@ -41,7 +41,7 @@ struct Square {
 
 class Grid {
 public:
-	Grid(Common::SeekableReadStream *stream);
+	Grid(Common::SeekableReadStream *stream, uint16 id);
 	void setGridAt(byte x, byte y, byte z, Square s);
 	Square *getGridAt(byte x, byte y, byte z);
 	byte getLibrary() { return _layoutLib; }
@@ -54,6 +54,7 @@ private:
 	byte _gridFragment;
 
 	BlockLibrary *_blockLibrary;
+	uint16 _id;
 
 	Square _grid[64*64*25];
 };

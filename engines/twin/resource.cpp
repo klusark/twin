@@ -127,7 +127,7 @@ Grid *Resource::getGrid(int id) {
 	} else {
 		stream = _gri->createReadStreamForIndex(id);
 	}
-	Grid *g = new Grid(stream);
+	Grid *g = new Grid(stream, id);
 	return g;
 }
 

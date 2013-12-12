@@ -30,7 +30,7 @@
 
 namespace Twin {
 
-Grid::Grid(Common::SeekableReadStream *stream) {
+Grid::Grid(Common::SeekableReadStream *stream, uint16 id): _id(id) {
 	memset(_grid, 0, 64*64*25*sizeof(Square));
 	loadLBA2(stream);
 }
@@ -40,11 +40,12 @@ void Grid::loadLBA2(Common::SeekableReadStream *stream) {
 	int off = 0;
 	if (g_twin->getGameType() == GType_LBA2) {
 		_layoutLib = stream->readByte();
-		_blockLibrary = g_resource->getBlockLibrary(_layoutLib);
 		_gridFragment = stream->readByte();
 		off = 34;
+	} else {
+		_layoutLib = _id;
 	}
-	_blockLibrary = g_resource->getBlockLibrary(0);
+	_blockLibrary = g_resource->getBlockLibrary(_layoutLib);
 
 	int n = 0;
 	int y = 0;
