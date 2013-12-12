@@ -30,9 +30,9 @@ namespace Twin {
 
 Animation::Animation(Common::SeekableReadStream *stream, Model *m, uint16 id) : _id(id), _isWaiting(nullptr) {
 	_model = m;
-	if (g_twin->getGameType() == GType_LBA2) {
+	//if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
-	}
+	//}
 }
 
 Animation::~Animation() {
@@ -109,7 +109,7 @@ void Animation::update(uint32 time) {
 		Boneframe *b = &k->_bones[i];
 		Boneframe *bn = &next->_bones[i];
 		Hierarchy *h = &_model->_heirs[i];
-		if (b->_type == 0) {
+		if (b->_type == 0 && false) {
 			h->_isTransltion = false;
 			h->_pitch = b->_pitch + (((((int)(bn->_pitch - b->_pitch).getDegrees() % 360) + 540) % 360) - 180) * interp;
 			h->_yaw = b->_yaw + (((((int)(bn->_yaw - b->_yaw).getDegrees() % 360) + 540) % 360) - 180) * interp;

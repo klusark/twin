@@ -81,6 +81,8 @@ namespace Twin {
 	OPCODEI(0x31, SET_DOOR_UP);			\
 	OPCODEI(0x32, SET_DOOR_DOWN);		\
 	OPCODEI(0x33, GIVE_BONUS);			\
+										\
+	OPCODEI(0x3D, SET_LIFE_POINT_OBJ);	\
 
 
 

@@ -65,6 +65,22 @@ protected:
 	void SPEED();
 	void BACKGROUND();
 	void WAIT_NUM_SECOND();
+	void NO_BODY();
+	void BETA();
+	void OPEN_LEFT();
+	void OPEN_RIGHT();
+	void OPEN_UP();
+	void OPEN_DOWN();
+	void CLOSE();
+	void WAIT_DOOR();
+	void SAMPLE_RND();
+	void SAMPLE_ALWAYS();
+	void SAMPLE_STOP();
+	void PLAY_ACF();
+	void REPEAT_SAMPLE();
+	void SIMPLE_SAMPLE();
+	void FACE_HERO();
+	void ANGLE_RND();
 };
 
 } // end of namespace Twin

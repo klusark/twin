@@ -154,4 +154,89 @@ void ScriptTrack::WAIT_NUM_SECOND() {
 	_isWaiting = true;
 }
 
+void ScriptTrack::NO_BODY() {
+	_actor->setInvisible(true);
+}
+
+void ScriptTrack::BETA() {
+	uint16 angle = getParamUint16();
+	_actor->setAngle((360 + 90)-((angle * 360) / 4096.f));
+}
+
+void ScriptTrack::OPEN_LEFT() {
+	int16 distance = getParamInt16();
+	_actor->_speed = 1000;
+	_actor->_angle = 180;
+	_actor->_speedStart = _actor->_pos;
+	_actor->_speedDistance = distance;
+}
+
+void ScriptTrack::OPEN_RIGHT() {
+	int16 distance = getParamInt16();
+	_actor->_speed = 1000;
+	_actor->_angle = 0;
+	_actor->_speedStart = _actor->_pos;
+	_actor->_speedDistance = distance;
+}
+
+void ScriptTrack::OPEN_UP() {
+	int16 distance = getParamInt16();
+	_actor->_speed = 1000;
+	_actor->_angle = 270;
+	_actor->_speedStart = _actor->_pos;
+	_actor->_speedDistance = distance;
+}
+
+void ScriptTrack::OPEN_DOWN() {
+	int16 distance = getParamInt16();
+	_actor->_speed = 1000;
+	_actor->_angle = 90;
+	_actor->_speedStart = _actor->_pos;
+	_actor->_speedDistance = distance;
+}
+
+void ScriptTrack::CLOSE() {
+	_actor->_speed = -1000;
+	_actor->_speedStart = _actor->_pos;
+}
+
+void ScriptTrack::WAIT_DOOR() {
+}
+
+void ScriptTrack::SAMPLE_RND() {
+	int16 param = getParamInt16();
+}
+
+void ScriptTrack::SAMPLE_ALWAYS() {
+	int16 param = getParamInt16();
+}
+
+void ScriptTrack::SAMPLE_STOP() {
+	int16 param = getParamInt16();
+}
+
+void ScriptTrack::PLAY_ACF() {
+	error("Read a null terminated string here");
+}
+
+void ScriptTrack::REPEAT_SAMPLE() {
+	int16 param = getParamInt16();
+}
+
+void ScriptTrack::SIMPLE_SAMPLE() {
+	int16 param = getParamInt16();
+}
+
+void ScriptTrack::FACE_HERO() {
+	uint16 param = getParamUint16();
+	Player *p = g_twin->getPlayer();
+	Math::Angle angle = _actor->getAngleTo(p);
+	_actor->turnToAngle(angle);
+}
+
+void ScriptTrack::ANGLE_RND() {
+	int16 param1 = getParamInt16();
+	uint16 param2 = getParamUint16();
+}
+
 } // end of namespace Twin

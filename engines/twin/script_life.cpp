@@ -480,4 +480,9 @@ void ScriptLife::GIVE_BONUS() {
 	byte unknown = getParamByte();
 }
 
+void ScriptLife::SET_LIFE_POINT_OBJ() {
+	byte actor = getParamByte();
+	byte life = getParamByte();
+}
+
 } // end of namespace Twin

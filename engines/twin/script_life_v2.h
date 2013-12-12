@@ -90,6 +90,7 @@ namespace Twin {
 	OPCODE(0x39, SHADOW_OBJ);			\
 	OPCODE(0x3A, POS_POINT);			\
 										\
+	OPCODEI(0x3D, SET_LIFE_POINT_OBJ);	\
 	OPCODE(0x3F, HIT_OBJ);				\
 	OPCODE(0x40, PLAY_ACF);				\
 										\
