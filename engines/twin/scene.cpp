@@ -222,6 +222,15 @@ void Scene::loadLBA(Common::SeekableReadStream *stream) {
 		z->_info[2] = stream->readUint16LE();
 		z->_snap = stream->readUint16LE();
 	}
+
+	_numPoints = stream->readUint16LE();
+	_points = new Point[_numPoints];
+	for (int i = 0; i < _numPoints; ++i) {
+		Point *p = &_points[i];
+		p->_x = stream->readUint16LE();
+		p->_y = stream->readUint16LE();
+		p->_z = stream->readUint16LE();
+	}
 }
 
 void Scene::update(uint32 delta) {
