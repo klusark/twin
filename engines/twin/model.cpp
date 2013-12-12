@@ -226,11 +226,18 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 
 void Model::loadLBA(Common::SeekableReadStream *stream) {
 	stream->seek(0x1A);
-	uint32 numPoints = stream->readUint16LE();
-	for (uint32 i = 0; i < numPoints; ++i) {
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
+
+
+	_numVerticies = stream->readUint16LE();
+	_verticies = new Vertex[_numVerticies];
+	for (uint32 i = 0; i < _numVerticies; ++i) {
+		float x, y ,z;
+		Vertex *v = &_verticies[i];
+		x = stream->readSint16LE() / 16384.0f;
+		y = stream->readSint16LE() / 16384.0f;
+		z = stream->readSint16LE() / 16384.0f;
+		v->_pos.set(x, y, z);
+		v->_bone = 0;
 	}
 
 	uint32 numElement = stream->readUint16LE();
@@ -241,10 +248,10 @@ void Model::loadLBA(Common::SeekableReadStream *stream) {
 
 	uint32 numShades = stream->readUint16LE();
 	for (uint32 i = 0; i < numShades; ++i) {
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
+		uint16 a = stream->readUint16LE();
+		uint16 b = stream->readUint16LE();
+		uint16 c = stream->readUint16LE();
+		uint16 d = stream->readUint16LE();
 	}
 
 	_numPolygons = stream->readUint16LE();
@@ -274,26 +281,26 @@ void Model::loadLBA(Common::SeekableReadStream *stream) {
 	_numLines = stream->readUint16LE();
 	_lines = new Line[_numLines];
 	for (uint32 i = 0; i < _numLines; ++i) {
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
+		Line *p = &_lines[i];
+		int a = stream->readUint16LE();
+		p->_colour = stream->readUint16LE();
+		p->_v1 = stream->readUint16LE() / 6;
+		p->_v2 = stream->readUint16LE() / 6;
 	}
 
 	_numSpheres = stream->readUint16LE();
 	_spheres = new Sphere[_numSpheres];
 	for (uint32 i = 0; i < _numSpheres; ++i) {
+		Sphere *s = &_spheres[i];
 		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
-		stream->readUint16LE();
+		s->_colour = stream->readUint16LE();
+		s->_vertex = stream->readUint16LE() / 6;
+		s->_size = stream->readUint16LE() / 16384.0;
 	}
 
 
 	//temp
 	_numPolygons = 0;
-	_numLines = 0;
-	_numSpheres = 0;
 }
 
 void Model::recalculateHierarchy() {
