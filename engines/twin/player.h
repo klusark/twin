@@ -32,7 +32,12 @@ class SeekableReadStream;
 
 namespace Twin {
 
-
+enum Behavior {
+	Normal,
+	Athletic,
+	Aggresive,
+	Discrete,
+};
 
 class Player : public Actor {
 public:
@@ -40,6 +45,10 @@ public:
 
 	void handleKeyDown(Common::KeyCode key);
 	void handleKeyUp(Common::KeyCode key);
+
+	void update(uint32 delta) override;
+
+	Behavior _behavior;
 };
 
 } // end of namespace Twin

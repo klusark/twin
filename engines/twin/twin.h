@@ -50,6 +50,7 @@ enum Keys {
 	KeyLeft,
 	KeyRight,
 	KeyAction,
+	KeyAthletic,
 	NumKeys,
 };
 

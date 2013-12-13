@@ -81,11 +81,12 @@ public:
 	Actor(Common::SeekableReadStream *stream);
 	Actor();
 	void draw();
-	void update(uint32 delta);
+	virtual void update(uint32 delta);
 	void setAnimation(uint16 anim);
 	void setBody(byte body);
 	void setPos(uint16 x, uint16 y, uint16 z);
 	void gotoPoint(Point *p, bool *done);
+	void gotoPoint3D(Point *p, bool *done);
 	void kill() { _dead = true; _lifePoints = 0; }
 	void setInvisible(bool state) { _isInvisible = state; }
 	Zone *getCurrentZone() { return _currZone; }
@@ -126,12 +127,14 @@ public:
 
 	Point *_dest;
 	bool *_destDone;
+	bool _dest3D;
 
 	bool _isMoving;
 	bool _isInvisible;
 	bool _dead;
 	bool _canDetectZones;
 	Math::Angle _angle;
+	Math::Angle _angleY;
 	Math::Angle _dstAngle;
 	bool _turning;
 

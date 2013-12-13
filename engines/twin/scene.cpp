@@ -312,4 +312,12 @@ uint16 Point::getDistanceTo(Point *p) {
 	return sqrt(xdiff * xdiff + ydiff * ydiff);
 }
 
+uint16 Point::get3DDistanceTo(Point *p) {
+	float xdiff = (int)p->_x - (int)_x;
+	float ydiff = (int)p->_y - (int)_y;
+	float zdiff = (int)p->_z - (int)_z;
+
+	return sqrt(xdiff * xdiff + ydiff * ydiff + zdiff * zdiff);
+}
+
 } // end of namespace Twin

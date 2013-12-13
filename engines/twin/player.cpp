@@ -22,12 +22,22 @@
 
 #include "engines/twin/player.h"
 #include "engines/twin/resource.h"
+#include "engines/twin/twin.h"
 
 namespace Twin {
 
 Player::Player() {
 	_entityID = 0;
 	_controlMode = kManual;
+	_behavior = Normal;
+}
+
+void Player::update(uint32 delta) {
+	Actor::update(delta);
+
+	if (g_twin->getKey(KeyAthletic)) {
+		_behavior = Athletic;
+	}
 }
 
 void Player::handleKeyDown(Common::KeyCode key) {

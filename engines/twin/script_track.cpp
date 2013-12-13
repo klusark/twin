@@ -131,10 +131,12 @@ void ScriptTrack::SAMPLE() {
 }
 
 void ScriptTrack::GOTO_POINT_3D() {
+	assert(_actor->_sprite);
 	byte id = getParamByte();
 	Scene *s = g_twin->getCurrentScene();
 	Point *p = s->getPoint(id);
-	_actor->setPos(p->_x, p->_y, p->_z);
+	_isWaitingForAction = true;
+	_actor->gotoPoint3D(s->getPoint(id), &_isWaitingForAction);
 }
 
 void ScriptTrack::SPEED() {

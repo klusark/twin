@@ -134,7 +134,7 @@ void Actor::loadLBA(Common::SeekableReadStream *stream) {
 	if (_entityID != 0xffff) {
 		_entity = g_resource->getEntity(_entityID, 0, 0);
 	} else {
-		//_sprite = g_resource->getSprite(_spriteID);
+		_sprite = g_resource->getSprite(_spriteID);
 	}
 
 
@@ -195,6 +195,9 @@ void Actor::update(uint32 delta) {
 	if (_sprite && _speed) {
 		_pos._x += _angle.getCosine() * (_speed * (int)delta) / 250.0f;
 		_pos._z += _angle.getSine() * (_speed * (int)delta) / 250.0f;
+		if (_dest3D) {
+			_pos._y += _angleY.getSine() * (_speed * (int)delta) / 250.0f;
+		}
 		if (_speedStart.getDistanceTo(&_pos) > _speedDistance) {
 			int direction = 1;
 			if (_speed < 0) {
@@ -219,10 +222,28 @@ void Actor::update(uint32 delta) {
 	if (_dest) {
 		turnToAngle(_pos.getAngleTo(_dest));
 
-		if (_pos.getDistanceTo(_dest) < 500) {
+		if (_dest3D) {
+			float ydiff = (int)_dest->_y - (int)_pos._y;
+
+			double rads = atan2(ydiff, _pos.getDistanceTo(_dest));
+
+			if (ydiff < 0) {
+				rads += 2 * M_PI;
+			}
+			_angleY = Math::Angle::fromRadians(rads);
+		}
+
+		uint16 distance = 0;
+		if (_dest3D) {
+			distance = _pos.get3DDistanceTo(_dest);
+		} else {
+			distance = _pos.getDistanceTo(_dest);
+		}
+		if ((_dest3D && distance < 100) || (!_dest3D && distance < 500)) {
 			_dest = nullptr;
 			*_destDone = false;
 			_destDone = nullptr;
+			_dest3D = false;
 		}
 	}
 
@@ -251,7 +272,7 @@ void Actor::update(uint32 delta) {
 	}
 
 	Grid *grid = g_twin->getCurrentScene()->getGrid();
-	if (grid) {
+	if (grid && _entity) {
 		grid->applyBrickShape(this);
 	}
 }
@@ -296,6 +317,12 @@ void Actor::gotoPoint(Point *p, bool *done) {
 	_dest = p;
 	_destDone = done;
 	_isMoving = true;
+	_dest3D = false;
+}
+
+void Actor::gotoPoint3D(Point *p, bool *done) {
+	gotoPoint(p, done);
+	_dest3D = true;
 }
 
 Math::Angle Actor::getAngleTo(Actor *a) {
@@ -303,8 +330,12 @@ Math::Angle Actor::getAngleTo(Actor *a) {
 }
 
 void Actor::turnToAngle(Math::Angle angle) {
-	_turning = true;
-	_dstAngle = angle;
+	if (_sprite) {
+		_angle = angle;
+	} else {
+		_turning = true;
+		_dstAngle = angle;
+	}
 }
 
 bool Actor::collidesWith(Actor *a) {

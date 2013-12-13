@@ -244,32 +244,28 @@ Common::Error TwinEngine::run() {
 	return Common::kNoError;
 }
 
+Common::KeyCode KeyMap[] {
+	Common::KEYCODE_UP,
+	Common::KEYCODE_DOWN,
+	Common::KEYCODE_LEFT,
+	Common::KEYCODE_RIGHT,
+	Common::KEYCODE_SPACE,
+	Common::KEYCODE_F6,
+};
+
 void TwinEngine::processKeyUp(Common::KeyCode key) {
-	//TODO: Make this code more better
-	if (key == Common::KEYCODE_UP) {
-		_keys[KeyUp] = false;
-	} else if (key == Common::KEYCODE_DOWN) {
-		_keys[KeyDown] = false;
-	} else if (key == Common::KEYCODE_LEFT) {
-		_keys[KeyLeft] = false;
-	} else if (key == Common::KEYCODE_RIGHT) {
-		_keys[KeyRight] = false;
-	} else if (key == Common::KEYCODE_SPACE) {
-		_keys[KeyAction] = false;
+	for (int i = 0; i < NumKeys; ++i) {
+		if (KeyMap[i] == key) {
+			_keys[i] = false;
+		}
 	}
 }
 
 void TwinEngine::processKeyDown(Common::KeyCode key) {
-	if (key == Common::KEYCODE_UP) {
-		_keys[KeyUp] = true;
-	} else if (key == Common::KEYCODE_DOWN) {
-		_keys[KeyDown] = true;
-	} else if (key == Common::KEYCODE_LEFT) {
-		_keys[KeyLeft] = true;
-	} else if (key == Common::KEYCODE_RIGHT) {
-		_keys[KeyRight] = true;
-	} else if (key == Common::KEYCODE_SPACE) {
-		_keys[KeyAction] = true;
+	for (int i = 0; i < NumKeys; ++i) {
+		if (KeyMap[i] == key) {
+			_keys[i] = true;
+		}
 	}
 }
 

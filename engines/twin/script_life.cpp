@@ -222,8 +222,9 @@ bool ScriptLife::NUM_GOLD_PIECES(byte oper) {
 }
 
 bool ScriptLife::BEHAVIOUR(byte oper) {
-	byte numKeys = getParamByte();
-	return false;
+	byte behavior = getParamByte();
+	Player *p = g_twin->getPlayer();
+	return p->_behavior == behavior;
 }
 
 bool ScriptLife::CHAPTER(byte oper) {
