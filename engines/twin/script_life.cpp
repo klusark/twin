@@ -199,13 +199,23 @@ bool ScriptLife::VAR_GAME(byte oper) {
 }
 
 bool ScriptLife::LIFE_POINT(byte oper) {
-	uint16 value = getParamUint16();
+	uint16 value;
+	if (g_twin->getGameType() == GType_LBA2) {
+		value = getParamUint16();
+	} else {
+		value = getParamByte();
+	}
 	return testCond(value, _actor->getLifePoints(), oper);
 }
 
 bool ScriptLife::LIFE_POINT_OBJ(byte oper) {
 	byte actor = _currentState._param;
-	uint16 value = getParamUint16();
+	uint16 value;
+	if (g_twin->getGameType() == GType_LBA2) {
+		value = getParamUint16();
+	} else {
+		value = getParamByte();
+	}
 	Scene *s = g_twin->getCurrentScene();
 	Actor *a = s->getActor(actor);
 	return testCond(value, a->getLifePoints(), oper);

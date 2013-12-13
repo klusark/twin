@@ -264,7 +264,11 @@ void Scene::processActorZone(Actor *a) {
 			switch (z->_type) {
 			case kCube:
 				if (a->_isHero) {
-					g_twin->changeScene(z->_snap, z->_info[0], z->_info[1], z->_info[2]);
+					if (g_twin->getGameType() == GType_LBA2) {
+						g_twin->changeScene(z->_snap, z->_info[0], z->_info[1], z->_info[2]);
+					} else {
+						g_twin->changeScene(z->_info[0], z->_info[1], z->_info[2], z->_info[3]);
+					}
 				}
 				break;
 			case kObject:
