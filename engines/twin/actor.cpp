@@ -52,12 +52,8 @@ Actor::Actor(Common::SeekableReadStream *stream) :
 	} else if (g_twin->getGameType() == GType_LBA) {
 		loadLBA(stream);
 	}
-	if (_entity) {
-		_box = &_entity->_model->_box;
-	}
-	if (_sprite) {
-		_box = &_sprite->_info->_box;
-	}
+	setBoundingBox();
+
 }
 
 Actor::Actor() : _entity(nullptr), _dest(nullptr), _dead(false), _facingActor(nullptr), _turning(false), _isMoving(false),
@@ -65,11 +61,12 @@ Actor::Actor() : _entity(nullptr), _dest(nullptr), _dead(false), _facingActor(nu
 		_currZone(nullptr), _standingOn(nullptr), _carrier(false), _box(nullptr), _isFalling(false),
 		_heroYBeforeFall(0) {
 	_entity = g_resource->getEntity(0, 0, 0);
-	_box = &_entity->_model->_box;
 	_pos._x = 0;
 	_pos._y = 0;
 	_pos._z = 0;
 	_canDetectZones = true;
+
+	setBoundingBox();
 }
 
 
@@ -352,11 +349,7 @@ void Actor::setBody(byte body) {
 		delete _entity;
 		_body = body;
 		_entity = g_resource->getEntity(_entityID, _body, _anim);
-		if (_entity->_hasBox) {
-			_box = &_entity->_box;
-		} else {
-			_box = nullptr;
-		}
+		setBoundingBox();
 	}
 }
 
@@ -496,6 +489,19 @@ void Actor::updateControl() {
 	default:
 		warning("Control mode not handled: %d", _controlMode);
 		break;
+	}
+}
+
+void Actor::setBoundingBox() {
+	if (_entity) {
+		if (g_twin->getGameType() == GType_LBA2 && _entity->_hasBox) {
+			_box = &_entity->_box;
+		} else {
+			_box = &_entity->_model->_box;
+		}
+	}
+	if (_sprite) {
+		_box = &_sprite->_info->_box;
 	}
 }
 

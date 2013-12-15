@@ -115,6 +115,8 @@ public:
 	void updateControl();
 	virtual void updateControlManual() { };
 	void stopFalling();
+	void setBoundingBox();
+
 	int _heroYBeforeFall;
 
 	bool _isHero;
