@@ -48,10 +48,20 @@ void Animation::loadLBA2(Common::SeekableReadStream *stream) {
 	_startFrame = stream->readUint16LE();
 	uint16 unknown1 = stream->readUint16LE();
 
+	float angleMult = 0;
+	if (g_twin->getGameType() == GType_LBA2) {
+		angleMult = 360.0/4096;
+	} else {
+		angleMult = 1.0/180;
+	}
+
 	_keyframes = new Keyframe[_numKeys];
 	for (int i = 0; i < _numKeys; ++i) {
 		Keyframe *k = &_keyframes[i];
 		k->_length = stream->readUint16LE();
+		if (g_twin->getGameType() == GType_LBA) {
+			k->_length *= 15;
+		}
 		k->_x = stream->readSint16LE();
 		k->_y = stream->readSint16LE();
 		k->_z = stream->readSint16LE();
@@ -63,9 +73,9 @@ void Animation::loadLBA2(Common::SeekableReadStream *stream) {
 			float y = stream->readSint16LE();
 			float z = stream->readSint16LE();
 			if (b->_type == 0) {
-				b->_pitch = (x * 360) / 4096;
-				b->_yaw = (z * 360) / 4096;
-				b->_roll = (y * 360) / 4096;
+				b->_pitch = x * angleMult;
+				b->_roll  = y * angleMult;
+				b->_yaw   = z * angleMult;
 			} else {
 				b->_pos.set(x / 16384.0f, y / 16384.0f, z / 16384.0f);
 			}
@@ -109,7 +119,7 @@ void Animation::update(uint32 time) {
 		Boneframe *b = &k->_bones[i];
 		Boneframe *bn = &next->_bones[i];
 		Hierarchy *h = &_model->_heirs[i];
-		if (b->_type == 0 && false) {
+		if (b->_type == 0) {
 			h->_isTransltion = false;
 			h->_pitch = b->_pitch + (((((int)(bn->_pitch - b->_pitch).getDegrees() % 360) + 540) % 360) - 180) * interp;
 			h->_yaw = b->_yaw + (((((int)(bn->_yaw - b->_yaw).getDegrees() % 360) + 540) % 360) - 180) * interp;
