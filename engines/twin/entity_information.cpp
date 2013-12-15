@@ -74,12 +74,7 @@ void EntityInformation::loadEntity(Common::SeekableReadStream *stream, EntityEnt
 			if (b._hasBox) {
 				// this is always 0x0E
 				stream->readByte();
-				b._x1 = stream->readSint16LE();
-				b._y1 = stream->readSint16LE();
-				b._z1 = stream->readSint16LE();
-				b._x2 = stream->readSint16LE();
-				b._y2 = stream->readSint16LE();
-				b._z2 = stream->readSint16LE();
+				b._box.load(stream);
 			}
 			e->_bodies.push_back(b);
 		} else if (opcode == 3) {

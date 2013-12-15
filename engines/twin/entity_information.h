@@ -25,6 +25,8 @@
 
 #include "common/array.h"
 
+#include "engines/twin/resource.h"
+
 namespace Common {
 class SeekableReadStream;
 }
@@ -38,13 +40,8 @@ public:
 	uint16 _bodyIndex;
 	byte _index;
 	bool _hasBox;
-	
-	int16 _x1;
-	int16 _x2;
-	int16 _y1;
-	int16 _y2;
-	int16 _z1;
-	int16 _z2;
+
+	BoundingBox _box;
 };
 
 class EntityAnim {

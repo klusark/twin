@@ -29,6 +29,8 @@
 
 #include "common/array.h"
 
+#include "engines/twin/resource.h"
+
 namespace Common {
 class SeekableReadStream;
 }
@@ -141,6 +143,8 @@ public:
 	Sphere *_spheres;
 	Hierarchy *_heir;
 	Hierarchy *_heirs;
+
+	BoundingBox _box;
 };
 
 } // end of namespace Twin

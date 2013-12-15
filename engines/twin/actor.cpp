@@ -36,6 +36,7 @@
 #include "engines/twin/scene.h"
 #include "engines/twin/grid.h"
 #include "engines/twin/sprite.h"
+#include "engines/twin/model.h"
 #include "common/textconsole.h"
 
 namespace Twin {
@@ -44,18 +45,25 @@ Actor::Actor(Common::SeekableReadStream *stream) :
 		_entity(nullptr), _dest(nullptr), _dead(false), _isHero(false), _angle(0),
 		_facingActor(nullptr), _turning(false), _isMoving(false), _isInvisible(false),
 		_numKeys(0), _numGold(0), _lifePoints(0), _sprite(nullptr), _heroMoved(false), _speed(0),
-		_currZone(nullptr), _canDetectZones(false) {
+		_currZone(nullptr), _canDetectZones(false), _standingOn(nullptr), _carrier(false), _box(nullptr) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
 	} else if (g_twin->getGameType() == GType_LBA) {
 		loadLBA(stream);
 	}
+	if (_entity) {
+		_box = &_entity->_model->_box;
+	}
+	if (_sprite) {
+		_box = &_sprite->_info->_box;
+	}
 }
 
 Actor::Actor() : _entity(nullptr), _dest(nullptr), _dead(false), _facingActor(nullptr), _turning(false), _isMoving(false),
 		_isInvisible(false), _numKeys(0), _numGold(0), _lifePoints(100), _sprite(nullptr), _heroMoved(false), _speed(0),
-		_currZone(nullptr) {
+		_currZone(nullptr), _standingOn(nullptr), _carrier(false), _box(nullptr) {
 	_entity = g_resource->getEntity(0, 0, 0);
+	_box = &_entity->_model->_box;
 	_pos._x = 0;
 	_pos._y = 0;
 	_pos._z = 0;
@@ -71,6 +79,7 @@ void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 	if (flags & 0x4) {
 		_canDetectZones = true;
 	}
+
 
 	_entityID = stream->readUint16LE();
 	_body = stream->readByte();
@@ -121,6 +130,9 @@ void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 void Actor::loadLBA(Common::SeekableReadStream *stream) {
 
 	uint16 flags = stream->readUint16LE();
+	if (flags & 0x4000) {
+		_carrier = true;
+	}
 	_entityID = stream->readUint16LE();
 
 	_body = stream->readByte();
@@ -271,7 +283,23 @@ void Actor::update(uint32 delta) {
 		_angle = next;
 	}
 
-	Grid *grid = g_twin->getCurrentScene()->getGrid();
+	if (_standingOn != nullptr) {
+		_pos = _standingOn->_pos;
+
+		if (!isStandingOnActor(_standingOn)) {
+			_standingOn = nullptr;
+		}
+	}
+
+	Scene *s = g_twin->getCurrentScene();
+	for (int i = 0; i < s->_numActors; ++i) {
+		Actor *a = s->getActor(i);
+		if (a->_carrier && a != this && isStandingOnActor(a)) {
+			_standingOn = a;
+		}
+	}
+
+	Grid *grid = s->getGrid();
 	if (grid && _entity) {
 		grid->applyBrickShape(this);
 	}
@@ -310,6 +338,11 @@ void Actor::setBody(byte body) {
 		delete _entity;
 		_body = body;
 		_entity = g_resource->getEntity(_entityID, _body, _anim);
+		if (_entity->_hasBox) {
+			_box = &_entity->_box;
+		} else {
+			_box = nullptr;
+		}
 	}
 }
 
@@ -339,22 +372,22 @@ void Actor::turnToAngle(Math::Angle angle) {
 }
 
 bool Actor::collidesWith(Actor *a) {
-	if (!_entity || !a->_entity) {
+	if (!_box || !a->_box) {
 		return false;
 	}
-	int16 x1 = _entity->_x1 + _pos._x;
-	int16 x2 = _entity->_x2 + _pos._x;
-	int16 y1 = _entity->_y1 + _pos._y;
-	int16 y2 = _entity->_y2 + _pos._y;
-	int16 z1 = _entity->_z1 + _pos._z;
-	int16 z2 = _entity->_z2 + _pos._z;
+	int16 x1 = _box->_x1 + _pos._x;
+	int16 x2 = _box->_x2 + _pos._x;
+	int16 y1 = _box->_y1 + _pos._y;
+	int16 y2 = _box->_y2 + _pos._y;
+	int16 z1 = _box->_z1 + _pos._z;
+	int16 z2 = _box->_z2 + _pos._z;
 
-	int16 ox1 = a->_entity->_x1 + a->_pos._x;
-	int16 ox2 = a->_entity->_x2 + a->_pos._x;
-	int16 oy1 = a->_entity->_y1 + a->_pos._y;
-	int16 oy2 = a->_entity->_y2 + a->_pos._y;
-	int16 oz1 = a->_entity->_z1 + a->_pos._z;
-	int16 oz2 = a->_entity->_z2 + a->_pos._z;
+	int16 ox1 = a->_box->_x1 + a->_pos._x;
+	int16 ox2 = a->_box->_x2 + a->_pos._x;
+	int16 oy1 = a->_box->_y1 + a->_pos._y;
+	int16 oy2 = a->_box->_y2 + a->_pos._y;
+	int16 oz1 = a->_box->_z1 + a->_pos._z;
+	int16 oz2 = a->_box->_z2 + a->_pos._z;
 
 	if (x1 > ox2 || x2 < ox1 ||
 		y1 > oy2 || y2 < oy1 ||
@@ -362,6 +395,63 @@ bool Actor::collidesWith(Actor *a) {
 		return false;
 	}
 	return true;
+}
+
+bool Actor::isStandingOnActor(Actor *other) {
+	int32 x1Left, y1Left, z1Left, x1Right, y1Right, z1Right;
+	int32 x2Left, y2Left, z2Left, x2Right, y2Right, z2Right;
+	Actor *actor1;
+	Actor *actor2;
+
+	actor1 = this;
+	actor2 = other;
+
+	if (actor1->_box == nullptr || actor2->_box == nullptr) {
+		return false;
+	}
+
+	// Current actor (actor 1)
+	x1Left = actor1->_pos._x + actor1->_box->_x1;
+	x1Right = actor1->_pos._x + actor1->_box->_x2;
+
+	y1Left = actor1->_pos._y + actor1->_box->_y1;
+	y1Right = actor1->_pos._y + actor1->_box->_y2;
+
+	z1Left = actor1->_pos._z + actor1->_box->_z1;
+	z1Right = actor1->_pos._z + actor1->_box->_z2;
+
+	// Actor 2
+	x2Left = actor2->_pos._x + actor2->_box->_x1;
+	x2Right = actor2->_pos._x + actor2->_box->_x2;
+
+	y2Left = actor2->_pos._y + actor2->_box->_y1;
+	y2Right = actor2->_pos._y + actor2->_box->_y2;
+
+	z2Left = actor2->_pos._z + actor2->_box->_z1;
+	z2Right = actor2->_pos._z + actor2->_box->_z2;
+
+	if (x1Left >= x2Right)
+		return 0; // not standing
+
+	if (x1Right <= x2Left)
+		return 0;
+
+	if (y1Left > (y2Right + 1))
+		return 0;
+
+	if (y1Left <= (y2Right - 0x100))
+		return 0;
+
+	if (y1Right <= y2Left)
+		return 0;
+
+	if (z1Left >= z2Right)
+		return 0;
+
+	if (z1Right <= z2Left)
+		return 0;
+
+	return 1; // standing
 }
 
 void Actor::updateControl() {

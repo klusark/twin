@@ -33,7 +33,8 @@
 
 namespace Twin {
 
-Model::Model(Common::SeekableReadStream *stream) {
+Model::Model(Common::SeekableReadStream *stream) :
+		_numTextures(0), _normals(nullptr), _textures(nullptr) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
 	} else {
@@ -211,6 +212,31 @@ void Model::loadLBA2(Common::SeekableReadStream *stream) {
 }
 
 void Model::loadLBA(Common::SeekableReadStream *stream) {
+
+	stream->readUint16LE();
+	int var1 = stream->readSint16LE();
+	int var2 = stream->readSint16LE();
+
+	int bottomleft = stream->readSint16LE();
+	int topright = stream->readSint16LE();
+
+	int var3 = stream->readSint16LE();
+	int var4 = stream->readSint16LE();
+
+	int result1 = var2 - var1;
+	int result2 = var4 - var3;
+
+	int result = result2 + result1;
+	result = abs(result);
+	result >>= 2;
+
+	_box._x1 = -result;
+	_box._x2 = result;
+	_box._y1 = bottomleft;
+	_box._y2 = topright;
+	_box._z1 = -result;
+	_box._z2 = result;
+
 	stream->seek(0x1A);
 
 

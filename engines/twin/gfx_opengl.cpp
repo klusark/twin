@@ -378,9 +378,9 @@ void GfxOpenGL::drawSprite(Actor *a) {
 	float yb = a->_pos._y / va;
 	float zb = a->_pos._z / va;
 
-	float x2 = sprite->_info->_x2 / va;
-	float y2 = sprite->_info->_y2 / va;
-	float zb2 = sprite->_info->_y2 / va;
+	float x2 = sprite->_info->_box._x2 / va;
+	float y2 = sprite->_info->_box._y2 / va;
+	float zb2 = sprite->_info->_box._y2 / va;
 	//sprite->_info->
 
 	float z1 = (xb * (TILE_DEPTH * 25)) + (yb * TILE_DEPTH * 64 * 25) + (zb * TILE_DEPTH * 4);

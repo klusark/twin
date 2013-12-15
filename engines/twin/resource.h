@@ -42,6 +42,17 @@ class Scene;
 class Sprite;
 class SpriteInfo;
 
+class BoundingBox {
+public:
+	void load(Common::SeekableReadStream *stream);
+	int16 _x1;
+	int16 _x2;
+	int16 _y1;
+	int16 _y2;
+	int16 _z1;
+	int16 _z2;
+};
+
 class Entity {
 public:
 	Entity(Model *m, Animation *a) : _model(m), _anim(a) { }
@@ -51,12 +62,8 @@ public:
 	Animation *_anim;
 	bool _hasBox;
 
-	int16 _x1;
-	int16 _x2;
-	int16 _y1;
-	int16 _y2;
-	int16 _z1;
-	int16 _z2;
+	BoundingBox _box;
+
 };
 
 class SceneAssociation {

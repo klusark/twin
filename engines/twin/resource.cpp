@@ -36,6 +36,15 @@
 
 namespace Twin {
 
+void BoundingBox::load(Common::SeekableReadStream *stream) {
+	_x1 = stream->readSint16LE();
+	_x2 = stream->readSint16LE();
+	_y1 = stream->readSint16LE();
+	_y2 = stream->readSint16LE();
+	_z1 = stream->readSint16LE();
+	_z2 = stream->readSint16LE();
+}
+
 Entity::~Entity() {
 	delete _anim;
 	delete _model;
@@ -218,12 +227,7 @@ Entity *Resource::getEntity(uint16 entity, uint16 body, uint16 anim) {
 	Animation *a = getAnimation(entity, anim, m);
 	Entity *ent = new Entity(m, a);
 	ent->_hasBox = b->_hasBox;
-	ent->_x1 = b->_x1;
-	ent->_x2 = b->_x2;
-	ent->_y1 = b->_y1;
-	ent->_y2 = b->_y2;
-	ent->_z1 = b->_z1;
-	ent->_z2 = b->_z2;
+	ent->_box = b->_box;
 	return ent;
 }
 
@@ -235,12 +239,8 @@ void Resource::loadSpriteInfo(Common::SeekableReadStream *stream) {
 		SpriteInfo *info = &_spriteInfo[i];
 		info->_x = stream->readSint16LE();
 		info->_y = stream->readSint16LE();
-		info->_x1 = stream->readSint16LE();
-		info->_x2 = stream->readSint16LE();
-		info->_y1 = stream->readSint16LE();
-		info->_y2 = stream->readSint16LE();
-		info->_z1 = stream->readSint16LE();
-		info->_z2 = stream->readSint16LE();
+		info->_box.load(stream);
+
 	}
 }
 

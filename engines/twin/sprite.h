@@ -23,6 +23,7 @@
 #ifndef TWIN_SPRITE_H
 #define TWIN_SPRITE_H
 
+#include "engines/twin/resource.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -34,12 +35,8 @@ class SpriteInfo {
 public:
 	int16 _x;
 	int16 _y;
-	int16 _x1;
-	int16 _x2;
-	int16 _y1;
-	int16 _y2;
-	int16 _z1;
-	int16 _z2;
+
+	BoundingBox _box;
 };
 
 class Sprite {

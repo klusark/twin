@@ -26,6 +26,7 @@
 #include "math/angle.h"
 
 #include "engines/twin/scene.h"
+#include "engines/twin/resource.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -102,6 +103,7 @@ public:
 	uint16 getLifePoints() { return _lifePoints; }
 	void hitBy(Actor *a, byte damage) { _lifePoints -= damage; _lastHitBy = a; }
 	bool isZonable() { return _canDetectZones; }
+	bool isStandingOnActor(Actor *other);
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 	void loadLBA(Common::SeekableReadStream *stream);
@@ -149,6 +151,12 @@ public:
 
 	Actor *_facingActor;
 	Actor *_lastHitBy;
+	Actor *_standingOn;
+
+	BoundingBox *_box;
+
+	// flags
+	bool _carrier;
 };
 
 } // end of namespace Twin
