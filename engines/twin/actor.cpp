@@ -62,7 +62,8 @@ Actor::Actor(Common::SeekableReadStream *stream) :
 
 Actor::Actor() : _entity(nullptr), _dest(nullptr), _dead(false), _facingActor(nullptr), _turning(false), _isMoving(false),
 		_isInvisible(false), _numKeys(0), _numGold(0), _lifePoints(100), _sprite(nullptr), _heroMoved(false), _speed(0),
-		_currZone(nullptr), _standingOn(nullptr), _carrier(false), _box(nullptr), _isFalling(false) {
+		_currZone(nullptr), _standingOn(nullptr), _carrier(false), _box(nullptr), _isFalling(false),
+		_heroYBeforeFall(0) {
 	_entity = g_resource->getEntity(0, 0, 0);
 	_box = &_entity->_model->_box;
 	_pos._x = 0;
@@ -646,7 +647,7 @@ void Actor::processCollision() {
 		}
 
 		if (_standingOn && _isFalling) {
-			//stopFalling();
+			stopFalling();
 		}
 
 		//causeActorDamage = 0;
@@ -695,7 +696,7 @@ void Actor::processCollision() {
 		if (brickShape) {
 			if (brickShape == kSolid) {
 				if (_isFalling) {
-					//stopFalling();
+					stopFalling();
 					_processPos._y = (collide._y << 8) + 0x100;
 				} else {
 					/*if (_isHero && heroBehaviour == kAthletic && actor->anim == brickShape && cfgfile.WallCollision == 1) { // avoid wall hit damage
@@ -726,13 +727,13 @@ void Actor::processCollision() {
 				}
 			} else {
 				if (_isFalling) {
-					//stopFalling();
+					stopFalling();
 				}
 
 				applyBrickShape(brickShape, collide);
 			}
 
-			_isFalling = false;
+			//_isFalling = false;
 		} else {
 			if (/*actor->staticFlags.bCanFall && */_standingOn == nullptr) {
 				Point collide;
@@ -740,7 +741,7 @@ void Actor::processCollision() {
 
 				if (brickShape) {
 					if (_isFalling) {
-						//stopFalling();
+						stopFalling();
 					}
 
 					applyBrickShape(brickShape, collide);
@@ -748,11 +749,11 @@ void Actor::processCollision() {
 					//if (!actor->dynamicFlags.bIsRotationByAnim) {
 						_isFalling = true;
 
-						/*if (!actorIdx && heroYBeforeFall == 0) {
-							heroYBeforeFall = processActorY;
+						if (_isHero && _heroYBeforeFall == 0) {
+							_heroYBeforeFall = _processPos._y;
 						}
 
-						initAnim(kFall, 0, 255, actorIdx);*/
+						//initAnim(kFall, 0, 255, actorIdx);
 						setAnimation(kFall);
 
 					//}
@@ -771,5 +772,36 @@ void Actor::processCollision() {
 	}*/
 }
 
+void Actor::stopFalling() {
+	_isFalling = false;
+	int32 fall;
+
+	if (_isHero) {
+		fall = _heroYBeforeFall - _processPos._y;
+
+		if (fall >= 0x1000) {
+			//addExtraSpecial(processActorPtr->X, processActorPtr->Y + 1000, processActorPtr->Z, kHitStars);
+			//processActorPtr->life--;
+			//initAnim(kLandingHit, 2, 0, currentlyProcessedActorIdx);
+			setAnimation(kLandingHit);
+		} else if (fall >= 0x800) {
+			//addExtraSpecial(processActorPtr->X, processActorPtr->Y + 1000, processActorPtr->Z, kHitStars);
+			//processActorPtr->life--;
+			//initAnim(kLandingHit, 2, 0, currentlyProcessedActorIdx);
+			setAnimation(kLandingHit);
+		} else if (fall > 10) {
+			//initAnim(kLanding, 2, 0, currentlyProcessedActorIdx);
+			setAnimation(kLanding);
+		} else {
+			//initAnim(kStanding, 0, 0, currentlyProcessedActorIdx);
+			setAnimation(kStanding);
+		}
+
+		_heroYBeforeFall = 0;
+	} else {
+		setAnimation(kLanding);
+		//initAnim(kLanding, 2, processActorPtr->animExtra, currentlyProcessedActorIdx);
+	}
+}
 
 } // end of namespace Twin
