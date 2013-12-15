@@ -66,6 +66,8 @@ public:
 	Math::Angle getAngleTo(Point *p);
 	uint16 getDistanceTo(Point *p);
 	uint16 get3DDistanceTo(Point *p);
+	void operator +=(const Point &);
+	Point operator -(const Point &) const;
 	int32 _x;
 	int32 _y;
 	int32 _z;

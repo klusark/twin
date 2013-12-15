@@ -32,6 +32,7 @@ class SeekableReadStream;
 namespace Twin {
 
 class Actor;
+class Point;
 
 struct Square {
 	byte _layout;
@@ -46,7 +47,8 @@ public:
 	Square *getGridAt(byte x, byte y, byte z);
 	byte getLibrary() { return _layoutLib; }
 	BlockLibrary *getBlockLibrary() { return _blockLibrary; }
-	void applyBrickShape(Actor *a);
+	ShapeType getBrickShape(const Point &p, Point *out = nullptr);
+	ShapeType getBrickShape(int x, int y, int z, Point *out = nullptr);
 private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 

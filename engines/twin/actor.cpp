@@ -181,18 +181,16 @@ void Actor::update(uint32 delta) {
 	}
 
 	processMovement();
+
+	_previousPos = _pos;
+
+	_trackScript->run(delta);
+
 	if (_entity) {
 		_entity->_anim->update(delta);
 	}
 
-	//return;
-
-	_lifeScript->run(delta);
-	_trackScript->run(delta);
-
-
-
-	Point before = _pos;
+	_processPos = _pos;
 
 	if (_entity && delta != 0) {
 		Keyframe *k = _entity->_anim->getKeyframe();
@@ -200,12 +198,30 @@ void Actor::update(uint32 delta) {
 		speed += _speed;
 		float speed2 = (k->_x * (int)delta) / 250.0f;
 
-		_pos._x += _angle.getCosine() * speed;
-		_pos._z += _angle.getSine() * speed;
+		_processPos._x += _angle.getCosine() * speed;
+		_processPos._z += _angle.getSine() * speed;
 
-		_pos._x += _angle.getSine() * speed2;
-		_pos._z += _angle.getCosine() * speed2;
+		_processPos._x += _angle.getSine() * speed2;
+		_processPos._z += _angle.getCosine() * speed2;
 	}
+
+	processCollision();
+
+	//return;
+
+	_lifeScript->run(delta);
+
+
+	_pos = _processPos;
+
+	if ((int16)_pos._z < 0) {
+		warning("ASDF");
+		_pos._z = 0;
+	}
+
+	/*Point before = _pos;
+
+
 
 	if (_sprite && _speed) {
 		_pos._x += _angle.getCosine() * (_speed * (int)delta) / 250.0f;
@@ -284,17 +300,11 @@ void Actor::update(uint32 delta) {
 		next.normalize(0);
 
 		_angle = next;
-	}
+	}*/
 
-	if (_standingOn != nullptr) {
-		_pos = _standingOn->_pos;
 
-		if (!isStandingOnActor(_standingOn)) {
-			_standingOn = nullptr;
-		}
-	}
 
-	Scene *s = g_twin->getCurrentScene();
+	/*Scene *s = g_twin->getCurrentScene();
 	for (int i = 0; i < s->_numActors; ++i) {
 		Actor *a = s->getActor(i);
 		if (a->_carrier && a != this && isStandingOnActor(a)) {
@@ -305,7 +315,7 @@ void Actor::update(uint32 delta) {
 	Grid *grid = s->getGrid();
 	if (grid && _entity) {
 		grid->applyBrickShape(this);
-	}
+	}*/
 }
 
 void Actor::resetActions() {
@@ -350,6 +360,7 @@ void Actor::setBody(byte body) {
 }
 
 void Actor::gotoPoint(Point *p, bool *done) {
+	return;
 	_dest = p;
 	_destDone = done;
 	_isMoving = true;
@@ -485,6 +496,279 @@ void Actor::updateControl() {
 		warning("Control mode not handled: %d", _controlMode);
 		break;
 	}
+}
+
+int32 getAverageValue(float var0, float var1, float var2, float var3) {
+	if (var3 <= 0) {
+		return var0;
+	}
+
+	if (var3 >= var2) {
+		return var1;
+	}
+
+	return ((((var1 - var0) * var3) / var2) + var0);
+}
+
+void Actor::applyBrickShape(ShapeType shape, const Point &brick) {
+	if (!shape) {
+		return;
+	}
+
+	int brkX = (brick._x << 9) - 0x100;
+	int brkY = brick._y << 8;
+	int brkZ = (brick._z << 9) - 0x100;
+
+
+
+	// double-side stairs
+	if (shape >= kDoubleSideStairsTop1 && shape <= kDoubleSideStairsRight2) {
+		switch (shape) {
+		case kDoubleSideStairsTop1:
+			if (_processPos._z - brick._z <= _processPos._x - brick._x) {
+				shape = kStairsTopLeft;
+			} else {
+				shape = kStairsTopRight;
+			}
+			break;
+		case kDoubleSideStairsBottom1:
+			if (_processPos._z - brick._z <= _processPos._x - brick._x) {
+				shape = kStairsBottomLeft;
+			} else {
+				shape = kStairsBottomRight;
+			}
+			break;
+		case kDoubleSideStairsLeft1:
+			if (512 - _processPos._x - brick._x <= _processPos._z - brick._z) {
+				shape = kStairsTopLeft;
+			} else {
+				shape = kStairsBottomLeft;
+			}
+			break;
+		case kDoubleSideStairsRight1:
+			if (512 - _processPos._x - brick._x <= _processPos._z - brick._z) {
+				shape = kStairsTopRight;
+			} else {
+				shape = kStairsBottomRight;
+			}
+			break;
+		case kDoubleSideStairsTop2:
+			if (_processPos._x - brick._x >= _processPos._z - brick._z) {
+				shape = kStairsTopRight;
+			} else {
+				shape = kStairsTopLeft;
+			}
+			break;
+		case kDoubleSideStairsBottom2:
+			if (_processPos._z - brick._z <= _processPos._x - brick._x) {
+				shape = kStairsBottomRight;
+			} else {
+				shape = kStairsBottomLeft;
+			}
+			break;
+		case kDoubleSideStairsLeft2:
+			if (512 - _processPos._x - brick._x <= _processPos._z - brick._z) {
+				shape = kStairsBottomLeft;
+			} else {
+				shape = kStairsTopLeft;
+			}
+			break;
+		case kDoubleSideStairsRight2:
+			if (512 - _processPos._x - brick._x <= _processPos._z - brick._z) {
+				shape = kStairsBottomRight;
+			} else {
+				shape = kStairsTopRight;
+			}
+			break;
+		}
+	}
+
+	switch (shape) {
+	case kStairsTopLeft:
+		_processPos._y = brkY + getAverageValue(0, 0x100, 0x200, _processPos._x - brkX);
+		break;
+	case kStairsTopRight:
+		_processPos._y = brkY + getAverageValue(0, 0x100, 0x200, _processPos._z - brkZ);
+		break;
+	case kStairsBottomLeft:
+		_processPos._y = brkY + getAverageValue(0x100, 0, 0x200, _processPos._z - brkZ);
+		break;
+	case kStairsBottomRight:
+		_processPos._y = brkY + getAverageValue(0x100, 0, 0x200, _processPos._x - brkX);
+		break;
+	default:
+		break;
+	}
+}
+
+void Actor::processCollision() {
+	Scene *s = g_twin->getCurrentScene();
+	Grid *grid = s->getGrid();
+
+
+
+	if (_standingOn != nullptr) {
+		_pos += (_standingOn->_pos - _standingOn->_previousPos);
+
+		if (!isStandingOnActor(_standingOn)) {
+			_standingOn = nullptr;
+		}
+	}
+
+	// actor falling Y speed
+	if (_isFalling) {
+		/*_processPos._x = previousActorX;
+		processActorY = previousActorY + loopActorStep; // add step to fall
+		_processPos._z = previousActorZ;*/
+		_processPos._y -= 10;
+	}
+
+
+
+	// actor collisions with bricks
+	if (_isHero/*actor->staticFlags.bComputeCollisionWithBricks*/) {
+		ShapeType brickShape;
+		//_collisionPos._y = 0;
+
+		Point collide;
+		brickShape = grid->getBrickShape(_previousPos, &collide);
+
+		if (brickShape) {
+			if (brickShape != kSolid) {
+				applyBrickShape(brickShape, collide);
+			} /*else { // this shouldn't happen (collision should avoid it)
+				actor->Y = processActorY = (processActorY / 256) * 256 + 256; // go upper
+			}*/
+		}
+
+		if (true /*actor->staticFlags.bComputeCollisionWithObj*/) {
+			//checkCollisionWithActors(actorIdx);
+		}
+
+		if (_standingOn && _isFalling) {
+			//stopFalling();
+		}
+
+		//causeActorDamage = 0;
+
+		//_processCollisionPos = _processPos;
+
+		/*
+		if (_isHero && !actor->staticFlags.bComputeLowCollision) {
+			// check hero collisions with bricks
+			checkHeroCollisionWithBricks(actor->boudingBox.X.bottomLeft, actor->boudingBox.Y.bottomLeft, actor->boudingBox.Z.bottomLeft, 1);
+			checkHeroCollisionWithBricks(actor->boudingBox.X.topRight,   actor->boudingBox.Y.bottomLeft, actor->boudingBox.Z.bottomLeft, 2);
+			checkHeroCollisionWithBricks(actor->boudingBox.X.topRight,   actor->boudingBox.Y.bottomLeft, actor->boudingBox.Z.topRight,   4);
+			checkHeroCollisionWithBricks(actor->boudingBox.X.bottomLeft, actor->boudingBox.Y.bottomLeft, actor->boudingBox.Z.topRight,   8);
+		} else {
+			// check other actors collisions with bricks
+			checkActorCollisionWithBricks(actor->boudingBox.X.bottomLeft, actor->boudingBox.Y.bottomLeft, actor->boudingBox.Z.bottomLeft, 1);
+			checkActorCollisionWithBricks(actor->boudingBox.X.topRight,   actor->boudingBox.Y.bottomLeft, actor->boudingBox.Z.bottomLeft, 2);
+			checkActorCollisionWithBricks(actor->boudingBox.X.topRight,   actor->boudingBox.Y.bottomLeft, actor->boudingBox.Z.topRight,   4);
+			checkActorCollisionWithBricks(actor->boudingBox.X.bottomLeft, actor->boudingBox.Y.bottomLeft, actor->boudingBox.Z.topRight,   8);
+		}*/
+
+		// process wall hit while running
+		/*if (causeActorDamage && !actor->dynamicFlags.bIsFalling && !currentlyProcessedActorIdx && heroBehaviour == kAthletic && actor->anim == kForward) {
+			rotateActor(actor->boudingBox.X.bottomLeft, actor->boudingBox.Z.bottomLeft, actor->angle + 0x580);
+
+			destX += _processPos._x;
+			destZ += _processPos._z;
+
+			if (destX >= 0 && destZ >= 0 && destX <= 0x7E00 && destZ <= 0x7E00) {
+				if (getBrickShape(destX, processActorY + 0x100, destZ) && cfgfile.WallCollision == 1) { // avoid wall hit damage
+					addExtraSpecial(actor->X, actor->Y + 1000, actor->Z, kHitStars);
+					initAnim(kBigHit, 2, 0, currentlyProcessedActorIdx);
+
+					if (currentlyProcessedActorIdx == 0) {
+						heroMoved = 1;
+					}
+
+					actor->life--;
+				}
+			}
+		}*/
+		brickShape = grid->getBrickShape(_processPos, &collide);
+		//brickShape = getBrickShape(_processPos._x, processActorY, _processPos._z);
+		_brickShape = brickShape;
+
+		if (brickShape) {
+			if (brickShape == kSolid) {
+				if (_isFalling) {
+					//stopFalling();
+					_processPos._y = (collide._y << 8) + 0x100;
+				} else {
+					/*if (_isHero && heroBehaviour == kAthletic && actor->anim == brickShape && cfgfile.WallCollision == 1) { // avoid wall hit damage
+						addExtraSpecial(actor->X, actor->Y + 1000, actor->Z, kHitStars);
+						initAnim(kBigHit, 2, 0, currentlyProcessedActorIdx);
+
+						if (!actorIdx) {
+							heroMoved = 1;
+						}
+
+						actor->life--;
+					}*/
+
+					// no Z coordinate issue
+					if (!grid->getBrickShape(_processPos._x, _processPos._y, _previousPos._z)) {
+						_processPos._z = _previousPos._z;
+					}
+
+					// no X coordinate issue
+					if (!grid->getBrickShape(_previousPos._x, _processPos._y, _processPos._z)) {
+						_processPos._x = _previousPos._x;
+					}
+
+					// X and Z with issue, no move
+					if (grid->getBrickShape(_processPos._x, _processPos._y, _previousPos._z) && grid->getBrickShape(_previousPos._x, _processPos._y, _processPos._z)) {
+						_processPos = _previousPos;
+					}
+				}
+			} else {
+				if (_isFalling) {
+					//stopFalling();
+				}
+
+				applyBrickShape(brickShape, collide);
+			}
+
+			_isFalling = false;
+		} else {
+			if (/*actor->staticFlags.bCanFall && */_standingOn == nullptr) {
+				Point collide;
+				brickShape = grid->getBrickShape(_processPos._x, _processPos._y - 1, _processPos._z, &collide);
+
+				if (brickShape) {
+					if (_isFalling) {
+						//stopFalling();
+					}
+
+					applyBrickShape(brickShape, collide);
+				} else {
+					//if (!actor->dynamicFlags.bIsRotationByAnim) {
+						_isFalling = true;
+
+						/*if (!actorIdx && heroYBeforeFall == 0) {
+							heroYBeforeFall = processActorY;
+						}
+
+						initAnim(kFall, 0, 255, actorIdx);*/
+						setAnimation(kFall);
+
+					//}
+				}
+			}
+		}
+
+		// if under the map, than die
+		/*if (collisionY == -1) {
+			actor->life = 0;
+		}*/
+	} /*else {
+		if (actor->staticFlags.bComputeCollisionWithObj) {
+			checkCollisionWithActors(actorIdx);
+		}
+	}*/
 }
 
 

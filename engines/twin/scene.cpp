@@ -324,4 +324,17 @@ uint16 Point::get3DDistanceTo(Point *p) {
 	return sqrt(xdiff * xdiff + ydiff * ydiff + zdiff * zdiff);
 }
 
+void Point::operator += (const Point &other) {
+	_x += other._x;
+	_y += other._y;
+	_z += other._z;
+}
+Point Point::operator - (const Point &other) const {
+	Point p;
+	p._x = _x - other._x;
+	p._y = _y - other._y;
+	p._z = _z - other._z;
+	return p;
+}
+
 } // end of namespace Twin

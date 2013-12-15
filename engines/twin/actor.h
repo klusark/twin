@@ -25,6 +25,7 @@
 
 #include "math/angle.h"
 
+#include "engines/twin/block_library.h"
 #include "engines/twin/scene.h"
 #include "engines/twin/resource.h"
 
@@ -105,6 +106,8 @@ public:
 	bool isZonable() { return _canDetectZones; }
 	bool isStandingOnActor(Actor *other);
 	void processMovement();
+	void processCollision();
+	void applyBrickShape(ShapeType brickShape, const Point &brick);
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 	void loadLBA(Common::SeekableReadStream *stream);
@@ -118,6 +121,8 @@ public:
 	byte _body;
 	byte _anim;
 	Point _pos;
+	Point _previousPos;
+	Point _processPos;
 	ControlMode _controlMode;
 	Zone *_currZone;
 
@@ -158,6 +163,8 @@ public:
 	BoundingBox *_box;
 
 	bool _isFalling;
+
+	ShapeType _brickShape;
 
 	// flags
 	bool _carrier;

@@ -108,63 +108,35 @@ Square *Grid::getGridAt(byte x, byte y, byte z) {
 }
 
 
-int32 getAverageValue(float var0, float var1, float var2, float var3) {
-	if (var3 <= 0) {
-		return var0;
-	}
 
-	if (var3 >= var2) {
-		return var1;
-	}
-
-	return ((((var1 - var0) * var3) / var2) + var0);
+ShapeType Grid::getBrickShape(const Point &p, Point *out) {
+	return getBrickShape(p._x, p._y, p._z, out);
 }
 
-void Grid::applyBrickShape(Actor *a) {
-	int x = a->_pos._x;
-	int y = a->_pos._y;
-	int z = a->_pos._z;
+ShapeType Grid::getBrickShape(int x, int y, int z, Point *out) {
 	x = (x + 0x100) >> 9;
 	y = (y >> 8);
 	z = (z + 0x100) >> 9;
 
 	if (x < 0 || y < 0 || z < 0 || x >= 64 || y > 25 || z >= 64) {
-		return;
+		return kNone;
 	}
-
+	if (out) {
+		out->_x = x;
+		out->_y = y;
+		out->_z = z;
+	}
 	Square *s = getGridAt(x, y, z);
 	if (s->_layout == 0) {
-		s = getGridAt(x, --y, z);
-		if (s->_layout == 0) {
-			++y;
-			s = getGridAt(x, ++y, z);
-			if (s->_layout == 0) {
-				return;
-			}
-		}
+		return kNone;
 	}
 	BlockInfo *b =_blockLibrary->getBlock(s->_layout - 1);
 	SubBlock *sb = &b->_blocks[s->_brick];
 
-	int brkX = (x << 9) - 0x100;
-	int brkY = y << 8;
-	int brkZ = (z << 9) - 0x100;
-	switch (sb->_shape) {
-	case kStairsTopLeft:
-		a->_pos._y = brkY + getAverageValue(0, 0x100, 0x200, a->_pos._x - brkX);
-		break;
-	case kStairsTopRight:
-		a->_pos._y = brkY + getAverageValue(0, 0x100, 0x200, a->_pos._z - brkZ);
-		break;
-	case kStairsBottomLeft:
-		a->_pos._y = brkY + getAverageValue(0x100, 0, 0x200, a->_pos._z - brkZ);
-		break;
-	case kStairsBottomRight:
-		a->_pos._y = brkY + getAverageValue(0x100, 0, 0x200, a->_pos._x - brkX);
-		break;
-	default:
-		break;
-	}
+
+
+	return sb->_shape;
 }
+
 
 } // end of namespace Twin
