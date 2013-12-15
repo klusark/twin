@@ -233,6 +233,9 @@ Common::Error TwinEngine::run() {
 		_scene->update(deltaTime);
 		_renderer->moveCamera(_player->_pos._x, _player->_pos._y, _player->_pos._z);
 
+		for (int i = 0; i < NumKeys; ++i) {
+			_lastKeys[i] = _keys[i];
+		}
 
 		_renderer->flipBuffer();
 
@@ -250,7 +253,10 @@ Common::KeyCode KeyMap[] {
 	Common::KEYCODE_LEFT,
 	Common::KEYCODE_RIGHT,
 	Common::KEYCODE_SPACE,
+	Common::KEYCODE_F5,
 	Common::KEYCODE_F6,
+	Common::KEYCODE_F7,
+	Common::KEYCODE_F8,
 };
 
 void TwinEngine::processKeyUp(Common::KeyCode key) {
@@ -267,6 +273,15 @@ void TwinEngine::processKeyDown(Common::KeyCode key) {
 			_keys[i] = true;
 		}
 	}
+}
+
+bool TwinEngine::keysChanged() {
+	for (int i = 0; i < NumKeys; ++i) {
+		if (_keys[i] != _lastKeys[i]) {
+			return true;
+		}
+	}
+	return false;
 }
 
 } // end of namespace Twin

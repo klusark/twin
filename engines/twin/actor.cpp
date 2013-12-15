@@ -45,7 +45,8 @@ Actor::Actor(Common::SeekableReadStream *stream) :
 		_entity(nullptr), _dest(nullptr), _dead(false), _isHero(false), _angle(0),
 		_facingActor(nullptr), _turning(false), _isMoving(false), _isInvisible(false),
 		_numKeys(0), _numGold(0), _lifePoints(0), _sprite(nullptr), _heroMoved(false), _speed(0),
-		_currZone(nullptr), _canDetectZones(false), _standingOn(nullptr), _carrier(false), _box(nullptr) {
+		_currZone(nullptr), _canDetectZones(false), _standingOn(nullptr), _carrier(false), _box(nullptr),
+		_isFalling(false) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
 	} else if (g_twin->getGameType() == GType_LBA) {
@@ -61,7 +62,7 @@ Actor::Actor(Common::SeekableReadStream *stream) :
 
 Actor::Actor() : _entity(nullptr), _dest(nullptr), _dead(false), _facingActor(nullptr), _turning(false), _isMoving(false),
 		_isInvisible(false), _numKeys(0), _numGold(0), _lifePoints(100), _sprite(nullptr), _heroMoved(false), _speed(0),
-		_currZone(nullptr), _standingOn(nullptr), _carrier(false), _box(nullptr) {
+		_currZone(nullptr), _standingOn(nullptr), _carrier(false), _box(nullptr), _isFalling(false) {
 	_entity = g_resource->getEntity(0, 0, 0);
 	_box = &_entity->_model->_box;
 	_pos._x = 0;
@@ -178,16 +179,18 @@ void Actor::update(uint32 delta) {
 	if (_dead) {
 		return;
 	}
-	_lifeScript->run(delta);
-	_trackScript->run(delta);
+
+	processMovement();
 	if (_entity) {
 		_entity->_anim->update(delta);
 	}
 
-	//Probably wrong
-	if (!_dest) {
-		updateControl();
-	}
+	//return;
+
+	_lifeScript->run(delta);
+	_trackScript->run(delta);
+
+
 
 	Point before = _pos;
 
@@ -454,53 +457,35 @@ bool Actor::isStandingOnActor(Actor *other) {
 	return 1; // standing
 }
 
+void Actor::processMovement() {
+
+
+	if (_isFalling) {
+	} else {
+		updateControl();
+	}
+}
+
 void Actor::updateControl() {
 	switch (_controlMode) {
+	case kNoMove:
+		break;
 	case kManual:
-		if (!g_twin->getKey(KeyUp) && !g_twin->getKey(KeyDown) && !g_twin->getKey(KeyLeft) && !g_twin->getKey(KeyRight)) {
-			if (_heroMoved) {
-				setAnimation(kStanding);
-				_heroMoved = false;
-			}
-		}
-
-		if (g_twin->getKey(KeyUp)) {
-			setAnimation(kForward);
-			_heroMoved = true;
-		}
-
-		if (g_twin->getKey(KeyDown) && !g_twin->getKey(KeyUp)) { 
-			setAnimation(kBackward);
-			_heroMoved = true;
-		}
-
-		if (g_twin->getKey(KeyLeft)) {
-			if (_entity->_anim->getId() == 0) {
-				setAnimation(kTurnLeft);
-			} else {
-			/*	if (!actor->dynamicFlags.bIsRotationByAnim) {
-					actor->angle = getRealAngle(&actor->move);
-				}*/
-			}
-		}
-
-		if (g_twin->getKey(KeyRight)) {
-			if (_entity->_anim->getId() == 0) {
-				setAnimation(kTurnRight);
-			} else {
-				/*if (!actor->dynamicFlags.bIsRotationByAnim) {
-					actor->angle = getRealAngle(&actor->move);
-				}*/
-			}
-		}
+		updateControlManual();
 		break;
 	case kSameXZ:
 		{
+			//TODO: Make this get the following actor
 			Actor *a = g_twin->getCurrentScene()->getActor(7);
 			_pos._x = a->_pos._x;
 			_pos._z = a->_pos._z;
 		}
+		break;
+	default:
+		warning("Control mode not handled: %d", _controlMode);
+		break;
 	}
 }
+
 
 } // end of namespace Twin

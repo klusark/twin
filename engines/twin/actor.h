@@ -104,11 +104,13 @@ public:
 	void hitBy(Actor *a, byte damage) { _lifePoints -= damage; _lastHitBy = a; }
 	bool isZonable() { return _canDetectZones; }
 	bool isStandingOnActor(Actor *other);
+	void processMovement();
 //private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 	void loadLBA(Common::SeekableReadStream *stream);
 
 	void updateControl();
+	virtual void updateControlManual() { };
 
 	bool _isHero;
 	bool _heroMoved;
@@ -154,6 +156,8 @@ public:
 	Actor *_standingOn;
 
 	BoundingBox *_box;
+
+	bool _isFalling;
 
 	// flags
 	bool _carrier;

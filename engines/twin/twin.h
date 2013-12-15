@@ -50,7 +50,10 @@ enum Keys {
 	KeyLeft,
 	KeyRight,
 	KeyAction,
+	KeyNormal,
 	KeyAthletic,
+	KeyAggressive,
+	KeyDiscreet,
 	NumKeys,
 };
 
@@ -70,6 +73,7 @@ protected:
 	void processKeyUp(Common::KeyCode key);
 	void processKeyDown(Common::KeyCode key);
 	bool _keys[NumKeys];
+	bool _lastKeys[NumKeys];
 public:
 	TwinEngine(OSystem *syst, TwinGameType type);
 	virtual ~TwinEngine();
@@ -81,6 +85,8 @@ public:
 	Player *getPlayer() { return _player; }
 
 	bool getKey(byte id) { return _keys[id]; }
+
+	bool keysChanged();
 };
 
 extern TwinEngine *g_twin;

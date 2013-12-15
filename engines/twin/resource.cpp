@@ -201,7 +201,8 @@ void Resource::loadGridDefaults() {
 Animation *Resource::getAnimation(uint16 entity, uint16 id, Model *m) {
 	EntityEntry *e = &_ei->_entities[entity];
 	int index = 0;
-	for (uint32 i = 0; i < e->_anims.size(); ++i) {
+	uint32 size = e->_anims.size();
+	for (uint32 i = 0; i < size; ++i) {
 		EntityAnim *ea = &e->_anims[i];
 		if (ea->_index == id) {
 			index = ea->_animIndex;
