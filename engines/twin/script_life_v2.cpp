@@ -120,7 +120,7 @@ bool ScriptLifeV2::ANGLE(byte oper) {
 bool ScriptLifeV2::DISTANCE_MESSAGE(byte oper) {
 	byte param1 = _currentState._param;
 	uint16 param2 = getParamUint16();
-	return false;
+	return true;
 }
 
 bool ScriptLifeV2::HIT_OBJ_BY(byte oper) {

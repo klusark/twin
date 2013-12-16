@@ -273,7 +273,7 @@ void Scene::processActorZone(Actor *a) {
 				break;
 			case kObject:
 				if (g_twin->getKey(KeyAction)) {
-					a->setAnimation(kAction);
+					a->setAnimation(kAction, true);
 					a->_numKeys = 1;
 				}
 				break;

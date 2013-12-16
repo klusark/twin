@@ -28,7 +28,8 @@
 
 namespace Twin {
 
-Animation::Animation(Common::SeekableReadStream *stream, Model *m, uint16 id) : _id(id), _isWaiting(nullptr) {
+Animation::Animation(Common::SeekableReadStream *stream, Model *m, uint16 id) :
+		_id(id), _isWaiting(nullptr), _stopped(false), _stopOnDone(false) {
 	_model = m;
 	//if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
@@ -86,13 +87,22 @@ void Animation::loadLBA2(Common::SeekableReadStream *stream) {
 }
 
 void Animation::update(uint32 time) {
+	if (_stopped) {
+		return;
+	}
 	_time += time;
 	Keyframe *k = &_keyframes[_currentFrame];
 	if (_time > k->_length) {
 		_time = 0;
 		++_currentFrame;
 		if (_currentFrame >= _numKeys) {
-			_currentFrame = _startFrame;
+			if (_stopOnDone) {
+				_stopped = true;
+				--_currentFrame;
+				_time = k->_length;
+			} else {
+				_currentFrame = _startFrame;
+			}
 			if (_isWaiting) {
 				--_waitLoops;
 				if (_waitLoops == 0) {

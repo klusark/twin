@@ -123,7 +123,7 @@ Scene *Resource::getScene(uint16 id) {
 }
 
 Sprite *Resource::getSprite(uint16 id) {
-	Sprite *s = new Sprite(_sprites->createReadStreamForIndex(id ));
+	Sprite *s = new Sprite(_sprites->createReadStreamForIndex(id));
 	s->setSpriteInfo(&_spriteInfo[id]);
 	return s;
 }

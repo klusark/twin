@@ -84,7 +84,7 @@ public:
 	Actor();
 	void draw();
 	virtual void update(uint32 delta);
-	void setAnimation(uint16 anim);
+	void setAnimation(uint16 anim, bool stop = false);
 	void setBody(byte body);
 	void setPos(uint16 x, uint16 y, uint16 z);
 	void gotoPoint(Point *p, bool *done);
@@ -124,6 +124,7 @@ public:
 	uint16 _entityID;
 	byte _body;
 	byte _anim;
+	byte _lastAnim;
 	Point _pos;
 	Point _previousPos;
 	Point _processPos;

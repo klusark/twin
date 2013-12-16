@@ -63,6 +63,8 @@ public:
 	Keyframe *getKeyframe() { return &_keyframes[_currentFrame]; }
 	bool *_isWaiting;
 	byte _waitLoops;
+	void stopOnDone() { _stopOnDone = true; }
+	bool isStopped() { return _stopped; }
 private:
 	void loadLBA2(Common::SeekableReadStream *stream);
 
@@ -75,6 +77,9 @@ private:
 	uint32 _time;
 
 	uint16 _id;
+
+	bool _stopped;
+	bool _stopOnDone;
 
 };
 

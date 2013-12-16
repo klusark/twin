@@ -91,7 +91,7 @@ void Player::updateControlManual() {
 			break;
 		case kAthletic:
 			if (g_twin->getKey(KeyAction)) {
-				setAnimation(kJump);
+				setAnimation(kJump, true);
 				//initAnim(kJump, 1, 0, actorIdx);
 			}
 			break;
@@ -105,15 +105,15 @@ void Player::updateControlManual() {
 
 						switch (aggresiveMode) {
 						case 0:
- 							setAnimation(kKick);
+ 							setAnimation(kKick, true);
 							//initAnim(kKick, 1, 0, actorIdx);
 							break;
 						case 1:
-							setAnimation(kRightPunch);
+							setAnimation(kRightPunch, true);
 							//initAnim(kRightPunch, 1, 0, actorIdx);
 							break;
 						case 2:
-							setAnimation(kLeftPunch);
+							setAnimation(kLeftPunch, true);
 							//initAnim(kLeftPunch, 1, 0, actorIdx);
 							break;
 						}

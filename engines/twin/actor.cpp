@@ -186,6 +186,9 @@ void Actor::update(uint32 delta) {
 
 	if (_entity) {
 		_entity->_anim->update(delta);
+		if (_entity->_anim->isStopped()) {
+			setAnimation(_lastAnim);
+		}
 	}
 
 	_processPos = _pos;
@@ -336,11 +339,15 @@ void  Actor::setPos(uint16 x, uint16 y, uint16 z) {
 	_pos._z = z;
 }
 
-void Actor::setAnimation(uint16 anim) {
+void Actor::setAnimation(uint16 anim, bool stop) {
 	if (_entity && _entity->_anim->getId() != anim) {
 		delete _entity->_anim;
+		_lastAnim = _anim;
 		_anim = anim;
 		_entity->_anim = g_resource->getAnimation(_entityID, _anim, _entity->_model);
+		if (stop) {
+			_entity->_anim->stopOnDone();
+		}
 	}
 }
 
