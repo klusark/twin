@@ -342,6 +342,8 @@ void Model::loadLBA(Common::SeekableReadStream *stream) {
 
 
 	createHierarchy();
+
+	_numSpheres = 0;
 }
 
 void Model::createHierarchy() {

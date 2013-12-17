@@ -46,7 +46,7 @@ Actor::Actor(Common::SeekableReadStream *stream) :
 		_facingActor(nullptr), _turning(false), _isMoving(false), _isInvisible(false),
 		_numKeys(0), _numGold(0), _lifePoints(0), _sprite(nullptr), _heroMoved(false), _speed(0),
 		_currZone(nullptr), _canDetectZones(false), _standingOn(nullptr), _carrier(false), _box(nullptr),
-		_isFalling(false) {
+		_isFalling(false), _computeCollisionWithBricks(false) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
 	} else if (g_twin->getGameType() == GType_LBA) {
@@ -59,7 +59,7 @@ Actor::Actor(Common::SeekableReadStream *stream) :
 Actor::Actor() : _entity(nullptr), _dest(nullptr), _dead(false), _facingActor(nullptr), _turning(false), _isMoving(false),
 		_isInvisible(false), _numKeys(0), _numGold(0), _lifePoints(100), _sprite(nullptr), _heroMoved(false), _speed(0),
 		_currZone(nullptr), _standingOn(nullptr), _carrier(false), _box(nullptr), _isFalling(false),
-		_heroYBeforeFall(0) {
+		_heroYBeforeFall(0), _computeCollisionWithBricks(false) {
 	_entity = g_resource->getEntity(0, 0, 0);
 	_pos._x = 0;
 	_pos._y = 0;
@@ -220,9 +220,6 @@ void Actor::update(uint32 delta) {
 		_pos._z = 0;
 	}
 
-	/*Point before = _pos;
-
-
 
 	if (_sprite && _speed) {
 		_pos._x += _angle.getCosine() * (_speed * (int)delta) / 250.0f;
@@ -301,7 +298,7 @@ void Actor::update(uint32 delta) {
 		next.normalize(0);
 
 		_angle = next;
-	}*/
+	}
 
 
 
@@ -361,7 +358,6 @@ void Actor::setBody(byte body) {
 }
 
 void Actor::gotoPoint(Point *p, bool *done) {
-	return;
 	_dest = p;
 	_destDone = done;
 	_isMoving = true;
@@ -640,7 +636,7 @@ void Actor::processCollision() {
 
 
 	// actor collisions with bricks
-	if (_isHero/*actor->staticFlags.bComputeCollisionWithBricks*/) {
+	if (_computeCollisionWithBricks && grid) {
 		ShapeType brickShape;
 		//_collisionPos._y = 0;
 

@@ -34,6 +34,8 @@ Player::Player() {
 	_heroMoved = 0;
 	_heroAction = 0;
 	_body = 0;
+
+	_computeCollisionWithBricks = true;
 }
 
 void Player::update(uint32 delta) {

@@ -279,7 +279,7 @@ void GfxOpenGL::drawModel(Model *m, bool fromIsland) {
 		glRotatef(_rotX, 0, 1, 0);
 	}
 
-	/*for (uint j = 0; j < m->_numSpheres; ++j) {
+	for (uint j = 0; j < m->_numSpheres; ++j) {
 		Sphere *s = &m->_spheres[j];
 		Vertex *v = &m->_verticies[s->_vertex];
 		Math::Vector3d vec = v->getPos(m);
@@ -290,7 +290,7 @@ void GfxOpenGL::drawModel(Model *m, bool fromIsland) {
 		glTranslatef(vec.x(), vec.y(), vec.z());
 		drawSphere(s->_size, 8, 8);
 		glPopMatrix();
-	}*/
+	}
 
 	for (uint j = 0; j < m->_numLines; ++j) {
 		Line *p = &m->_lines[j];
