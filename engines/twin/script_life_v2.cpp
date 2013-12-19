@@ -173,11 +173,6 @@ void ScriptLifeV2::BRICK_COL() {
 	byte unknown = getParamByte();
 }
 
-void ScriptLifeV2::INVISIBLE() {
-	byte state = getParamByte();
-	_actor->setInvisible(state);
-}
-
 void ScriptLifeV2::SHADOW_OBJ() {
 	byte param1 = getParamByte();
 	byte param2 = getParamByte();

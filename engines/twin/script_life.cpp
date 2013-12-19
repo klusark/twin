@@ -515,6 +515,11 @@ void ScriptLife::OR_IF() {
 	}
 }
 
+void ScriptLife::INVISIBLE() {
+	byte state = getParamByte();
+	_actor->setInvisible(state);
+}
+
 void ScriptLife::POS_POINT() {
 	byte point = getParamByte();
 	Scene *s = g_twin->getCurrentScene();

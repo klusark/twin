@@ -83,6 +83,7 @@ namespace Twin {
 	OPCODEI(0x33, GIVE_BONUS);			\
 										\
 	OPCODEI(0x37, OR_IF);				\
+	OPCODEI(0x38, INVISIBLE);			\
 										\
 	OPCODE(0x39, ZOOM);					\
 	OPCODEI(0x3A, POS_POINT);			\

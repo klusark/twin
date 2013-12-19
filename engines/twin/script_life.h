@@ -143,6 +143,7 @@ protected:
 	void GIVE_BONUS();
 
 	void OR_IF();
+	void INVISIBLE();
 
 	void POS_POINT();
 

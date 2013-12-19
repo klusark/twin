@@ -86,7 +86,7 @@ namespace Twin {
 	OPCODE(0x35, OBJ_COL);				\
 	OPCODE(0x36, BRICK_COL);			\
 	OPCODEI(0x37, OR_IF);				\
-	OPCODE(0x38, INVISIBLE);			\
+	OPCODEI(0x38, INVISIBLE);			\
 	OPCODE(0x39, SHADOW_OBJ);			\
 	OPCODEI(0x3A, POS_POINT);			\
 										\
