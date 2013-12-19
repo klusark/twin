@@ -210,12 +210,10 @@ void Actor::update(uint32 delta) {
 
 	processCollision();
 
-	//return;
+	_pos = _processPos;
 
 	_lifeScript->run(delta);
 
-
-	_pos = _processPos;
 
 	if ((int16)_pos._z < 0) {
 		warning("ASDF");
@@ -332,7 +330,7 @@ void Actor::draw() {
 	g_renderer->drawActor(this);
 }
 
-void  Actor::setPos(uint16 x, uint16 y, uint16 z) {
+void Actor::setPos(uint16 x, uint16 y, uint16 z) {
 	_pos._x = x;
 	_pos._y = y;
 	_pos._z = z;
