@@ -64,6 +64,7 @@ class TwinEngine : public Engine {
 	Scene *_nextScene;
 	bool _action;
 	Player *_player;
+	bool _cinemaMode;
 protected:
 	// Engine APIs
 	virtual Common::Error run();
@@ -87,6 +88,8 @@ public:
 	bool getKey(byte id) { return _keys[id]; }
 
 	bool keysChanged();
+
+	void setCinemaMode(bool mode) { _cinemaMode = mode; }
 };
 
 extern TwinEngine *g_twin;

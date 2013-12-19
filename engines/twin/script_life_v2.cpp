@@ -247,7 +247,8 @@ void ScriptLifeV2::ANIM_TEXTURE() {
 }
 
 void ScriptLifeV2::CINEMA_MODE() {
-	byte val = getParamByte();
+	bool mode = (bool)getParamByte();
+	g_twin->setCinemaMode(mode);
 }
 
 void ScriptLifeV2::AND_IF() {

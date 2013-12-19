@@ -53,7 +53,7 @@ TwinEngine *g_twin = NULL;
 GfxBase *g_renderer = NULL;
 
 TwinEngine::TwinEngine(OSystem *syst, TwinGameType type) :
-		Engine(syst), _type(type) {
+		Engine(syst), _type(type), _cinemaMode(false) {
 	g_twin = this;
 	_action = false;
 	memset(_keys, 0, NumKeys);
@@ -260,6 +260,9 @@ Common::KeyCode KeyMap[] {
 };
 
 void TwinEngine::processKeyUp(Common::KeyCode key) {
+	if (_cinemaMode) {
+		return;
+	}
 	for (int i = 0; i < NumKeys; ++i) {
 		if (KeyMap[i] == key) {
 			_keys[i] = false;
@@ -268,6 +271,9 @@ void TwinEngine::processKeyUp(Common::KeyCode key) {
 }
 
 void TwinEngine::processKeyDown(Common::KeyCode key) {
+	if (_cinemaMode) {
+		return;
+	}
 	for (int i = 0; i < NumKeys; ++i) {
 		if (KeyMap[i] == key) {
 			_keys[i] = true;
