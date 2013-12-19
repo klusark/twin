@@ -66,6 +66,9 @@ void Animation::loadLBA2(Common::SeekableReadStream *stream) {
 		k->_x = stream->readSint16LE();
 		k->_y = stream->readSint16LE();
 		k->_z = stream->readSint16LE();
+		k->_noFalling = stream->readSint32LE();
+		stream->readSint32LE();
+		stream->seek(-8, SEEK_CUR);
 		k->_bones = new Boneframe[_numBones];
 		for (int j = 0; j < _numBones; ++j) {
 			Boneframe *b = &k->_bones[j];

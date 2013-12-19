@@ -49,6 +49,8 @@ public:
 	int16 _y;
 	int16 _z;
 
+	int32 _noFalling;
+
 	Boneframe *_bones;
 };
 

@@ -195,15 +195,17 @@ void Actor::update(uint32 delta) {
 
 	if (_entity && delta != 0) {
 		Keyframe *k = _entity->_anim->getKeyframe();
-		float speed = (k->_z * (int)delta) / 250.0f;
+		float speed = (k->_z * (int)delta) / 150.f;
 		speed += _speed;
-		float speed2 = (k->_x * (int)delta) / 250.0f;
+		float speed2 = (k->_x * (int)delta) / 150.f;
 
 		_processPos._x += _angle.getCosine() * speed;
 		_processPos._z += _angle.getSine() * speed;
 
 		_processPos._x += _angle.getSine() * speed2;
 		_processPos._z += _angle.getCosine() * speed2;
+
+		_processPos._y += (k->_y * (int)delta) / 250.f;
 	}
 
 	processCollision();
@@ -630,7 +632,7 @@ void Actor::processCollision() {
 		/*_processPos._x = previousActorX;
 		processActorY = previousActorY + loopActorStep; // add step to fall
 		_processPos._z = previousActorZ;*/
-		_processPos._y -= 10;
+		//_processPos._y -= 10;
 	}
 
 
@@ -755,7 +757,7 @@ void Actor::processCollision() {
 
 					applyBrickShape(brickShape, collide);
 				} else {
-					//if (!actor->dynamicFlags.bIsRotationByAnim) {
+					if (!_entity->_anim->getKeyframe()->_noFalling) {
 						_isFalling = true;
 
 						if (_isHero && _heroYBeforeFall == 0) {
@@ -765,7 +767,7 @@ void Actor::processCollision() {
 						//initAnim(kFall, 0, 255, actorIdx);
 						setAnimation(kFall);
 
-					//}
+					}
 				}
 			}
 		}
