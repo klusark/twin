@@ -116,6 +116,8 @@ public:
 	virtual void updateControlManual() { };
 	void stopFalling();
 	void setBoundingBox();
+	void checkCollisionWithActors();
+
 
 	int _heroYBeforeFall;
 

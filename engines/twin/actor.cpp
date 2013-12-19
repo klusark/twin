@@ -620,7 +620,8 @@ void Actor::processCollision() {
 
 
 	if (_standingOn != nullptr) {
-		_pos += (_standingOn->_pos - _standingOn->_previousPos);
+		_processPos += (_standingOn->_pos - _standingOn->_previousPos);
+		_pos = _processPos;
 
 		if (!isStandingOnActor(_standingOn)) {
 			_standingOn = nullptr;
@@ -654,7 +655,7 @@ void Actor::processCollision() {
 		}
 
 		if (true /*actor->staticFlags.bComputeCollisionWithObj*/) {
-			//checkCollisionWithActors(actorIdx);
+			checkCollisionWithActors();
 		}
 
 		if (_standingOn && _isFalling) {
@@ -813,6 +814,166 @@ void Actor::stopFalling() {
 		setAnimation(kLanding);
 		//initAnim(kLanding, 2, processActorPtr->animExtra, currentlyProcessedActorIdx);
 	}
+}
+
+void Actor::checkCollisionWithActors() {
+	Scene *s = g_twin->getCurrentScene();
+	for (int i = 0; i < s->_numActors; ++i) {
+		Actor *a = s->getActor(i);
+		if (a == this || a == _standingOn/* || actor->staticFlags.bComputeLowCollision*/) {
+			continue;
+		}
+
+		if (collidesWith(a)) {
+			//actor->collision = a; // mark as collision with actor a
+
+			if (a->_carrier) {
+				if (_isFalling || isStandingOnActor(a)) {
+					//_processPos._y = yRightTest - actor->boudingBox.Y.bottomLeft + 1;
+					_standingOn = a;
+				} else {
+					/*int32 newAngle;
+
+					newAngle = getAngleAndSetTargetActorDistance(processActorX, processActorZ, actorTest->X, actorTest->Z);
+
+					if (actorTest->staticFlags.bCanBePushed && !actor->staticFlags.bCanBePushed) {
+						actorTest->lastY = 0;
+
+						if (actorTest->staticFlags.bUseMiniZv) {
+							if (newAngle >= 0x80 && newAngle < 0x180 && actor->angle > 0x80 && actor->angle < 0x180) {
+								actorTest->lastX = 192;
+							}
+							if (newAngle >= 0x180 && newAngle < 0x280 && actor->angle > 0x180 && actor->angle < 0x280) {
+								actorTest->lastZ = -64;
+							}
+							if (newAngle >= 0x280 && newAngle < 0x380 && actor->angle > 0x280 && actor->angle < 0x380) {
+								actorTest->lastX = -64;
+							}
+							if ((newAngle >= 0x380 || newAngle < 0x80) && (actor->angle > 0x380 || actor->angle < 0x80)) {
+								actorTest->lastX = 192;
+							}
+						} else {
+							actorTest->lastX = processActorX - actor->collisionX;
+							actorTest->lastZ = processActorZ - actor->collisionZ;
+						}
+					}
+
+					if ((actorTest->boudingBox.X.topRight - actorTest->boudingBox.X.bottomLeft == actorTest->boudingBox.Z.topRight - actorTest->boudingBox.Z.bottomLeft) &&
+						(actor->boudingBox.X.topRight - actor->boudingBox.X.bottomLeft == actor->boudingBox.Z.topRight - actor->boudingBox.Z.bottomLeft)) {
+						if (newAngle < 0x180) {
+							processActorX = xLeftTest - actor->boudingBox.X.topRight;
+						}
+						if (newAngle >= 0x180 && newAngle < 0x280) {
+							processActorZ = zRightTest - actor->boudingBox.Z.bottomLeft;
+						}
+						if (newAngle >= 0x280 && newAngle < 0x380) {
+							processActorX = xRightTest - actor->boudingBox.X.bottomLeft;
+						}
+						if (newAngle >= 0x380 || (newAngle < 0x380 && newAngle < 0x80)) {
+							processActorZ = zLeftTest - actor->boudingBox.Z.topRight;
+						}
+					} else {
+						if (!actor->dynamicFlags.bIsFalling) {
+							processActorX = previousActorX;
+							processActorY = previousActorY;
+							processActorZ = previousActorZ;
+						}
+					}*/
+				}
+			} else {
+				warning("Collide!");
+				/*int32 newAngle;
+
+				if (standingOnActor(actorIdx, a)) {
+					hitActor(actorIdx, a, 1, -1);
+				}
+
+				newAngle = getAngleAndSetTargetActorDistance(processActorX, processActorZ, actorTest->X, actorTest->Z);
+
+				if (actorTest->staticFlags.bCanBePushed && !actor->staticFlags.bCanBePushed) {
+					actorTest->lastY = 0;
+
+					if (actorTest->staticFlags.bUseMiniZv) {
+						if (newAngle >= 0x80 && newAngle < 0x180 && actor->angle > 0x80 && actor->angle < 0x180) {
+							actorTest->lastX = 192;
+						}
+						if (newAngle >= 0x180 && newAngle < 0x280 && actor->angle > 0x180 && actor->angle < 0x280) {
+							actorTest->lastZ = -64;
+						}
+						if (newAngle >= 0x280 && newAngle < 0x380 && actor->angle > 0x280 && actor->angle < 0x380) {
+							actorTest->lastX = -64;
+						}
+						if ((newAngle >= 0x380 || newAngle < 0x80) && (actor->angle > 0x380 || actor->angle < 0x80)) {
+							actorTest->lastX = 192;
+						}
+					} else {
+						actorTest->lastX = processActorX - actor->collisionX;
+						actorTest->lastZ = processActorZ - actor->collisionZ;
+					}
+				}
+
+				if ((actorTest->boudingBox.X.topRight - actorTest->boudingBox.X.bottomLeft == actorTest->boudingBox.Z.topRight - actorTest->boudingBox.Z.bottomLeft) &&
+					(actor->boudingBox.X.topRight - actor->boudingBox.X.bottomLeft == actor->boudingBox.Z.topRight - actor->boudingBox.Z.bottomLeft)) {
+					if (newAngle < 0x180) {
+						processActorX = xLeftTest - actor->boudingBox.X.topRight;
+					}
+					if (newAngle >= 0x180 && newAngle < 0x280) {
+						processActorZ = zRightTest - actor->boudingBox.Z.bottomLeft;
+					}
+					if (newAngle >= 0x280 && newAngle < 0x380) {
+						processActorX = xRightTest - actor->boudingBox.X.bottomLeft;
+					}
+					if (newAngle >= 0x380 || (newAngle < 0x380 && newAngle < 0x80)) {
+						processActorZ = zLeftTest - actor->boudingBox.Z.topRight;
+					}
+				} else {
+					if (!actor->dynamicFlags.bIsFalling) {
+						processActorX = previousActorX;
+						processActorY = previousActorY;
+						processActorZ = previousActorZ;
+					}
+				}*/
+			}
+		}
+	}
+
+	/*if (actor->dynamicFlags.bIsHitting) {
+		rotateActor(0, 200, actor->angle);
+
+		xLeft  = destX + processActorX + actor->boudingBox.X.bottomLeft;
+		xRight = destX + processActorX + actor->boudingBox.X.topRight;
+
+		yLeft  = processActorY + actor->boudingBox.Y.bottomLeft;
+		yRight = processActorY + actor->boudingBox.Y.topRight;
+
+		zLeft  = destZ + processActorZ + actor->boudingBox.Z.bottomLeft;
+		zRight = destZ + processActorZ + actor->boudingBox.Z.topRight;
+
+		for (a = 0; a < sceneNumActors; a++) {
+			actorTest = &sceneActors[a];
+
+			// aviod current processed actor
+			if (a != actorIdx && actorTest->entity != -1 && !actorTest->staticFlags.bIsHidden && actorTest->standOn != actorIdx) {
+				int32 xLeftTest, xRightTest, yLeftTest, yRightTest, zLeftTest, zRightTest;
+
+				xLeftTest  = actorTest->X + actorTest->boudingBox.X.bottomLeft;
+				xRightTest = actorTest->X + actorTest->boudingBox.X.topRight;
+
+				yLeftTest  = actorTest->Y + actorTest->boudingBox.Y.bottomLeft;
+				yRightTest = actorTest->Y + actorTest->boudingBox.Y.topRight;
+
+				zLeftTest  = actorTest->Z + actorTest->boudingBox.Z.bottomLeft;
+				zRightTest = actorTest->Z + actorTest->boudingBox.Z.topRight;
+
+				if (xLeft < xRightTest && xRight > xLeftTest && yLeft < yRightTest && yRight > yLeftTest && zLeft < zRightTest && zRight > zLeftTest) {
+					hitActor(actorIdx, a, actor->strengthOfHit, actor->angle + 0x200);
+					actor->dynamicFlags.bIsHitting = 0;
+				}
+			}
+		}
+	}*/
+
+	//return actor->collision;
 }
 
 } // end of namespace Twin
