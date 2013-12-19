@@ -230,6 +230,15 @@ Common::Error TwinEngine::run() {
 
 		_scene->draw();
 
+
+		//FIXME: Do this better.
+		// The intention here is to make sure that the engine update often
+		// enough so that things don't go flying off into the distance if the
+		// game freezes.
+		while (deltaTime > 32) {
+			_scene->update(32);
+			deltaTime -= 32;
+		}
 		_scene->update(deltaTime);
 		_renderer->moveCamera(_player->_pos._x, _player->_pos._y, _player->_pos._z);
 
