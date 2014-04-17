@@ -51,9 +51,9 @@ void Animation::loadLBA2(Common::SeekableReadStream *stream) {
 
 	float angleMult = 0;
 	if (g_twin->getGameType() == GType_LBA2) {
-		angleMult = 360.0/4096;
+		angleMult = 360.0f/4096;
 	} else {
-		angleMult = 1.0/180;
+		angleMult = 1.0f/180;
 	}
 
 	_keyframes = new Keyframe[_numKeys];
@@ -117,7 +117,7 @@ void Animation::update(uint32 time) {
 		k = &_keyframes[_currentFrame];
 	}
 	Keyframe *next;
-	if (_currentFrame != _numKeys - 1) {
+	if (_currentFrame + 1 != _numKeys) {
 		next = &_keyframes[_currentFrame + 1];
 	} else {
 		next = &_keyframes[_startFrame];

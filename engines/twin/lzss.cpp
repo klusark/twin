@@ -28,7 +28,7 @@ namespace Twin {
 
 
 LzssReadStream::LzssReadStream(Common::ReadStream *indata, uint32 mode, uint32 realsize) {
-	_outLzssBufData = (uint8 *)malloc(realsize);
+	_outLzssBufData = new uint8[realsize];
 	memset(_outLzssBufData, 0, realsize);
 	decodeLZSS(indata, mode, realsize);
 	_size = realsize;
@@ -37,7 +37,7 @@ LzssReadStream::LzssReadStream(Common::ReadStream *indata, uint32 mode, uint32 r
 }
 
 LzssReadStream::~LzssReadStream() {
-	free(_outLzssBufData);
+	delete[] _outLzssBufData;
 }
 
 void LzssReadStream::decodeLZSS(Common::ReadStream *in, uint32 mode, uint32 dataSize) {
