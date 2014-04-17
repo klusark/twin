@@ -88,7 +88,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "People";
+		return "Adeline Software International";
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
