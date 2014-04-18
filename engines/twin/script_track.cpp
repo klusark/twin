@@ -171,6 +171,7 @@ void ScriptTrack::OPEN_LEFT() {
 	_actor->_angle = 180;
 	_actor->_speedStart = _actor->_pos;
 	_actor->_speedDistance = distance;
+	_actor->_doorMode = true;
 }
 
 void ScriptTrack::OPEN_RIGHT() {
@@ -179,6 +180,7 @@ void ScriptTrack::OPEN_RIGHT() {
 	_actor->_angle = 0;
 	_actor->_speedStart = _actor->_pos;
 	_actor->_speedDistance = distance;
+	_actor->_doorMode = true;
 }
 
 void ScriptTrack::OPEN_UP() {
@@ -187,6 +189,7 @@ void ScriptTrack::OPEN_UP() {
 	_actor->_angle = 270;
 	_actor->_speedStart = _actor->_pos;
 	_actor->_speedDistance = distance;
+	_actor->_doorMode = true;
 }
 
 void ScriptTrack::OPEN_DOWN() {
@@ -195,14 +198,20 @@ void ScriptTrack::OPEN_DOWN() {
 	_actor->_angle = 90;
 	_actor->_speedStart = _actor->_pos;
 	_actor->_speedDistance = distance;
+	_actor->_doorMode = true;
 }
 
 void ScriptTrack::CLOSE() {
 	_actor->_speed = -1000;
 	_actor->_speedStart = _actor->_pos;
+	_actor->_doorMode = true;
 }
 
 void ScriptTrack::WAIT_DOOR() {
+	if (_actor->_doorMode) {
+		jump(-1);
+		yield();
+	}
 }
 
 void ScriptTrack::SAMPLE_RND() {

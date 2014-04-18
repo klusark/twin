@@ -46,7 +46,7 @@ public:
 	void stop();
 	void start();
 	void yield();
-	void jump(uint16 size);
+	void jump(int32 size);
 	void jumpAddress(uint16 address);
 	uint16 getAddress();
 	uint16 getGameVar(byte id);

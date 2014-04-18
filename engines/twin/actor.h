@@ -171,6 +171,8 @@ public:
 
 	bool _isFalling;
 
+	bool _doorMode;
+
 	ShapeType _brickShape;
 
 	// flags

@@ -83,7 +83,7 @@ void Script::yield() {
 	_isYielded = true;
 }
 
-void Script::jump(uint16 size) {
+void Script::jump(int32 size) {
 	_pos += size;
 	if (_pos > _length) {
 		error("Jumping past the end of the script");
