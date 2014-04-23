@@ -71,6 +71,9 @@ Resource::Resource() : _firstGrid(0) {
 	_sprites = new Hqr();
 	_sprites->open("SPRITES.HQR");
 
+	_text = new Hqr();
+	_text->open("TEXT.HQR");
+
 	if (g_twin->getGameType() == GType_LBA2) {
 		_bkg = new Hqr();
 		_bkg->open("LBA_BKG.HQR");
@@ -105,6 +108,7 @@ Resource::~Resource() {
 	delete _body;
 	delete _anim;
 	delete _scene;
+	delete _text;
 }
 
 Scene *Resource::getScene(uint16 id) {
@@ -243,6 +247,32 @@ void Resource::loadSpriteInfo(Common::SeekableReadStream *stream) {
 		info->_box.load(stream);
 
 	}
+}
+
+Common::String Resource::getMessage(uint16 id, uint16 message) {
+	Common::SeekableReadStream *lookup = _text->createReadStreamForIndex(id + 6);
+	Common::SeekableReadStream *strings = _text->createReadStreamForIndex(id + 7);
+
+	char buff[1024];
+	int j = 0;
+
+	int size = lookup->size()/2;
+	for (int i = 0; i < size; ++i) {
+		uint16 val = lookup->readUint16LE();
+		if (val == message) {
+			strings->seek(i*2);
+			uint16 offset = strings->readUint16LE();
+			char c = 0;
+			strings->seek(offset);
+			do {
+				c = strings->readByte();
+				buff[j++] = c;
+			} while (c != 0);
+
+			return buff;
+		}
+	}
+	return "";
 }
 
 } // end of namespace Twin

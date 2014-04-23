@@ -84,6 +84,7 @@ public:
 	Entity *getEntity(uint16 entity, uint16 body, uint16 anim);
 	Scene *getScene(uint16 id);
 	Sprite *getSprite(uint16 id);
+	Common::String getMessage(uint16 is, uint16 message);
 private:
 	void loadGridDefaults();
 	void loadSpriteInfo(Common::SeekableReadStream *stream);
@@ -105,6 +106,7 @@ private:
 	Hqr *_gri;
 	Hqr *_bll;
 	Hqr *_f3d;
+	Hqr *_text;
 
 	EntityInformation *_ei;
 	SpriteInfo *_spriteInfo;
