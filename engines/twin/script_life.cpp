@@ -99,7 +99,6 @@ bool ScriptLife::DISTANCE(byte oper) {
 
 bool ScriptLife::ZONE(byte oper) {
 	byte zone = getParamByte();
-	Scene *s = g_twin->getCurrentScene();
 
 	Zone *currZone = _actor->getCurrentZone();
 	if (!currZone) {
@@ -135,16 +134,16 @@ bool ScriptLife::BODY_OBJ_COND(byte oper) {
 }
 
 bool ScriptLife::ANIM_COND(byte oper) {
-	byte body = getParamByte();
-	return testCond(body, _actor->_entity->_anim->getId(), oper);
+	byte anim = getParamByte();
+	return testCond(anim, _actor->_entity->_anim->getId(), oper);
 }
 
 bool ScriptLife::ANIM_OBJ_COND(byte oper) {
 	byte actor = _currentState._param;
 	Scene *s = g_twin->getCurrentScene();
 	Actor *a = s->getActor(actor);
-	byte body = getParamByte();
-	return testCond(body, a->_entity->_anim->getId(), oper);
+	byte anim = getParamByte();
+	return testCond(anim, a->_entity->_anim->getId(), oper);
 }
 
 bool ScriptLife::CURRENT_TRACK(byte oper) {
@@ -170,6 +169,7 @@ bool ScriptLife::VAR_CUBE(byte oper) {
 bool ScriptLife::CONE_VIEW(byte oper) {
 	byte actor = _currentState._param;
 	uint16 value = getParamUint16();
+	warning("STUB: CONE_VIEW, actor(%d), value(%d)", actor, value);
 	return false;
 }
 
@@ -244,17 +244,20 @@ bool ScriptLife::CHAPTER(byte oper) {
 
 bool ScriptLife::DISTANCE_3D(byte oper) {
 	uint16 value = getParamUint16();
+	warning("STUB: DISTANCE_3D, value(%d)", value);
 	return false;
 }
 
 bool ScriptLife::USE_INVERNTORY(byte oper) {
 	byte param1 = _currentState._param;
 	byte param2 = getParamByte();
+	warning("STUB: USE_INVERNTORY, param1(%d), param2(%d)", param1, param2);
 	return false;
 }
 
 bool ScriptLife::CARRIED_BY(byte oper) {
 	byte param1 = getParamByte();
+	warning("STUB: CARRIED_BY, param1(%d)", param1);
 	return false;
 }
 
@@ -376,6 +379,8 @@ void ScriptLife::SET_TRACK_OBJ() {
 
 void ScriptLife::MESSAGE() {
 	uint16 id = getParamUint16();
+	Common::String str = g_resource->getMessage(0, id);
+	warning("STUB: MESSAGE(%d): %s", id, str.c_str());
 }
 
 void ScriptLife::CAN_FALL() {
@@ -457,6 +462,7 @@ void ScriptLife::USE_ONE_LITTLE_KEY() {
 
 void ScriptLife::GIVE_GOLD_PIECES() {
 	int16 gold = getParamInt16();
+	_actor->_numGold += gold;
 }
 
 void ScriptLife::END_LIFE() {
