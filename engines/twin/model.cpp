@@ -384,7 +384,7 @@ Math::Matrix4 Hierarchy::computeLocalMatrix() {
 	if (_isTransltion) {
 		pos += _translation;
 	} else {
-		matrix.buildFromPitchYawRoll(_pitch, _yaw, _roll);
+		matrix.buildFromEuler(_pitch, _yaw, _roll, Math::EO_XZY);
 	}
 	matrix.setPosition(pos);
 	return matrix;
