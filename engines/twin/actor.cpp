@@ -46,7 +46,7 @@ Actor::Actor(Common::SeekableReadStream *stream) :
 		_facingActor(nullptr), _turning(false), _isMoving(false), _isInvisible(false),
 		_numKeys(0), _numGold(0), _lifePoints(0), _sprite(nullptr), _heroMoved(false), _speed(0),
 		_currZone(nullptr), _canDetectZones(false), _standingOn(nullptr), _carrier(false), _box(nullptr),
-		_isFalling(false), _computeCollisionWithBricks(false), _doorMode(false) {
+		_isFalling(false), _computeCollisionWithBricks(false), _doorMode(false), _canFall(false) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		loadLBA2(stream);
 	} else if (g_twin->getGameType() == GType_LBA) {
@@ -59,7 +59,7 @@ Actor::Actor(Common::SeekableReadStream *stream) :
 Actor::Actor() : _entity(nullptr), _dest(nullptr), _dead(false), _facingActor(nullptr), _turning(false), _isMoving(false),
 		_isInvisible(false), _numKeys(0), _numGold(0), _lifePoints(100), _sprite(nullptr), _heroMoved(false), _speed(0),
 		_currZone(nullptr), _standingOn(nullptr), _carrier(false), _box(nullptr), _isFalling(false),
-		_heroYBeforeFall(0), _computeCollisionWithBricks(false), _doorMode(false) {
+		_heroYBeforeFall(0), _computeCollisionWithBricks(false), _doorMode(false), _canFall(false) {
 	_entity = g_resource->getEntity(0, 0, 0);
 	_pos._x = 0;
 	_pos._y = 0;
@@ -129,6 +129,15 @@ void Actor::loadLBA2(Common::SeekableReadStream *stream) {
 void Actor::loadLBA(Common::SeekableReadStream *stream) {
 
 	uint16 flags = stream->readUint16LE();
+	if (flags & 0x1) {
+
+	}
+	if (flags & 0x2) {
+		_computeCollisionWithBricks = true;
+	}
+	if (flags & 0x800) {
+		_canFall = true;
+	}
 	if (flags & 0x4000) {
 		_carrier = true;
 	}
@@ -757,7 +766,7 @@ void Actor::processCollision() {
 
 					applyBrickShape(brickShape, collide);
 				} else {
-					if (!_entity->_anim->getKeyframe()->_noFalling) {
+					if (!_entity->_anim->getKeyframe()->_noFalling && _canFall) {
 						_isFalling = true;
 
 						if (_isHero && _heroYBeforeFall == 0) {

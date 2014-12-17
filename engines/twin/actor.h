@@ -178,6 +178,7 @@ public:
 	// flags
 	bool _carrier;
 	bool _computeCollisionWithBricks;
+	bool _canFall;
 };
 
 } // end of namespace Twin
