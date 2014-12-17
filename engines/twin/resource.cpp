@@ -55,7 +55,7 @@ void Entity::update(uint32 time) {
 
 Resource *g_resource = nullptr;
 
-Resource::Resource() : _firstGrid(0) {
+Resource::Resource() : _firstGrid(0), _bkg(nullptr) {
 	_scene = new Hqr();
 	_scene->open("SCENE.HQR");
 
