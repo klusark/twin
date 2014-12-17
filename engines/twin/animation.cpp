@@ -53,7 +53,7 @@ void Animation::loadLBA2(Common::SeekableReadStream *stream) {
 	if (g_twin->getGameType() == GType_LBA2) {
 		angleMult = 360.0f/4096;
 	} else {
-		angleMult = 1.0f/180;
+		angleMult = 360.0f/1024;
 	}
 
 	_keyframes = new Keyframe[_numKeys];
