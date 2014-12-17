@@ -57,6 +57,7 @@ public:
 	uint32 _info[8];
 	ZoneType _type;
 	uint16 _snap;
+	uint32 _id;
 	bool isActorInside(Actor *a);
 	byte getId();
 };

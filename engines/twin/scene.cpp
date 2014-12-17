@@ -221,6 +221,7 @@ void Scene::loadLBA(Common::SeekableReadStream *stream) {
 		z->_info[2] = stream->readUint16LE();
 		z->_info[3] = stream->readUint16LE();
 		z->_snap = stream->readUint16LE();
+		z->_id = z->_info[0];
 	}
 
 	_numPoints = stream->readUint16LE();
@@ -286,7 +287,7 @@ void Scene::processActorZone(Actor *a) {
 }
 
 byte Zone::getId() {
-	return _snap;
+	return _id;
 }
 
 bool Zone::isActorInside(Actor *a) {

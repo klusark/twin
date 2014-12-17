@@ -168,9 +168,12 @@ bool ScriptLife::VAR_CUBE(byte oper) {
 
 bool ScriptLife::CONE_VIEW(byte oper) {
 	byte actor = _currentState._param;
-	uint16 value = getParamUint16();
-	warning("STUB: CONE_VIEW, actor(%d), value(%d)", actor, value);
-	return false;
+	uint16 distance = getParamUint16();
+	Scene *s = g_twin->getCurrentScene();
+	Actor *a = s->getActor(actor);
+	//TODO: Need to implement the cone part
+	uint16 actualDistance = a->_pos.getDistanceTo(&_actor->_pos);
+	return testCond(distance, actualDistance, oper);
 }
 
 bool ScriptLife::HIT_BY(byte oper) {
