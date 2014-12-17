@@ -41,10 +41,13 @@ ScriptLifeV1::ScriptLifeV1(Common::SeekableReadStream *stream, ScriptTrack *trac
 
 }
 
+void scriptLogger(const Common::String &func) {
+	//warning("%s", func.c_str());
+}
 
 void ScriptLifeV1::execute(byte opcode) {
 	switch (opcode) {
-		#define OPCODE(op, func) case op: func(); break
+		#define OPCODE(op, func) case op: scriptLogger(#func); func(); break
 		#define OPCODEI(op, func) OPCODE(op, func)
 			LIFE_OPCODES_V1
 		#undef OPCODE
@@ -84,6 +87,19 @@ void ScriptLifeV1::ZOOM() {
 
 void ScriptLifeV1::INIT_PINGOUIN() {
 	byte param = getParamByte();
+}
+
+void ScriptLifeV1::SAY_MESSAGE() {
+	uint16 id = getParamUint16();
+	Common::String str = g_resource->getMessage(0, id);
+	warning("STUB: SAY_MESSAGE(%d): %s", id, str.c_str());
+}
+
+void ScriptLifeV1::SAY_MESSAGE_OBJ() {
+	byte actor = getParamByte();
+	uint16 id = getParamUint16();
+	Common::String str = g_resource->getMessage(0, id);
+	warning("STUB: SAY_MESSAGE_OBJ(%d): %s", id, str.c_str());
 }
 
 } // end of namespace Twin

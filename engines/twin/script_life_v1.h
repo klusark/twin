@@ -92,6 +92,9 @@ namespace Twin {
 										\
 	OPCODE(0x47, INIT_PINGOUIN);		\
 	OPCODEI(0x48, SET_HOLO_POS);		\
+										\
+	OPCODE(0x4D, SAY_MESSAGE);			\
+	OPCODE(0x4E, SAY_MESSAGE_OBJ);		\
 
 
 
