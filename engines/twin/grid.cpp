@@ -126,16 +126,21 @@ ShapeType Grid::getBrickShape(int x, int y, int z, Point *out) {
 		out->_y = y;
 		out->_z = z;
 	}
-	Square *s = getGridAt(x, y, z);
-	if (s->_layout == 0) {
-		return kNone;
+	//TODO: Use proper height here instead of just 5
+	for (int i = 0; i < 5; ++i) {
+		Square *s = getGridAt(x, y + i, z);
+		if (s->_layout == 0) {
+			continue;
+		}
+		BlockInfo *b =_blockLibrary->getBlock(s->_layout - 1);
+		SubBlock *sb = &b->_blocks[s->_brick];
+
+
+
+		return sb->_shape;
 	}
-	BlockInfo *b =_blockLibrary->getBlock(s->_layout - 1);
-	SubBlock *sb = &b->_blocks[s->_brick];
 
-
-
-	return sb->_shape;
+	return kNone;
 }
 
 

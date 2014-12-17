@@ -491,7 +491,7 @@ void Actor::updateControl() {
 		}
 		break;
 	default:
-		warning("Control mode not handled: %d", _controlMode);
+		//warning("Control mode not handled: %d", _controlMode);
 		break;
 	}
 }
@@ -828,7 +828,7 @@ void Actor::checkCollisionWithActors() {
 
 			if (a->_carrier) {
 				if (_isFalling || isStandingOnActor(a)) {
-					//_processPos._y = yRightTest - actor->boudingBox.Y.bottomLeft + 1;
+					_processPos._y = (a->_pos._y + a->_box->_y2) - _box->_y1 + 1;
 					_standingOn = a;
 				} else {
 					/*int32 newAngle;
