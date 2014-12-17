@@ -162,7 +162,7 @@ void Actor::loadLBA(Common::SeekableReadStream *stream) {
 	stream->readUint16LE();
 	stream->readUint16LE();
 	stream->readUint16LE();
-	stream->readUint16LE();
+	_controlMode = (ControlMode)stream->readUint16LE();
 	stream->readUint16LE();
 	stream->readUint16LE();
 	stream->readUint16LE();
