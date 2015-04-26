@@ -443,8 +443,15 @@ void ScriptLife::END_COMPORTEMENT() {
 }
 
 void ScriptLife::SET_VAR_GAME() {
+	uint16 value;
 	byte var = getParamByte();
-	uint16 value = getParamUint16();
+	
+	if (g_twin->getGameType() == GType_LBA2) {
+		value = getParamUint16();
+	} else {
+		value = getParamByte();
+	}
+
 	setGameVar(var, value);
 }
 
