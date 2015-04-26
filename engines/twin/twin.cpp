@@ -256,7 +256,7 @@ Common::Error TwinEngine::run() {
 	return Common::kNoError;
 }
 
-Common::KeyCode KeyMap[] {
+Common::KeyCode KeyMap[] = {
 	Common::KEYCODE_UP,
 	Common::KEYCODE_DOWN,
 	Common::KEYCODE_LEFT,
@@ -265,7 +265,7 @@ Common::KeyCode KeyMap[] {
 	Common::KEYCODE_F5,
 	Common::KEYCODE_F6,
 	Common::KEYCODE_F7,
-	Common::KEYCODE_F8,
+	Common::KEYCODE_F8
 };
 
 void TwinEngine::processKeyUp(Common::KeyCode key) {
